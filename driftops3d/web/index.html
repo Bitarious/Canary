@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DriftOps 3D</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#/">
+      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><path d="M3 22c5 0 6-12 11-12s5 8 9 8 4-6 6-6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+      <span class="brand-name">Drift<span>Ops</span></span>
+    </a>
+    <nav class="tabs" aria-label="Views">
+      <a data-tab="twin" href="#/">Twin</a>
+      <a data-tab="fleet" href="#/fleet">Fleet</a>
+      <a data-tab="incidents" href="#/incidents">Incidents <span class="tab-count" id="incCount"></span></a>
+    </nav>
+    <div class="crumbs" id="crumbs"></div>
+    <div class="controls">
+      <div class="site-health" id="siteHealth"></div>
+      <button id="benchBtn" class="btn ghost" title="Measure the computer that is running the DriftOps server (~30 s stress test + sensors). The result is stored under Local devices; it does not benchmark the server or rack you are viewing.">
+        <span class="ico">⏱</span> <span class="lbl">Benchmark this computer</span>
+      </button>
+      <button id="analyzeBtn" class="btn primary" hidden><span class="ico">◎</span> Analyze</button>
+    </div>
+  </header>
+
+  <div id="jobBar" class="jobbar" hidden>
+    <div class="jobbar-text"><span id="jobText">Benchmarking…</span><span id="jobPct"></span></div>
+    <div class="jobbar-track"><div id="jobFill"></div></div>
+  </div>
+
+  <main>
+    <section id="twinView" class="view twin">
+      <aside id="sidebar" class="sidebar"></aside>
+      <div class="twin-center">
+        <div id="siteStage" class="stage3d"></div>
+        <div id="siteLabels" class="labels"></div>
+        <div id="twinHead" class="twin-head"></div>
+        <div id="twinFoot" class="twin-foot"></div>
+      </div>
+      <aside id="copilot" class="copilot"></aside>
+    </section>
+
+    <section id="deviceView" class="view" hidden>
+      <div id="stage" class="stage3d"></div>
+      <div id="labels" class="labels"></div>
+      <aside id="overview" class="card overview"></aside>
+      <aside id="panel" class="card panel" hidden></aside>
+      <div class="legend">
+        <span><i class="dot healthy"></i>Healthy</span>
+        <span><i class="dot watch"></i>Watch</span>
+        <span><i class="dot elevated"></i>Elevated</span>
+        <span><i class="dot critical"></i>Critical</span>
+      </div>
+      <div class="hint">Drag to orbit · scroll to zoom · Esc to go back</div>
+    </section>
+
+    <section id="fleetView" class="view page" hidden></section>
+    <section id="incidentsView" class="view page" hidden></section>
+  </main>
+
+  <div id="loading" class="loading" hidden><div class="spinner"></div><span id="loadingText">Running the model over the fleet…</span></div>
+  <div id="toast" class="toast" hidden></div>
+  <div id="drop" class="drop" hidden><div>Drop telemetry JSON to import</div></div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
