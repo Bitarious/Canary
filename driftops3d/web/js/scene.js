@@ -24,7 +24,8 @@ const MATCH_SCALE = 0.8;   // the device view starts this much closer than its d
 export function deviceFraming(formFactor) {
   const c = formFactor === 'server' ? CAMERA.server : CAMERA.laptop;
   const off = c.pos.clone().sub(c.target);
-  return { dir: off.clone().normalize(), dist: off.length() * MATCH_SCALE, size: c.size, fov: DEVICE_FOV };
+  return { dir: off.clone().normalize(), dist: off.length() * MATCH_SCALE, size: c.size, fov: DEVICE_FOV,
+    target: c.target.clone(), pos: c.target.clone().addScaledVector(off, MATCH_SCALE) };
 }
 
 export const ease = {
@@ -188,15 +189,23 @@ function drawScreen(canvas, state, text = '') {
 
 // ------------------------------------------------------------------------------------ layouts
 
-function laptopLayout(counts) {
-  const L = { shell: [], internals: [], slots: {}, overflow: [], extras: {} };
-  const shellMat = new THREE.MeshPhysicalMaterial({ color: 0xb4bcc8, metalness: 0.85, roughness: 0.32, clearcoat: 0.4, transparent: true });
-  const keyMat = new THREE.MeshStandardMaterial({ color: 0x1b222d, roughness: 0.8, transparent: true });
+export const LAPTOP_LOOK = {
+  shell: { color: 0xb4bcc8, metalness: 0.85, roughness: 0.32, clearcoat: 0.4 },
+  trim: { color: 0x1b222d, metalness: 0, roughness: 0.8 },
+  led: { color: 0x38bdf8 },
+};
+
+/** Shared exterior in native device coordinates, including the open lid and screen artwork. */
+export function buildLaptopShell() {
+  const meshes = [];
+  const shellMat = new THREE.MeshPhysicalMaterial({ ...LAPTOP_LOOK.shell, transparent: true });
+  const keyMat = new THREE.MeshStandardMaterial({ ...LAPTOP_LOOK.trim, transparent: true });
+  const ledMat = new THREE.MeshBasicMaterial({ ...LAPTOP_LOOK.led, transparent: true });
   const root = new THREE.Group();
 
   const base = rbox(3.6, 0.22, 2.5, 0.07, shellMat, 0, 0.11, 0);
   root.add(base);
-  L.shell.push(base);
+  meshes.push(base);
 
   const keyGeo = new THREE.BoxGeometry(0.19, 0.03, 0.19);
   const keys = new THREE.InstancedMesh(keyGeo, keyMat, 14 * 5);
@@ -207,17 +216,20 @@ function laptopLayout(counts) {
     keys.setMatrixAt(n++, m4);
   }
   root.add(keys);
-  L.shell.push(keys);
+  meshes.push(keys);
   const pad = box(1.1, 0.012, 0.6, keyMat, 0, 0.226, 0.72);
   root.add(pad);
-  L.shell.push(pad);
+  meshes.push(pad);
+  const led = box(0.12, 0.018, 0.012, ledMat, 1.4, 0.11, 1.25);
+  root.add(led);
+  meshes.push(led);
 
   // Lid hinged at the back edge.
   const hinge = new THREE.Group();
   hinge.position.set(0, 0.22, -1.22);
   const lid = rbox(3.6, 0.08, 2.45, 0.06, shellMat, 0, 0.04, 1.22);
   hinge.add(lid);
-  L.shell.push(lid);
+  meshes.push(lid);
   const canvas = document.createElement('canvas');
   canvas.width = 1024; canvas.height = 640;
   drawScreen(canvas, 'idle');
@@ -228,10 +240,17 @@ function laptopLayout(counts) {
   screen.rotation.x = Math.PI / 2;
   screen.position.set(0, -0.002, 1.22);
   hinge.add(screen);
-  L.shell.push(screen);
+  meshes.push(screen);
   hinge.rotation.x = -1.95;
   root.add(hinge);
-  L.extras = { hinge, screenCanvas: canvas, screenTex: tex, lidOpen: -1.95, lidWide: -2.25 };
+  return { group: root, meshes, shellMat, keyMat, ledMat, screenMat,
+    extras: { hinge, screenCanvas: canvas, screenTex: tex, lidOpen: -1.95, lidWide: -2.25 } };
+}
+
+function laptopLayout(counts) {
+  const shell = buildLaptopShell();
+  const root = shell.group;
+  const L = { shell: shell.meshes, internals: [], slots: {}, overflow: [], extras: shell.extras };
 
   const board = box(3.4, 0.02, 2.3, new THREE.MeshStandardMaterial({ color: 0x0c3a2c, roughness: 0.75, metalness: 0.2 }), 0, 0.03, 0);
   root.add(board);
@@ -563,12 +582,13 @@ export class HardwareScene {
       const start = L.camera.target.clone().add(L.camera.pos.clone().sub(L.camera.target).multiplyScalar(MATCH_SCALE));
       this.camera.position.copy(start);
       this.controls.autoRotate = false;
-      this.tweens.add(1600, k => this.camera.position.lerpVectors(start, L.camera.pos, k), { delay: 650, easing: ease.inOut });
+      this.tweens.add(1600, k => this.camera.position.lerpVectors(start, L.camera.pos, k), { delay: 900, easing: ease.inOut });
     } else {
       this.camera.position.copy(L.camera.pos).multiplyScalar(1.25);
       this.controls.autoRotate = true;
       this.tweens.add(1200, k => this.camera.position.lerpVectors(L.camera.pos.clone().multiplyScalar(1.25), L.camera.pos, k), { easing: ease.out });
     }
+    this.controls.update();
   }
 
   _dispose() {

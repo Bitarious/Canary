@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { Tweens, ease, STATUS_HEX, SERVER_SIZE, SERVER_LOOK, DEVICE_LIGHTS, buildServerShell } from './scene.js';
+import { Tweens, ease, STATUS_HEX, SERVER_SIZE, SERVER_LOOK, DEVICE_LIGHTS, buildServerShell, LAPTOP_LOOK, buildLaptopShell } from './scene.js';
 
 const RW = 0.9, RH = 2.1, RD = 1.1;       // rack cabinet size
 const PITCH_X = 1.75, PITCH_Z = 4.2;      // rack spacing (aisles between rows)
@@ -82,7 +82,7 @@ export class SiteScene {
     scene.add(key, key.target);
     const rim = (this.rim = new THREE.DirectionalLight(0x38bdf8, 0.7));
     rim.position.set(-10, 6, -8);
-    scene.add(rim);
+    scene.add(rim, rim.target);
 
     this.floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.ShadowMaterial({ opacity: 0.4 }));
     this.floor.rotation.x = -Math.PI / 2;
@@ -141,7 +141,8 @@ export class SiteScene {
 
   resize() {
     const w = this.container.clientWidth || 1, h = this.container.clientHeight || 1;
-    this.camera.aspect = w / h;
+    const view = this.camera.view;
+    this.camera.aspect = view?.enabled ? view.fullWidth / view.fullHeight : w / h;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(w, h);
     this.labelRenderer.setSize(w, h);
@@ -206,10 +207,6 @@ export class SiteScene {
     g.userData.rackId = rack.id;
     const cols = Math.min(3, rack.devices.length);
     const rows = Math.ceil(rack.devices.length / cols);
-    const bezelMat = new THREE.MeshStandardMaterial({ color: 0x101822, roughness: 0.5, transparent: true });
-    const keyMat = new THREE.MeshStandardMaterial({ color: 0x182330, roughness: 0.7, transparent: true });
-    const screenMat = new THREE.MeshStandardMaterial({ color: 0x123047, emissive: 0x164d70,
-      emissiveIntensity: 0.45, roughness: 0.3, transparent: true });
     const stripMat = new THREE.MeshBasicMaterial({ color: NEUTRAL.clone(), transparent: true });
     const haloMat = new THREE.MeshBasicMaterial({ map: halo(), color: STATUS_HEX[rack.status], transparent: true,
       opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
@@ -219,33 +216,19 @@ export class SiteScene {
     g.add(haloMesh);
 
     rack.devices.forEach((d, i) => {
-      const laptop = new THREE.Group();
+      const shell = buildLaptopShell();
+      const laptop = shell.group;
+      const { shellMat: mat, keyMat: bezelMat, ledMat, screenMat } = shell;
+      const scale = 0.5;
+      laptop.scale.setScalar(scale);
       laptop.position.set((i % cols - (cols - 1) / 2) * 2.2, 0, (Math.floor(i / cols) - (rows - 1) / 2) * 2.1);
-      const mat = new THREE.MeshStandardMaterial({ color: NEUTRAL.clone(), emissive: 0,
-        emissiveIntensity: 0, metalness: 0.55, roughness: 0.4, transparent: true });
-      const ledMat = new THREE.MeshBasicMaterial({ color: NEUTRAL.clone(), transparent: true });
-      // Thin palm rest, individual keys and a recessed trackpad make the silhouette unmistakable.
-      laptop.add(box(1.8, 0.08, 1.2, mat, 0, 0.09, 0));
-      laptop.add(box(1.57, 0.012, 0.53, bezelMat, 0, 0.136, -0.2));
-      for (let row = 0; row < 4; row++) for (let col = 0; col < 12; col++) {
-        laptop.add(box(0.108, 0.012, 0.085, keyMat, (col - 5.5) * 0.125, 0.15, -0.39 + row * 0.115));
-      }
-      laptop.add(box(0.52, 0.008, 0.26, bezelMat, 0, 0.135, 0.32));
-      laptop.add(box(0.16, 0.012, 0.012, ledMat, 0.68, 0.1, 0.606));
-
-      const lid = new THREE.Group();
-      lid.position.set(0, 0.13, -0.54);
-      lid.rotation.x = -0.22;
-      lid.add(box(1.8, 1.12, 0.065, mat, 0, 0.56, 0));
-      lid.add(box(1.7, 1.02, 0.012, bezelMat, 0, 0.57, 0.037));
-      lid.add(box(1.57, 0.88, 0.012, screenMat, 0, 0.59, 0.049));
-      lid.add(box(0.025, 0.025, 0.012, keyMat, 0, 1.095, 0.05));
-      lid.add(box(0.34, 0.018, 0.012, stripMat, 0, 0.08, 0.05));
-      laptop.add(lid);
+      mat.color.copy(NEUTRAL);
+      ledMat.color.copy(NEUTRAL);
       laptop.traverse(o => { o.userData.deviceId = d.id; o.userData.rackId = rack.id; });
       g.add(laptop);
       this.slabs.set(d.id, { mesh: laptop, mat, bezelMat, ledMat, data: d, rackId: rack.id,
-        y: 0.6, revealed: false, glow: null, scanGlow: 0 });
+        y: 0.6, revealed: false, glow: null, scanGlow: 0,
+        screenMat, scale, scaleY: scale });
     });
 
     const el = document.createElement('div');
@@ -254,7 +237,7 @@ export class SiteScene {
     const label = new CSS2DObject(el);
     label.position.set(0, 1.6, 0);
     g.add(label);
-    this.racks.set(rack.id, { group: g, data: rack, frameMats: [keyMat, screenMat], stripMat, haloMat,
+    this.racks.set(rack.id, { group: g, data: rack, frameMats: [], stripMat, haloMat,
       labelEl: el, label, revealed: false });
     this._paintRackLabel(rack.id);
     return g;
@@ -464,12 +447,18 @@ export class SiteScene {
     this.scanState = null;
     if (this.zoomed?.look) this._applyLook(this.zoomed.look, 0);   // put the hall lighting back
     this.zoomed = null;
+    this.camera.fov = 35;
+    this.camera.clearViewOffset();
+    this.resize();
     this.controls.minDistance = 2;
     this.key.castShadow = true;
     this.beam.visible = false;
     this.root.traverse(o => {
       if (o.geometry) o.geometry.dispose();
-      if (o.material && o.material.map !== haloTexture) o.material.dispose?.();
+      if (o.material && o.material.map !== haloTexture) {
+        o.material.map?.dispose();
+        o.material.dispose?.();
+      }
       if (o.isCSS2DObject) o.element.remove();
     });
     this.root.clear();
@@ -488,7 +477,7 @@ export class SiteScene {
       const dim = rack && rid !== id;
       const to = dim ? 0.22 : 1;
       const mats = [...r.frameMats.slice(0, 2), r.stripMat];
-      const slabMats = [...this.slabs.values()].filter(s => s.rackId === rid).flatMap(s => [s.mat, s.bezelMat, s.ledMat]);
+      const slabMats = [...this.slabs.values()].filter(s => s.rackId === rid).flatMap(s => [s.mat, s.bezelMat, s.ledMat, s.screenMat].filter(Boolean));
       for (const m of [...mats, ...slabMats]) {
         const from = m.opacity;
         m.transparent = true;
@@ -510,7 +499,7 @@ export class SiteScene {
   // ------------------------------------------------------------------------------ zoom into a device
 
   /** Isolate the chosen device, bring it forward and fly the camera to its full bounds. */
-  async zoomToDevice(id, framing = null, shiftPx = 0) {
+  async zoomToDevice(id, framing = null, shiftPx = 0, viewport = null) {
     const s = this.slabs.get(id);
     if (!s || this.zoomed) return;
     this._clearSelBox();
@@ -542,8 +531,7 @@ export class SiteScene {
       for (const { m, from } of faded) { m.opacity = from * (1 - k); m.depthWrite = m.opacity > 0.95; }
       for (const m of mine) { m.opacity = Math.max(m.opacity, k); m.depthWrite = true; }
     });
-    // Servers blend into the device view's exact materials and lighting, so the crossfade shows no change at all.
-    const look = s.scale ? this._serverLook(s) : null;
+    const look = s.scale ? this._deviceLook(s) : null;
     this.zoomed.look = look;
     const fromColor = s.mat.color.clone();
     this.zoomed.colors = { fromColor };
@@ -558,6 +546,22 @@ export class SiteScene {
       }
       s.zoomBlend = k;
     }, { delay: 250, easing: ease.inOut });
+
+    if (s.data.form_factor === 'laptop' && framing && viewport) {
+      // Both views use the same native model. Transform the destination camera by
+      // the laptop's scale and position, and render the corresponding crop of the
+      // full page. This preserves perspective and pixel placement at every depth.
+      const origin = s.mesh.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0, 0, 0.95));
+      const pos = framing.pos.clone().multiplyScalar(s.scale).add(origin);
+      const target = framing.target.clone().multiplyScalar(s.scale).add(origin);
+      const projection = { fromFov: this.camera.fov, toFov: framing.fov, viewport };
+      this.zoomed.projection = projection;
+      this.controls.minDistance = 0.2;
+      const lens = this.tweens.add(1300, k => this._matchProjection(projection, k));
+      const cam = this._cameraTo(pos, target, 1300);
+      await Promise.all([fade, slide, lens, cam]);
+      return;
+    }
 
     // End on the same framing the device view starts with: same view direction, and a distance at which
     // the slab covers as many pixels as the device chassis will (pixel size ∝ size / (distance · tan(fov/2))).
@@ -591,6 +595,7 @@ export class SiteScene {
     const s = this.slabs.get(z.id);
     for (const r of this.racks.values()) r.labelEl.style.opacity = '';
     await this.tweens.add(600, k => {
+      if (z.projection) this._matchProjection(z.projection, 1 - k);
       for (const { m, from } of z.faded) { m.opacity = from * k; m.depthWrite = m.opacity > 0.95; }
       for (const { m, z: z0 } of z.start) m.position.z = z0 + 0.95 * (1 - k);
       if (s) {
@@ -604,6 +609,7 @@ export class SiteScene {
         }
       }
     });
+    if (z.projection) { this.camera.clearViewOffset(); this.resize(); }
     if (s) {
       s.zoomBlend = 0;
       if (z.look) { this._applyLook(z.look, 0); s.mesh.scale.y = s.scaleY; } else s.mat.color.copy(z.colors.fromColor);
@@ -611,15 +617,31 @@ export class SiteScene {
     for (const { m, z: z0 } of z.start) m.position.z = z0;
   }
 
-  /** Snapshot a rack server's current materials and the hall lighting, paired with the device view's values. */
-  _serverLook(s) {
+  _matchProjection({ fromFov, toFov, viewport: v }, k) {
+    this.camera.fov = THREE.MathUtils.lerp(fromFov, toFov, k);
+    this.camera.setViewOffset(THREE.MathUtils.lerp(v.width, v.fullWidth, k),
+      THREE.MathUtils.lerp(v.height, v.fullHeight, k), v.offsetX * k, v.offsetY * k, v.width, v.height);
+  }
+
+  /** Pair the device's materials and lighting with the detailed view's values. */
+  _deviceLook(s) {
+    const style = s.data.form_factor === 'laptop' ? LAPTOP_LOOK : SERVER_LOOK;
     const mat = (m, to) => ({
       m, color: [m.color.clone(), new THREE.Color(to.color)],
       metalness: [m.metalness, to.metalness], roughness: [m.roughness, to.roughness], clearcoat: [m.clearcoat, to.clearcoat],
     });
     const r = this.renderer, sc = this.scene;
+    const vectors = [];
+    if (s.data.form_factor === 'laptop') {
+      const origin = s.mesh.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0, 0, 0.95));
+      for (const [value, offset] of [[this.key.position, [4, 8, 5]], [this.key.target.position, [0, 0, 0]],
+        [this.rim.position, [-6, 3, -5]], [this.rim.target.position, [0, 0, 0]]]) {
+        vectors.push({ value, from: value.clone(), to: new THREE.Vector3(...offset).multiplyScalar(s.scale).add(origin) });
+      }
+    }
     return {
-      mats: [mat(s.mat, SERVER_LOOK.shell), mat(s.bezelMat, SERVER_LOOK.trim), mat(s.ledMat, SERVER_LOOK.led)],
+      vectors,
+      mats: [mat(s.mat, style.shell), mat(s.bezelMat, style.trim), mat(s.ledMat, style.led)],
       exposure: [r.toneMappingExposure, DEVICE_LIGHTS.exposure],
       environment: [sc.environmentIntensity, DEVICE_LIGHTS.environment],
       hemi: [this.hemi.intensity, DEVICE_LIGHTS.hemi],
@@ -631,6 +653,7 @@ export class SiteScene {
   /** k = 0: the twin's own look; k = 1: identical to the device view. */
   _applyLook(look, k) {
     const mix = ([a, b]) => a + (b - a) * k;
+    for (const { value, from, to } of look.vectors) value.lerpVectors(from, to, k);
     for (const x of look.mats) {
       x.m.color.copy(x.color[0]).lerp(x.color[1], k);
       for (const p of ['metalness', 'roughness', 'clearcoat']) if (x[p][0] !== undefined) x.m[p] = mix(x[p]);

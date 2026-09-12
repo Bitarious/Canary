@@ -1,6 +1,6 @@
 # DriftOps 3D
 
-A digital twin for infrastructure health across several sites. Data centers are shown as 3D halls of racks; the HQ fleet shows three open laptops with screens, keyboards and trackpads. Devices are colored by health, and drifting devices glow.
+A digital twin for infrastructure health across several sites. Data centers are shown as 3D halls of racks; the HQ fleet shows three open laptops using the same chassis, keyboard and screen as the device view. The laptop zoom matches the destination camera and screen position before switching views. Devices are colored by health, and drifting devices glow.
 
 - **Picking a device:** pick a site, then click a rack, then click a server. At HQ, click a laptop directly. That opens the 3D device view.
 - **Analyzing it:** in the device view, **Analyze** makes the chassis transparent and colors every internal component by health.
@@ -24,7 +24,8 @@ using Node 22 or newer:
 node driftops3d/tests/site-navigation.mjs http://127.0.0.1:8765 http://127.0.0.1:9223
 ```
 
-This clicks all three HQ laptop models, checks device analysis and return
+This clicks all three HQ laptop models, checks that their exterior geometry and
+screen projection match at the view switch, checks device analysis and return
 navigation, and checks a server's zoom and return transition.
 
 ### Views

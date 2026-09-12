@@ -160,8 +160,12 @@ async function openDeviceAnimated(id) {
       const slab = siteScene.slabs.get(id);
       // The device view spans the full width; the twin canvas sits between the sidebar and the copilot.
       const r = siteScene.container.getBoundingClientRect();
+      const page = els.views.twin.getBoundingClientRect();
       const shift = window.innerWidth / 2 - (r.left + r.width / 2);
-      await siteScene.zoomToDevice(id, deviceFraming(slab.data.form_factor), shift);
+      await siteScene.zoomToDevice(id, deviceFraming(slab.data.form_factor), shift, {
+        fullWidth: page.width, fullHeight: page.height,
+        offsetX: r.left - page.left, offsetY: r.top - page.top, width: r.width, height: r.height,
+      });
     } finally {
       state.zooming = false;
     }
