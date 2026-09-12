@@ -1,0 +1,30 @@
+version: drive-time-v1
+group_key: serial_number
+group_rule: First 8 hex digits of SHA256('driftops-split-v1:' + serial_number), modulo 100.
+horizon_days: 7
+partitions:
+  train:
+    group_range: [0, 60]
+    first_cutoff: '2024-07-28'
+    last_cutoff: '2024-08-24'
+    labels_available_by: '2024-08-31'
+  validation:
+    group_range: [60, 75]
+    first_cutoff: '2024-09-01'
+    last_cutoff: '2024-09-23'
+    labels_available_by: '2024-09-30'
+  calibration:
+    group_range: [75, 85]
+    first_cutoff: '2024-10-01'
+    last_cutoff: '2024-10-24'
+    labels_available_by: '2024-10-31'
+  test:
+    group_range: [85, 100]
+    first_cutoff: '2024-11-01'
+    last_cutoff: '2024-12-24'
+    labels_available_by: '2024-12-31'
+notes:
+  - Group ranges are half-open; drive identities never cross partitions.
+  - Prior observations from a held-out drive may supply its causal lookback.
+  - Calibration is omitted if outcomes are insufficient; test labels are never reassigned.
+  - Event-day and post-event records are excluded from prediction inputs.

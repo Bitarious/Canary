@@ -1,0 +1,30 @@
+[project]
+name = "driftops"
+version = "0.1.0"
+description = "Backblaze HDD temporal evidence and maintenance demo"
+requires-python = ">=3.12"
+readme = "README.md"
+dependencies = [
+  "timenet[build,s3]==0.1.0",
+  "duckdb>=1.4,<2",
+  "pyyaml>=6,<7",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.13,<0.13"]
+build-backend = "uv_build"
+
+[project.scripts]
+driftops = "driftops.cli:main"
+
+[project.optional-dependencies]
+model-access = [
+    "huggingface-hub>=1,<2",
+]
+
+[dependency-groups]
+dev = ["pytest>=8,<10"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

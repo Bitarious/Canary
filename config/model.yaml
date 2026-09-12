@@ -1,0 +1,20 @@
+# Model selection and immutable references; this is not a runnable training config.
+backend: opentslm-sp
+selection_status: weight-access-verified-runtime-check-pending
+base_model:
+  repo_id: google/gemma-3-270m
+  revision: 9b0cfec892e2bc2afd938c98eabe4e4a7b1e0ca1
+  weight_file: model.safetensors
+temporal_checkpoint:
+  repo_id: OpenTSLM/gemma-3-270m-tsqa-sp
+  revision: c97bd36131e07d53a7af9cd307eb3db628f9712f
+  filename: model_checkpoint.pt
+opentslm_source:
+  repo_url: https://github.com/OpenTSLM/OpenTSLM
+  reviewed_revision: 2968f4b891baab4307f7e9d0043e87677b593a30
+intended_adaptation:
+  freeze: [base_language_model]
+  update: [time_series_encoder, projector]
+  lora: false
+  status: proposed-until-model-load-and-parameter-audit
+training_started: false

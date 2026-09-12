@@ -1,0 +1,8 @@
+{
+  "source_url": "https://www.backblaze.com/cloud-storage/resources/hard-drive-test-data",
+  "metadata_uri": "s3://drivestats-iceberg/drivestats/metadata/00258-83455019-db09-4def-8eb2-640f5b222dd8.metadata.json",
+  "metadata_sha256": "8bdbbafed8931b3e8f224e4c6099e306aebcb4a2f0621dab480735ae96aa4c6c",
+  "current_snapshot_id": 8298869781046488555,
+  "source_updated_at_ms": 1788366403886,
+  "discovered_at": "2026-09-12T18:47:56.939045+00:00"
+}

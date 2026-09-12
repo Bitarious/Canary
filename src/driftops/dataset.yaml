@@ -1,0 +1,16 @@
+yaml_schema_version: 1
+dataset_id: driftops/backblaze-hdd
+dataset_version: 0.1.0
+name: DriftOps Backblaze HDD histories
+description: >-
+  Backblaze daily HDD SMART observations with device metadata, source outcome
+  annotations, and derived cutoff-scoped signal description tasks. Outcomes and
+  language targets are not inference inputs. Raw SMART values retain their source
+  encoding; physical units and failure causes are not inferred by conversion.
+license: other
+license_url: https://www.backblaze.com/cloud-storage/resources/hard-drive-test-data
+source_url: https://www.backblaze.com/cloud-storage/resources/hard-drive-test-data
+citation: Backblaze Drive Stats / Hard Drive Test Data
+access: open
+domains: [observability]
+tags: [hdd, smart, maintenance, time-series, weak-supervision]

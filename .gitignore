@@ -1,0 +1,23 @@
+# Local tools, credentials, and machine-specific state
+.tools/
+.local/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python and frontend build outputs
+.venv/
+.venv-*/
+.pytest_cache/
+*.egg-info/
+build/
+__pycache__/
+*.pyc
+node_modules/
+dist/
+
+# Downloaded data and generated model artifacts
+data/
+artifacts/

@@ -1,0 +1,35 @@
+source: backblaze
+hardware: hdd
+model: ST8000NM0055
+start: '2024-07-01'
+end: '2024-12-31'
+max_drives: 3000
+cohort_selection: baseline-date-identities
+selection_reason: >-
+  The July development audit found 13,728 distinct drives and 52 recorded events,
+  with more than 99.98% coverage of SMART 5 and 197. Select at most 3,000
+  baseline-date identities without consulting future outcomes. An initial
+  ST4000DM000 acquisition was rejected for coverage: only two drives remained
+  in October-December. No trained performance or held-out event labels were
+  used to make this change; retain that acquisition as a coverage audit.
+raw_path: data/raw/backblaze.parquet
+source_snapshot: config/source-snapshot.json
+timef_root: data/timef
+dataset_id: driftops/backblaze-hdd
+dataset_version: 0.1.0
+channels:
+  - smart_5_raw
+  - smart_9_raw
+  - smart_187_raw
+  - smart_188_raw
+  - smart_194_raw
+  - smart_197_raw
+  - smart_198_raw
+language_channels:
+  - smart_5_raw
+  - smart_187_raw
+  - smart_194_raw
+  - smart_197_raw
+lookback_days: 28
+task_stride_days: 7
+availability_assumption: Source-day record available at the end of that calendar day in UTC.
