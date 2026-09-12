@@ -494,26 +494,33 @@ export class SiteScene {
     }
   }
 
-  // ------------------------------------------------------------------------------ zoom into a server
+  // ------------------------------------------------------------------------------ zoom into a device
 
-  /** Hide everything except the chosen server, slide it out of its rack and fly the camera to it. */
+  /** Isolate the chosen device, bring it forward and fly the camera to its full bounds. */
   async zoomToDevice(id, framing = null, shiftPx = 0) {
     const s = this.slabs.get(id);
     if (!s || this.zoomed) return;
     this._clearSelBox();
     this.tip.visible = false;
     this.hover = null;
-    const others = [];
-    for (const r of this.racks.values()) {
-      others.push(...r.frameMats, r.blankMat);
-      r.labelEl.style.opacity = 0;
-    }
-    for (const o of this.slabs.values()) if (o !== s) others.push(o.mat, o.bezelMat, o.ledMat);
-    const mine = [s.mat, s.bezelMat, s.ledMat];
-    const faded = others.map(m => ({ m, from: m.opacity }));
-    const world = s.mesh.getWorldPosition(new THREE.Vector3());   // resting position, before the slide
     const meshes = s.mesh.parent.children.filter(c => c.userData.deviceId === id);
+    // Servers use sibling meshes; laptops nest their screen, keys and chassis in a group.
+    // Read actual materials so office groups need no rack-only blank panels, and keep
+    // every part of the selected laptop visible throughout the transition.
+    const materials = objects => {
+      const found = new Set();
+      for (const object of objects) object.traverse(o => {
+        if (o.material) for (const m of (Array.isArray(o.material) ? o.material : [o.material])) found.add(m);
+      });
+      return found;
+    };
+    const mine = materials(meshes);
+    const others = [...materials([this.root])].filter(m => !mine.has(m));
+    const faded = others.map(m => ({ m, from: m.opacity }));
+    const bounds = new THREE.Box3().setFromObject(s.mesh);
+    const world = bounds.getCenter(new THREE.Vector3());   // resting position, before the slide
     const start = meshes.map(m => ({ m, z: m.position.z }));
+    for (const r of this.racks.values()) r.labelEl.style.opacity = 0;
     this.zoomed = { id, rackId: s.rackId, faded, start, mine };
     this.key.castShadow = false;   // hidden racks must not leave shadows on the floor
 
@@ -537,8 +544,7 @@ export class SiteScene {
     const tanHere = Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2));
     let dir = new THREE.Vector3(0.75, 0.55, 2.2).normalize(), dist = 2.4;
     if (framing) {
-      s.mesh.geometry.computeBoundingBox();
-      const slabSize = s.mesh.geometry.boundingBox.getSize(new THREE.Vector3()).length();
+      const slabSize = bounds.getSize(new THREE.Vector3()).length();
       dir = framing.dir.clone();
       dist = (slabSize * framing.dist * Math.tan(THREE.MathUtils.degToRad(framing.fov / 2))) / (framing.size * tanHere);
     }
@@ -554,7 +560,7 @@ export class SiteScene {
     await Promise.all([fade, slide, cam]);
   }
 
-  /** Reverse of zoomToDevice: put the server back and bring the rest of the hall back. */
+  /** Reverse of zoomToDevice: put the device back and restore the rest of the site. */
   async restoreZoom() {
     const z = this.zoomed;
     if (!z) return;

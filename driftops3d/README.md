@@ -13,6 +13,20 @@ pip install psutil          # only dependency (agent); the server uses the stand
 python server.py            # http://127.0.0.1:8765  (loads the demo sites, ~15 s model warm-up)
 ```
 
+### Browser check
+
+Browser navigation regression check: with the demo running and a separate Chrome
+test window started with `--remote-debugging-port=9223` and
+`--user-data-dir=/tmp/driftops-navigation-chrome`, run this from the repository root
+using Node 22 or newer:
+
+```bash
+node driftops3d/tests/site-navigation.mjs http://127.0.0.1:8765 http://127.0.0.1:9223
+```
+
+This clicks all three HQ laptop models, checks device analysis and return
+navigation, and checks a server's zoom and return transition.
+
 ### Views
 
 | View | What you get |

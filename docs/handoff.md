@@ -20,7 +20,9 @@ compute. No local CUDA setup is required for the data preview.
 
 The separate `driftops3d/` illustrative UI uses synthetic telemetry and rule-based
 health analysis. Its HQ scene contains exactly three open laptop models, one per
-office group, with direct navigation to device analysis. Site A and Site B retain
+office group, with direct navigation to device analysis. The zoom transition
+supports grouped laptop parts as well as server meshes; the navigation regression
+check is documented in the 3D README. Site A and Site B retain
 their server racks. Run it with `python3 driftops3d/server.py` and open port 8765;
 see [its README](../driftops3d/README.md). This is separate from the real Backblaze
 preview described above.
