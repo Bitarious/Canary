@@ -88,6 +88,11 @@ a { color: inherit; text-decoration: none; }
 /* ---------------------------------------------------------------- views */
 .view { position: fixed; top: var(--top); left: 0; right: 0; bottom: 0; }
 .stage3d { position: absolute; inset: 0; }
+/* crossfade between the twin and the device view */
+.view.xf-in { z-index: 2; animation: xfIn .7s ease both; }
+.view.xf-out { z-index: 1; animation: xfOut .7s ease .12s both; pointer-events: none; }
+@keyframes xfIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes xfOut { from { opacity: 1; } to { opacity: 0; } }
 .stage3d canvas { display: block; }
 .labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 
