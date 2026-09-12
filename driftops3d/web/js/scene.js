@@ -11,6 +11,22 @@ const EMISSIVE_BASE = { healthy: 0.10, watch: 0.22, elevated: 0.34, critical: 0.
 const PULSE = { healthy: 0, watch: 0.05, elevated: 0.16, critical: 0.38 };
 const FAN_SPEED = { idle: 14, healthy: 16, watch: 9, elevated: 5, critical: 1.6 };
 
+// Default device cameras, shared with the digital twin so its zoom can end on the same framing.
+const CAMERA = {
+  // size = diagonal of the machine's bounding box (laptop includes the open lid)
+  laptop: { pos: new THREE.Vector3(4.7, 3.9, 5.7), target: new THREE.Vector3(0, 0.55, -0.35), size: Math.hypot(3.6, 2.6, 3.2) },
+  server: { pos: new THREE.Vector3(5.6, 3.9, 6.4), target: new THREE.Vector3(0, 0.35, 0), size: Math.hypot(4.6, 0.9, 3.6) },
+};
+const DEVICE_FOV = 38;
+const MATCH_SCALE = 0.8;   // the device view starts this much closer than its default camera
+
+/** How the device view frames a machine at the start of a "match" intro (direction, distance, size, fov). */
+export function deviceFraming(formFactor) {
+  const c = formFactor === 'server' ? CAMERA.server : CAMERA.laptop;
+  const off = c.pos.clone().sub(c.target);
+  return { dir: off.clone().normalize(), dist: off.length() * MATCH_SCALE, size: c.size, fov: DEVICE_FOV };
+}
+
 export const ease = {
   inOut: t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2),
   out: t => 1 - Math.pow(1 - t, 3),
@@ -258,7 +274,7 @@ function laptopLayout(counts) {
 
   L.root = root;
   L.size = new THREE.Vector3(3.6, 2.6, 3.2);
-  L.camera = { pos: V(4.7, 3.9, 5.7), target: V(0, 0.55, -0.35) };
+  L.camera = { pos: CAMERA.laptop.pos.clone(), target: CAMERA.laptop.target.clone() };
   L.lift = 0.32;
   return L;
 }
@@ -337,7 +353,7 @@ function serverLayout(counts) {
 
   L.root = root;
   L.size = new THREE.Vector3(W, H, D);
-  L.camera = { pos: V(5.6, 3.9, 6.4), target: V(0, 0.35, 0) };
+  L.camera = { pos: CAMERA.server.pos.clone(), target: CAMERA.server.target.clone() };
   L.lift = 0.55;
   return L;
 }
@@ -451,7 +467,7 @@ export class HardwareScene {
 
   // -------------------------------------------------------------------------- build
 
-  load(machine, components) {
+  load(machine, components, { intro } = {}) {
     this._dispose();
     const counts = {};
     for (const c of components) counts[c.type] = (counts[c.type] || 0) + 1;
@@ -527,9 +543,18 @@ export class HardwareScene {
     this.selected = null;
     this.ring.scale.setScalar(Math.max(L.size.x, L.size.z) * 0.75);
     this.controls.target.copy(L.camera.target);
-    this.camera.position.copy(L.camera.pos).multiplyScalar(1.25);
-    this.controls.autoRotate = true;
-    this.tweens.add(1200, k => this.camera.position.lerpVectors(L.camera.pos.clone().multiplyScalar(1.25), L.camera.pos, k), { easing: ease.out });
+    if (intro === 'match') {
+      // Continue from the digital twin's zoom: start at the matched framing, hold during the crossfade,
+      // then ease back to the normal view.
+      const start = L.camera.target.clone().add(L.camera.pos.clone().sub(L.camera.target).multiplyScalar(MATCH_SCALE));
+      this.camera.position.copy(start);
+      this.controls.autoRotate = false;
+      this.tweens.add(1600, k => this.camera.position.lerpVectors(start, L.camera.pos, k), { delay: 650, easing: ease.inOut });
+    } else {
+      this.camera.position.copy(L.camera.pos).multiplyScalar(1.25);
+      this.controls.autoRotate = true;
+      this.tweens.add(1200, k => this.camera.position.lerpVectors(L.camera.pos.clone().multiplyScalar(1.25), L.camera.pos, k), { easing: ease.out });
+    }
   }
 
   _dispose() {

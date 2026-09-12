@@ -1,4 +1,4 @@
-import { HardwareScene } from './scene.js';
+import { HardwareScene, deviceFraming } from './scene.js';
 import { SiteScene } from './site-scene.js';
 import { renderOverview, renderComponent, esc } from './panel.js';
 import { renderSidebar, renderTwinHead, Copilot, renderFleet, renderIncidents } from './twin.js';
@@ -43,7 +43,7 @@ function getSiteScene() {
   if (!siteScene) {
     siteScene = new SiteScene($('siteStage'), $('siteLabels'));
     siteScene.onRackSelect = (rackId, deviceId) => go(`#/site/${state.site.id}${rackId ? `/rack/${rackId}` : ''}`, { focusDevice: deviceId });
-    siteScene.onDeviceOpen = id => go(`#/device/${id}`);
+    siteScene.onDeviceOpen = id => openDeviceAnimated(id);
   }
   return siteScene;
 }
@@ -55,12 +55,34 @@ function getDeviceScene() {
   return deviceScene;
 }
 
-function showView(name) {
+let xfTimer;
+/** Switch views; with crossfade the previous view keeps rendering underneath while the new one fades in. */
+function showView(name, { crossfade = false } = {}) {
   if (state.view === name) return;
+  const from = state.view;
   state.view = name;
-  for (const [k, el] of Object.entries(els.views)) el.hidden = k !== name;
-  siteScene?.setActive(name === 'twin');
-  deviceScene?.setActive(name === 'device');
+  const fade = crossfade && from && els.views[from] && !els.views[from].hidden;
+  for (const [k, el] of Object.entries(els.views)) {
+    el.hidden = k !== name && !(fade && k === from);
+    el.classList.remove('xf-in', 'xf-out');
+  }
+  siteScene?.setActive(name === 'twin' || (fade && from === 'twin'));
+  deviceScene?.setActive(name === 'device' || (fade && from === 'device'));
+  clearTimeout(xfTimer);
+  if (fade) {
+    const toEl = els.views[name], fromEl = els.views[from];
+    void toEl.offsetWidth;   // restart CSS animations
+    toEl.classList.add('xf-in');
+    fromEl.classList.add('xf-out');
+    xfTimer = setTimeout(() => {
+      toEl.classList.remove('xf-in');
+      fromEl.classList.remove('xf-out');
+      if (state.view === from) return;
+      fromEl.hidden = true;
+      if (from === 'twin') siteScene?.setActive(false);
+      if (from === 'device') deviceScene?.setActive(false);
+    }, 900);
+  }
   const tab = name === 'device' ? 'twin' : name;
   document.querySelectorAll('.tabs a').forEach(a => a.classList.toggle('active', a.dataset.tab === tab));
   els.analyze.hidden = name !== 'device' && name !== 'twin';
@@ -81,7 +103,7 @@ async function route() {
   pendingOpts = {};
   const parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
   try {
-    if (parts[0] === 'device' && parts[1]) return await openDevice(decodeURIComponent(parts[1]));
+    if (parts[0] === 'device' && parts[1]) return await openDevice(decodeURIComponent(parts[1]), opts);
     if (parts[0] === 'fleet') return await openFleet();
     if (parts[0] === 'incidents') return await openIncidents();
     if (parts[0] === 'site' && parts[1]) return await openSite(parts[1], parts[2] === 'rack' ? parts[3] : null, opts);
@@ -103,9 +125,9 @@ async function refreshSites() {
 }
 
 async function openSite(siteId, rackId, opts = {}) {
-  showView('twin');
+  showView('twin', { crossfade: state.view === 'device' && !!siteScene?.zoomed });
   const scene = getSiteScene();
-  if (!copilot) copilot = new Copilot($('copilot'), { api, onOpenDevice: id => go(`#/device/${id}`), onFocus: onCopilotFocus });
+  if (!copilot) copilot = new Copilot($('copilot'), { api, onOpenDevice: id => openDeviceAnimated(id), onFocus: onCopilotFocus });
   let freshSite = false;
   if (!state.site || state.site.id !== siteId) {
     state.site = await api(`/api/sites/${siteId}`);
@@ -115,7 +137,9 @@ async function openSite(siteId, rackId, opts = {}) {
   const rackChanged = state.rackId !== (rackId || null);
   state.rackId = rackId || null;
   state.lastTwin = location.hash;
-  scene.selectRack(state.rackId, { fly: rackChanged || opts.fly });
+  const wasZoomed = !!scene.zoomed;
+  if (wasZoomed) scene.restoreZoom();   // coming back from a device: put the server back into its rack
+  scene.selectRack(state.rackId, { fly: rackChanged || opts.fly || wasZoomed });
   scene.focusDevice(opts.focusDevice || null);
   paintTwin();
   // A newly opened site is scanned once so its health colours are revealed by the model.
@@ -125,6 +149,25 @@ async function openSite(siteId, rackId, opts = {}) {
   const rack = state.site.racks.find(r => r.id === state.rackId);
   if (opts.ask) copilot.ask(opts.ask);
   else if (rack && rackChanged) copilot.ask(`Status of ${rack.name}?`);
+}
+
+/** From the twin, zoom into the server first (others hide, server slides out), then show the device view. */
+async function openDeviceAnimated(id) {
+  if (state.view === 'twin' && siteScene?.slabs.has(id) && !state.twinScanning && !state.zooming) {
+    state.zooming = true;
+    try {
+      siteScene.focusDevice(null);
+      const slab = siteScene.slabs.get(id);
+      // The device view spans the full width; the twin canvas sits between the sidebar and the copilot.
+      const r = siteScene.container.getBoundingClientRect();
+      const shift = window.innerWidth / 2 - (r.left + r.width / 2);
+      await siteScene.zoomToDevice(id, deviceFraming(slab.data.form_factor), shift);
+    } finally {
+      state.zooming = false;
+    }
+    return go(`#/device/${id}`, { crossfade: true });
+  }
+  go(`#/device/${id}`);
 }
 
 function paintTwin() {
@@ -186,7 +229,7 @@ els.sidebar.addEventListener('click', e => {
   if (!t) return;
   if (t.dataset.site) return go(`#/site/${t.dataset.site}`);
   if (t.dataset.clearRack !== undefined) return go(`#/site/${state.site.id}`);
-  if (t.dataset.open) return go(`#/device/${t.dataset.open}`);
+  if (t.dataset.open) return openDeviceAnimated(t.dataset.open);
   if (t.dataset.drift) {
     const d = state.site.drifting.find(x => x.id === t.dataset.drift);
     return go(`#/site/${state.site.id}/rack/${t.dataset.rack}`, { focusDevice: d.id, ask: `Status of ${d.label}?` });
@@ -200,18 +243,19 @@ els.sidebar.addEventListener('mouseover', e => {
 
 // ------------------------------------------------------------------------------------ device view
 
-async function openDevice(id) {
-  showView('device');
+async function openDevice(id, opts = {}) {
+  const reuse = state.current?.id === id && state.current.machine && !opts.crossfade;
+  const record = reuse ? state.current : await api(`/api/machines/${encodeURIComponent(id)}`);
+  showView('device', { crossfade: !!opts.crossfade });
   const scene = getDeviceScene();
-  if (state.current?.id === id && state.current.machine) { paintCrumbs(); return; }
-  const record = await api(`/api/machines/${encodeURIComponent(id)}`);
+  if (reuse) { paintCrumbs(); return; }
   state.current = record;
   state.analysis = null;
   state.sim = {};
   selectComponent(null);
   els.analyze.disabled = false;
   els.analyze.innerHTML = '<span class="ico">◎</span> Analyze';
-  scene.load(record.machine, record.components);
+  scene.load(record.machine, record.components, { intro: opts.crossfade ? 'match' : undefined });
   paintCrumbs();
   drawOverview();
 }
@@ -445,5 +489,8 @@ async function boot() {
     } catch { /* server briefly unavailable */ }
   }, 8000);
 }
+
+// Debug handle for the browser console.
+window.driftops = { state, openDevice: openDeviceAnimated, get siteScene() { return siteScene; }, get deviceScene() { return deviceScene; } };
 
 boot();

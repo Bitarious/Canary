@@ -11,6 +11,7 @@ const HALO = { healthy: 0, watch: 0.3, elevated: 0.5, critical: 0.75 };
 const BG = new THREE.Color(0x0b1320);
 const NEUTRAL = new THREE.Color(0x3a4452);
 const SCAN = new THREE.Color(0x38bdf8);
+const CHASSIS = new THREE.Color(0xa7b0bd);   // device-view shell colour
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 function box(w, h, d, m, x = 0, y = 0, z = 0) {
@@ -319,7 +320,7 @@ export class SiteScene {
     g.add(label);
     stripMat.color.copy(NEUTRAL);
     this.racks.set(rack.id, { group: g, data: rack, frameMats: [frameMat, sideMat, glassMat, stripMat], stripMat, haloMat,
-      labelEl: el, label, revealed: false });
+      blankMat, labelEl: el, label, revealed: false });
     this._paintRackLabel(rack.id);
     return g;
   }
@@ -450,6 +451,8 @@ export class SiteScene {
     for (const tw of this.tweens.list) tw.resolve();  // let pending animations finish their awaits
     this._scanToken = (this._scanToken || 0) + 1;
     this.scanState = null;
+    this.zoomed = null;
+    this.key.castShadow = true;
     this.beam.visible = false;
     this.root.traverse(o => {
       if (o.geometry) o.geometry.dispose();
@@ -491,6 +494,88 @@ export class SiteScene {
     }
   }
 
+  // ------------------------------------------------------------------------------ zoom into a server
+
+  /** Hide everything except the chosen server, slide it out of its rack and fly the camera to it. */
+  async zoomToDevice(id, framing = null, shiftPx = 0) {
+    const s = this.slabs.get(id);
+    if (!s || this.zoomed) return;
+    this._clearSelBox();
+    this.tip.visible = false;
+    this.hover = null;
+    const others = [];
+    for (const r of this.racks.values()) {
+      others.push(...r.frameMats, r.blankMat);
+      r.labelEl.style.opacity = 0;
+    }
+    for (const o of this.slabs.values()) if (o !== s) others.push(o.mat, o.bezelMat, o.ledMat);
+    const mine = [s.mat, s.bezelMat, s.ledMat];
+    const faded = others.map(m => ({ m, from: m.opacity }));
+    const world = s.mesh.getWorldPosition(new THREE.Vector3());   // resting position, before the slide
+    const meshes = s.mesh.parent.children.filter(c => c.userData.deviceId === id);
+    const start = meshes.map(m => ({ m, z: m.position.z }));
+    this.zoomed = { id, rackId: s.rackId, faded, start, mine };
+    this.key.castShadow = false;   // hidden racks must not leave shadows on the floor
+
+    for (const m of [...others, ...mine]) m.transparent = true;
+    const fade = this.tweens.add(650, k => {
+      for (const { m, from } of faded) { m.opacity = from * (1 - k); m.depthWrite = m.opacity > 0.95; }
+      for (const m of mine) { m.opacity = Math.max(m.opacity, k); m.depthWrite = true; }
+    });
+    // Blend the slab towards the device chassis colour so the crossfade reads as one object.
+    const fromColor = s.mat.color.clone(), fromEmissive = s.mat.emissive.clone();
+    this.zoomed.colors = { fromColor, fromEmissive };
+    const slide = this.tweens.add(900, k => {
+      for (const { m, z } of start) m.position.z = z + 0.95 * k;
+      s.mat.color.copy(fromColor).lerp(CHASSIS, k * 0.85);
+      s.zoomGlow = Math.sin(Math.PI * k) * 0.8;
+      s.zoomBlend = k;
+    }, { delay: 250, easing: ease.inOut });
+
+    // End on the same framing the device view starts with: same view direction, and a distance at which
+    // the slab covers as many pixels as the device chassis will (pixel size ∝ size / (distance · tan(fov/2))).
+    const tanHere = Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2));
+    let dir = new THREE.Vector3(0.75, 0.55, 2.2).normalize(), dist = 2.4;
+    if (framing) {
+      s.mesh.geometry.computeBoundingBox();
+      const slabSize = s.mesh.geometry.boundingBox.getSize(new THREE.Vector3()).length();
+      dir = framing.dir.clone();
+      dist = (slabSize * framing.dist * Math.tan(THREE.MathUtils.degToRad(framing.fov / 2))) / (framing.size * tanHere);
+    }
+    const target = world.clone().add(new THREE.Vector3(0, 0, 0.95));
+    if (shiftPx) {
+      // The twin canvas is narrower than the device canvas; shift so the server lands where the chassis will.
+      const perPx = (2 * dist * tanHere) / (this.container.clientHeight || 1);
+      const right = new THREE.Vector3().crossVectors(dir.clone().negate(), new THREE.Vector3(0, 1, 0)).normalize();
+      target.addScaledVector(right, -shiftPx * perPx);
+    }
+    this.controls.minDistance = 0.2;
+    const cam = this._cameraTo(target.clone().addScaledVector(dir, dist), target, 1300);
+    await Promise.all([fade, slide, cam]);
+  }
+
+  /** Reverse of zoomToDevice: put the server back and bring the rest of the hall back. */
+  async restoreZoom() {
+    const z = this.zoomed;
+    if (!z) return;
+    this.zoomed = null;
+    this.key.castShadow = true;
+    this.controls.minDistance = 2;
+    const s = this.slabs.get(z.id);
+    for (const r of this.racks.values()) r.labelEl.style.opacity = '';
+    await this.tweens.add(600, k => {
+      for (const { m, from } of z.faded) { m.opacity = from * k; m.depthWrite = m.opacity > 0.95; }
+      for (const { m, z: z0 } of z.start) m.position.z = z0 + 0.95 * (1 - k);
+      if (s) {
+        s.zoomGlow = 0;
+        s.zoomBlend = 1 - k;
+        s.mat.color.copy(CHASSIS).lerp(z.colors.fromColor, 0.15 + 0.85 * k);
+      }
+    });
+    if (s) { s.mat.color.copy(z.colors.fromColor); s.zoomBlend = 0; }
+    for (const { m, z: z0 } of z.start) m.position.z = z0;
+  }
+
   focusDevice(id) {
     this._clearSelBox();
     const s = id && this.slabs.get(id);
@@ -527,7 +612,7 @@ export class SiteScene {
     el.addEventListener('pointermove', e => { this._move = e; });
     el.addEventListener('pointerleave', () => { this._move = null; this._setHover(null); });
     el.addEventListener('pointerup', e => {
-      if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5) return;
+      if (!down || this.zoomed || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5) return;
       const hit = this._pick(e);
       if (!hit) return this.onRackSelect(null);
       if (hit.deviceId && (this.slabs.get(hit.deviceId)?.data.form_factor === 'laptop' || this.selectedRack === hit.rackId)) {
@@ -542,7 +627,10 @@ export class SiteScene {
     this.pointer.set(((e.clientX - rect.left) / rect.width) * 2 - 1, -((e.clientY - rect.top) / rect.height) * 2 + 1);
     this.raycaster.setFromCamera(this.pointer, this.camera);
     const hits = this.raycaster.intersectObjects(this.root.children, true);
-    const hit = hits.find(h => h.object.userData.deviceId) || hits.find(h => h.object.userData.rackId);
+    // With a rack selected, dimmed racks in front of it must not steal the click.
+    const sel = this.selectedRack && hits.filter(h => h.object.userData.rackId === this.selectedRack);
+    const pool = sel && sel.length ? sel : hits;
+    const hit = pool.find(h => h.object.userData.deviceId) || pool.find(h => h.object.userData.rackId);
     return hit ? hit.object.userData : null;
   }
 
@@ -576,14 +664,14 @@ export class SiteScene {
     const dt = Math.min(0.05, this.clock.getDelta());
     this.tweens.update(now);
     this.controls.update();
-    if (this._move) {
+    if (this._move && !this.zoomed) {
       this._setHover(this._pick(this._move));
       this._move = null;
     }
     const t = now / 1000;
     for (const [id, r] of this.racks) {
       const drifting = r.data.drifting > 0 && r.data.status !== 'healthy';
-      const base = r.revealed ? HALO[r.data.status] * (this.selectedRack && this.selectedRack !== id ? 0.3 : 1) : 0;
+      const base = r.revealed && !this.zoomed ? HALO[r.data.status] * (this.selectedRack && this.selectedRack !== id ? 0.3 : 1) : 0;
       r.haloMat.opacity = base * (drifting ? 0.7 + 0.3 * Math.sin(t * 2.5) : 1) + (this.hover?.rackId === id ? 0.12 : 0);
     }
     const sc = this.scanState;
@@ -605,6 +693,8 @@ export class SiteScene {
       }
       if (this.hover?.deviceId === id) e += 0.5;
       if (this.selectedRack && this.selectedRack !== s.rackId) e *= 0.2;
+      if (s.zoomBlend) e *= 1 - 0.9 * s.zoomBlend;   // fade the status glow as the slab turns into the chassis
+      if (s.zoomGlow) e += 0.6 * s.zoomGlow;
       s.mat.emissiveIntensity = e;
     }
     if (this.selBox) this.selBox.material.opacity = 0.6 + 0.4 * Math.sin(t * 5);
