@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { Tweens, ease, STATUS_HEX } from './scene.js';
+import { Tweens, ease, STATUS_HEX, SERVER_SIZE, SERVER_LOOK, DEVICE_LIGHTS, buildServerShell } from './scene.js';
 
 const RW = 0.9, RH = 2.1, RD = 1.1;       // rack cabinet size
 const PITCH_X = 1.75, PITCH_Z = 4.2;      // rack spacing (aisles between rows)
@@ -73,13 +73,14 @@ export class SiteScene {
     controls.minDistance = 2;
     controls.maxDistance = 60;
 
-    scene.add(new THREE.HemisphereLight(0xbfd8ff, 0x0b1320, 0.5));
+    this.hemi = new THREE.HemisphereLight(0xbfd8ff, 0x0b1320, 0.5);
+    scene.add(this.hemi);
     const key = (this.key = new THREE.DirectionalLight(0xffffff, 1.8));
     key.castShadow = true;
     key.shadow.mapSize.set(2048, 2048);
     key.shadow.bias = -0.0005;
     scene.add(key, key.target);
-    const rim = new THREE.DirectionalLight(0x38bdf8, 0.7);
+    const rim = (this.rim = new THREE.DirectionalLight(0x38bdf8, 0.7));
     rim.position.set(-10, 6, -8);
     scene.add(rim);
 
@@ -301,15 +302,25 @@ export class SiteScene {
       const idx = Math.min(cap - 1, Math.max(0, (d.slot || i + 1) - 1));
       const y = 0.16 + idx * unit + unit / 2;
       // Servers start neutral: health colours are revealed by the scan animation.
-      const mat = new THREE.MeshStandardMaterial({ color: NEUTRAL.clone(), emissive: new THREE.Color(0),
-        emissiveIntensity: 0, metalness: 0.35, roughness: 0.5, transparent: true });
-      const mesh = box(RW - 0.12, unit * 0.74, RD - 0.18, mat, 0, y, -0.02);
+      // Physical material (like the device view's shell) so the zoom can blend into it exactly.
+      const mat = new THREE.MeshPhysicalMaterial({ color: NEUTRAL.clone(), emissive: new THREE.Color(0),
+        emissiveIntensity: 0, metalness: 0.35, roughness: 0.5, clearcoat: 0, transparent: true });
       const bezelMat = new THREE.MeshStandardMaterial({ color: 0x0d131c, metalness: 0.6, roughness: 0.4, transparent: true });
-      const bezel = box(RW - 0.12, unit * 0.74, 0.02, bezelMat, 0, y, (RD - 0.18) / 2 - 0.01);
       const ledMat = new THREE.MeshBasicMaterial({ color: NEUTRAL.clone(), transparent: true });
-      const led = box(0.05, unit * 0.22, 0.012, ledMat, RW / 2 - 0.13, y, (RD - 0.18) / 2 + 0.005);
-      for (const m of [mesh, bezel, led]) { m.userData.deviceId = d.id; m.userData.rackId = rack.id; g.add(m); }
-      this.slabs.set(d.id, { mesh, mat, bezelMat, ledMat, data: d, rackId: rack.id, y, revealed: false, glow: null, scanGlow: 0 });
+      // Same server model as the device view, scaled down to fit the rack slot (height squashed only if the slot is tight).
+      const { W, H, D } = SERVER_SIZE;
+      const scale = (RW - 0.12) / (W + 0.32);
+      const scaleY = Math.min(scale, (unit * 0.82) / H);
+      const shell = buildServerShell({ shell: mat, trim: bezelMat, led: ledMat });
+      shell.group.position.y = -H / 2;
+      const mesh = new THREE.Group();
+      mesh.add(shell.group);
+      mesh.scale.set(scale, scaleY, scale);
+      mesh.position.set(0, y, RD / 2 - 0.03 - (D / 2 + 0.18) * scale);   // handles just behind the glass door
+      mesh.traverse(m => { m.userData.deviceId = d.id; m.userData.rackId = rack.id; });
+      g.add(mesh);
+      this.slabs.set(d.id, { mesh, mat, bezelMat, ledMat, data: d, rackId: rack.id, y, revealed: false, glow: null, scanGlow: 0,
+        scale, scaleY, modelSize: Math.hypot(W, H, D) * scale });
     });
 
     const el = document.createElement('div');
@@ -347,7 +358,7 @@ export class SiteScene {
         const s = this.slabs.get(d.id);
         if (!s) continue;
         s.data = d;
-        if (s.revealed) {
+        if (s.revealed && this.zoomed?.id !== d.id) {
           s.mat.color.copy(slabColor(d.status));
           s.mat.emissive.setHex(STATUS_HEX[d.status]);
           s.ledMat.color.setHex(STATUS_HEX[d.status]);
@@ -451,7 +462,9 @@ export class SiteScene {
     for (const tw of this.tweens.list) tw.resolve();  // let pending animations finish their awaits
     this._scanToken = (this._scanToken || 0) + 1;
     this.scanState = null;
+    if (this.zoomed?.look) this._applyLook(this.zoomed.look, 0);   // put the hall lighting back
     this.zoomed = null;
+    this.controls.minDistance = 2;
     this.key.castShadow = true;
     this.beam.visible = false;
     this.root.traverse(o => {
@@ -529,13 +542,20 @@ export class SiteScene {
       for (const { m, from } of faded) { m.opacity = from * (1 - k); m.depthWrite = m.opacity > 0.95; }
       for (const m of mine) { m.opacity = Math.max(m.opacity, k); m.depthWrite = true; }
     });
-    // Blend the slab towards the device chassis colour so the crossfade reads as one object.
-    const fromColor = s.mat.color.clone(), fromEmissive = s.mat.emissive.clone();
-    this.zoomed.colors = { fromColor, fromEmissive };
+    // Servers blend into the device view's exact materials and lighting, so the crossfade shows no change at all.
+    const look = s.scale ? this._serverLook(s) : null;
+    this.zoomed.look = look;
+    const fromColor = s.mat.color.clone();
+    this.zoomed.colors = { fromColor };
     const slide = this.tweens.add(900, k => {
       for (const { m, z } of start) m.position.z = z + 0.95 * k;
-      s.mat.color.copy(fromColor).lerp(CHASSIS, k * 0.85);
-      s.zoomGlow = Math.sin(Math.PI * k) * 0.8;
+      if (look) {
+        s.mesh.scale.y = s.scaleY + (s.scale - s.scaleY) * k;   // un-squash to the device view's proportions
+        this._applyLook(look, k);
+      } else {
+        s.mat.color.copy(fromColor).lerp(CHASSIS, k * 0.85);
+        s.zoomGlow = Math.sin(Math.PI * k) * 0.8;
+      }
       s.zoomBlend = k;
     }, { delay: 250, easing: ease.inOut });
 
@@ -544,7 +564,8 @@ export class SiteScene {
     const tanHere = Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2));
     let dir = new THREE.Vector3(0.75, 0.55, 2.2).normalize(), dist = 2.4;
     if (framing) {
-      const slabSize = bounds.getSize(new THREE.Vector3()).length();
+      // Servers use the unsquashed model size (what the device view frames); laptops use their bounds.
+      const slabSize = s.modelSize || bounds.getSize(new THREE.Vector3()).length();
       dir = framing.dir.clone();
       dist = (slabSize * framing.dist * Math.tan(THREE.MathUtils.degToRad(framing.fov / 2))) / (framing.size * tanHere);
     }
@@ -575,11 +596,50 @@ export class SiteScene {
       if (s) {
         s.zoomGlow = 0;
         s.zoomBlend = 1 - k;
-        s.mat.color.copy(CHASSIS).lerp(z.colors.fromColor, 0.15 + 0.85 * k);
+        if (z.look) {
+          s.mesh.scale.y = s.scale + (s.scaleY - s.scale) * k;
+          this._applyLook(z.look, 1 - k);
+        } else {
+          s.mat.color.copy(CHASSIS).lerp(z.colors.fromColor, 0.15 + 0.85 * k);
+        }
       }
     });
-    if (s) { s.mat.color.copy(z.colors.fromColor); s.zoomBlend = 0; }
+    if (s) {
+      s.zoomBlend = 0;
+      if (z.look) { this._applyLook(z.look, 0); s.mesh.scale.y = s.scaleY; } else s.mat.color.copy(z.colors.fromColor);
+    }
     for (const { m, z: z0 } of z.start) m.position.z = z0;
+  }
+
+  /** Snapshot a rack server's current materials and the hall lighting, paired with the device view's values. */
+  _serverLook(s) {
+    const mat = (m, to) => ({
+      m, color: [m.color.clone(), new THREE.Color(to.color)],
+      metalness: [m.metalness, to.metalness], roughness: [m.roughness, to.roughness], clearcoat: [m.clearcoat, to.clearcoat],
+    });
+    const r = this.renderer, sc = this.scene;
+    return {
+      mats: [mat(s.mat, SERVER_LOOK.shell), mat(s.bezelMat, SERVER_LOOK.trim), mat(s.ledMat, SERVER_LOOK.led)],
+      exposure: [r.toneMappingExposure, DEVICE_LIGHTS.exposure],
+      environment: [sc.environmentIntensity, DEVICE_LIGHTS.environment],
+      hemi: [this.hemi.intensity, DEVICE_LIGHTS.hemi],
+      key: [this.key.intensity, DEVICE_LIGHTS.key],
+      rim: [this.rim.intensity, DEVICE_LIGHTS.rim],
+    };
+  }
+
+  /** k = 0: the twin's own look; k = 1: identical to the device view. */
+  _applyLook(look, k) {
+    const mix = ([a, b]) => a + (b - a) * k;
+    for (const x of look.mats) {
+      x.m.color.copy(x.color[0]).lerp(x.color[1], k);
+      for (const p of ['metalness', 'roughness', 'clearcoat']) if (x[p][0] !== undefined) x.m[p] = mix(x[p]);
+    }
+    this.renderer.toneMappingExposure = mix(look.exposure);
+    this.scene.environmentIntensity = mix(look.environment);
+    this.hemi.intensity = mix(look.hemi);
+    this.key.intensity = mix(look.key);
+    this.rim.intensity = mix(look.rim);
   }
 
   focusDevice(id) {
@@ -699,7 +759,7 @@ export class SiteScene {
       }
       if (this.hover?.deviceId === id) e += 0.5;
       if (this.selectedRack && this.selectedRack !== s.rackId) e *= 0.2;
-      if (s.zoomBlend) e *= 1 - 0.9 * s.zoomBlend;   // fade the status glow as the slab turns into the chassis
+      if (s.zoomBlend) e *= 1 - (s.scale ? 1 : 0.9) * s.zoomBlend;   // fade the status glow as the slab turns into the chassis
       if (s.zoomGlow) e += 0.6 * s.zoomGlow;
       s.mat.emissiveIntensity = e;
     }

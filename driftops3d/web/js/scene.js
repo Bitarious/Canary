@@ -279,27 +279,41 @@ function laptopLayout(counts) {
   return L;
 }
 
+// Server chassis dimensions, materials and scene lighting, shared with the digital twin so its zoom ends on an identical look.
+export const SERVER_SIZE = { W: 4.6, H: 0.9, D: 3.6 };
+export const SERVER_LOOK = {
+  shell: { color: 0x9aa4b2, metalness: 0.8, roughness: 0.38, clearcoat: 0.25 },
+  trim: { color: 0x1a212c, metalness: 0.6, roughness: 0.5 },
+  led: { color: 0x38bdf8 },
+};
+export const DEVICE_LIGHTS = { exposure: 1.05, environment: 0.6, hemi: 0.55, key: 2.2, rim: 1.1 };
+
+/** The server's outer shell (chassis, rack ears, handles, front LED), base at y = 0. Used by the device view and the twin. */
+export function buildServerShell({ shell, trim, led: ledMat }) {
+  const { W, H, D } = SERVER_SIZE;
+  const group = new THREE.Group();
+  const meshes = [rbox(W, H, D, 0.035, shell, 0, H / 2, 0)];
+  for (const s of [-1, 1]) {
+    meshes.push(box(0.16, H, 0.08, trim, s * (W / 2 + 0.08), H / 2, D / 2 - 0.04));
+    meshes.push(box(0.06, H * 0.6, 0.16, trim, s * (W / 2 - 0.12), H / 2, D / 2 + 0.1));
+  }
+  meshes.push(box(1.2, 0.03, 0.02, ledMat, 0, H - 0.08, D / 2 + 0.01));
+  group.add(...meshes);
+  return { group, meshes };
+}
+
 function serverLayout(counts) {
   const L = { shell: [], internals: [], slots: {}, overflow: [], extras: {} };
   const V = (x, y, z) => new THREE.Vector3(x, y, z);
   const root = new THREE.Group();
-  const shellMat = new THREE.MeshPhysicalMaterial({ color: 0x9aa4b2, metalness: 0.8, roughness: 0.38, clearcoat: 0.25, transparent: true });
-  const trimMat = new THREE.MeshStandardMaterial({ color: 0x1a212c, metalness: 0.6, roughness: 0.5, transparent: true });
-  const W = 4.6, H = 0.9, D = 3.6;
+  const shellMat = new THREE.MeshPhysicalMaterial({ ...SERVER_LOOK.shell, transparent: true });
+  const trimMat = new THREE.MeshStandardMaterial({ ...SERVER_LOOK.trim, transparent: true });
+  const { W, H, D } = SERVER_SIZE;
 
-  const chassis = rbox(W, H, D, 0.035, shellMat, 0, H / 2, 0);
-  root.add(chassis);
-  L.shell.push(chassis);
-  for (const s of [-1, 1]) {
-    const ear = box(0.16, H, 0.08, trimMat, s * (W / 2 + 0.08), H / 2, D / 2 - 0.04);
-    const handle = box(0.06, H * 0.6, 0.16, trimMat, s * (W / 2 - 0.12), H / 2, D / 2 + 0.1);
-    root.add(ear, handle);
-    L.shell.push(ear, handle);
-  }
-  const ledMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true });
-  const led = box(1.2, 0.03, 0.02, ledMat, 0, H - 0.08, D / 2 + 0.01);
-  root.add(led);
-  L.shell.push(led);
+  const ledMat = new THREE.MeshBasicMaterial({ ...SERVER_LOOK.led, transparent: true });
+  const shell = buildServerShell({ shell: shellMat, trim: trimMat, led: ledMat });
+  root.add(...shell.meshes);
+  L.shell.push(...shell.meshes);
 
   const board = box(W - 0.3, 0.03, D - 0.3, new THREE.MeshStandardMaterial({ color: 0x0c3a2c, roughness: 0.75, metalness: 0.2 }), 0, 0.05, 0);
   root.add(board);
@@ -374,7 +388,7 @@ export class HardwareScene {
     const r = (this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }));
     r.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     r.toneMapping = THREE.ACESFilmicToneMapping;
-    r.toneMappingExposure = 1.05;
+    r.toneMappingExposure = DEVICE_LIGHTS.exposure;
     r.outputColorSpace = THREE.SRGBColorSpace;
     r.shadowMap.enabled = true;
     r.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -385,7 +399,7 @@ export class HardwareScene {
     const scene = (this.scene = new THREE.Scene());
     const pmrem = new THREE.PMREMGenerator(r);
     scene.environment = pmrem.fromScene(new RoomEnvironment(r), 0.04).texture;
-    scene.environmentIntensity = 0.6;
+    scene.environmentIntensity = DEVICE_LIGHTS.environment;
 
     this.camera = new THREE.PerspectiveCamera(38, 1, 0.05, 200);
     this.camera.position.set(6, 4, 7);
@@ -399,8 +413,8 @@ export class HardwareScene {
     controls.autoRotateSpeed = 0.6;
     controls.addEventListener('start', () => { controls.autoRotate = false; });
 
-    scene.add(new THREE.HemisphereLight(0xbfd8ff, 0x0b1320, 0.55));
-    const key = new THREE.DirectionalLight(0xffffff, 2.2);
+    scene.add(new THREE.HemisphereLight(0xbfd8ff, 0x0b1320, DEVICE_LIGHTS.hemi));
+    const key = new THREE.DirectionalLight(0xffffff, DEVICE_LIGHTS.key);
     key.position.set(4, 8, 5);
     key.castShadow = true;
     key.shadow.mapSize.set(2048, 2048);
@@ -409,7 +423,7 @@ export class HardwareScene {
     key.shadow.radius = 6;
     key.shadow.bias = -0.0005;
     scene.add(key);
-    const rim = new THREE.DirectionalLight(0x38bdf8, 1.1);
+    const rim = new THREE.DirectionalLight(0x38bdf8, DEVICE_LIGHTS.rim);
     rim.position.set(-6, 3, -5);
     scene.add(rim);
 
