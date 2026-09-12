@@ -153,14 +153,17 @@ export class SiteScene {
     if (sameSite && ids === this._ids) return this.refresh(site);
     this._clear();
     this.siteId = site.id;
+    this.isOffice = site.kind === 'office';
     this._ids = ids;
 
     const cols = Math.max(...site.racks.map(r => r.col)) + 1;
     const rows = Math.max(...site.racks.map(r => r.row)) + 1;
-    const ox = ((cols - 1) * PITCH_X) / 2, oz = ((rows - 1) * PITCH_Z) / 2;
+    const pitchX = this.isOffice ? 2.5 : PITCH_X;
+    const ox = ((cols - 1) * pitchX) / 2, oz = ((rows - 1) * PITCH_Z) / 2;
     site.racks.forEach((rack, i) => {
-      const g = this._buildRack(rack);
-      g.position.set(rack.col * PITCH_X - ox, 0, rack.row * PITCH_Z - oz);
+      const laptops = rack.devices.length > 0 && rack.devices.every(d => d.form_factor === 'laptop');
+      const g = laptops ? this._buildLaptops(rack) : this._buildRack(rack);
+      g.position.set(rack.col * pitchX - ox, 0, rack.row * PITCH_Z - oz);
       this.root.add(g);
       if (animate) {
         g.scale.y = 0.001;
@@ -174,7 +177,9 @@ export class SiteScene {
     const extent = Math.max(size.x, size.z * 0.9, 4);
     this.overview = {
       target: this.center.clone(),
-      pos: this.center.clone().add(new THREE.Vector3(extent * 0.75 + 2, extent * 0.8 + 3.5, extent * 0.95 + 4)),
+      pos: this.center.clone().add(this.isOffice
+        ? new THREE.Vector3(extent * 0.28, extent * 0.65 + 2, extent * 1.2 + 3)
+        : new THREE.Vector3(extent * 0.75 + 2, extent * 0.8 + 3.5, extent * 0.95 + 4)),
     };
     this.key.position.copy(this.center).add(new THREE.Vector3(6, 14, 8));
     this.key.target.position.copy(this.center);
@@ -192,6 +197,65 @@ export class SiteScene {
       this.camera.position.copy(this.overview.pos);
       this.controls.target.copy(this.overview.target);
     }
+  }
+
+  _buildLaptops(rack) {
+    const g = new THREE.Group();
+    g.userData.rackId = rack.id;
+    const cols = Math.min(3, rack.devices.length);
+    const rows = Math.ceil(rack.devices.length / cols);
+    const bezelMat = new THREE.MeshStandardMaterial({ color: 0x101822, roughness: 0.5, transparent: true });
+    const keyMat = new THREE.MeshStandardMaterial({ color: 0x182330, roughness: 0.7, transparent: true });
+    const screenMat = new THREE.MeshStandardMaterial({ color: 0x123047, emissive: 0x164d70,
+      emissiveIntensity: 0.45, roughness: 0.3, transparent: true });
+    const stripMat = new THREE.MeshBasicMaterial({ color: NEUTRAL.clone(), transparent: true });
+    const haloMat = new THREE.MeshBasicMaterial({ map: halo(), color: STATUS_HEX[rack.status], transparent: true,
+      opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
+    const haloMesh = new THREE.Mesh(new THREE.PlaneGeometry(cols * 2.2, rows * 2.1), haloMat);
+    haloMesh.rotation.x = -Math.PI / 2;
+    haloMesh.position.y = 0.01;
+    g.add(haloMesh);
+
+    rack.devices.forEach((d, i) => {
+      const laptop = new THREE.Group();
+      laptop.position.set((i % cols - (cols - 1) / 2) * 2.2, 0, (Math.floor(i / cols) - (rows - 1) / 2) * 2.1);
+      const mat = new THREE.MeshStandardMaterial({ color: NEUTRAL.clone(), emissive: 0,
+        emissiveIntensity: 0, metalness: 0.55, roughness: 0.4, transparent: true });
+      const ledMat = new THREE.MeshBasicMaterial({ color: NEUTRAL.clone(), transparent: true });
+      // Thin palm rest, individual keys and a recessed trackpad make the silhouette unmistakable.
+      laptop.add(box(1.8, 0.08, 1.2, mat, 0, 0.09, 0));
+      laptop.add(box(1.57, 0.012, 0.53, bezelMat, 0, 0.136, -0.2));
+      for (let row = 0; row < 4; row++) for (let col = 0; col < 12; col++) {
+        laptop.add(box(0.108, 0.012, 0.085, keyMat, (col - 5.5) * 0.125, 0.15, -0.39 + row * 0.115));
+      }
+      laptop.add(box(0.52, 0.008, 0.26, bezelMat, 0, 0.135, 0.32));
+      laptop.add(box(0.16, 0.012, 0.012, ledMat, 0.68, 0.1, 0.606));
+
+      const lid = new THREE.Group();
+      lid.position.set(0, 0.13, -0.54);
+      lid.rotation.x = -0.22;
+      lid.add(box(1.8, 1.12, 0.065, mat, 0, 0.56, 0));
+      lid.add(box(1.7, 1.02, 0.012, bezelMat, 0, 0.57, 0.037));
+      lid.add(box(1.57, 0.88, 0.012, screenMat, 0, 0.59, 0.049));
+      lid.add(box(0.025, 0.025, 0.012, keyMat, 0, 1.095, 0.05));
+      lid.add(box(0.34, 0.018, 0.012, stripMat, 0, 0.08, 0.05));
+      laptop.add(lid);
+      laptop.traverse(o => { o.userData.deviceId = d.id; o.userData.rackId = rack.id; });
+      g.add(laptop);
+      this.slabs.set(d.id, { mesh: laptop, mat, bezelMat, ledMat, data: d, rackId: rack.id,
+        y: 0.6, revealed: false, glow: null, scanGlow: 0 });
+    });
+
+    const el = document.createElement('div');
+    el.className = 'rack-label';
+    el.addEventListener('click', e => { e.stopPropagation(); this.onRackSelect(rack.id); });
+    const label = new CSS2DObject(el);
+    label.position.set(0, 1.6, 0);
+    g.add(label);
+    this.racks.set(rack.id, { group: g, data: rack, frameMats: [keyMat, screenMat], stripMat, haloMat,
+      labelEl: el, label, revealed: false });
+    this._paintRackLabel(rack.id);
+    return g;
   }
 
   _buildRack(rack) {
@@ -420,7 +484,7 @@ export class SiteScene {
     if (!fly || !this.overview) return;
     if (rack) {
       const p = rack.group.position;
-      const target = new THREE.Vector3(p.x, 1.05, p.z);
+      const target = new THREE.Vector3(p.x, this.isOffice ? 0.6 : 1.05, p.z);
       this._cameraTo(target.clone().add(new THREE.Vector3(2.6, 1.7, 5.6)), target, 1000);
     } else {
       this._cameraTo(this.overview.pos, this.overview.target, 1000);
@@ -466,7 +530,9 @@ export class SiteScene {
       if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5) return;
       const hit = this._pick(e);
       if (!hit) return this.onRackSelect(null);
-      if (hit.deviceId && this.selectedRack === hit.rackId) return this.onDeviceOpen(hit.deviceId);
+      if (hit.deviceId && (this.slabs.get(hit.deviceId)?.data.form_factor === 'laptop' || this.selectedRack === hit.rackId)) {
+        return this.onDeviceOpen(hit.deviceId);
+      }
       this.onRackSelect(hit.rackId, hit.deviceId);
     });
   }
@@ -487,7 +553,7 @@ export class SiteScene {
       const s = h?.deviceId && this.slabs.get(h.deviceId);
       if (s) {
         const d = s.data;
-        const inSel = this.selectedRack === s.rackId;
+        const inSel = d.form_factor === 'laptop' || this.selectedRack === s.rackId;
         this.tipEl.innerHTML = s.revealed ? `<b>${d.label}</b> <span class="s-${d.status}">${Math.round(d.health)}</span>
           <div>${d.status === 'healthy' ? 'healthy' : `${d.worst.name.split('·')[0].trim()} · ${d.worst.signal || d.status}`}</div>`
           : `<b>${d.label}</b><div>not analyzed yet — press Analyze</div>`;

@@ -18,7 +18,7 @@ SITES = [
                for i in range(7)]},
     {"id": "site-b", "name": "Site B", "region": "US-EAST · Ashburn", "kind": "datacenter",
      "racks": [{"id": f"r0{i + 1}", "name": f"Rack 0{i + 1}", "row": i // 3, "col": i % 3} for i in range(6)]},
-    {"id": "hq", "name": "HQ laptop fleet", "region": "EU-CENTRAL · Zurich HQ", "kind": "office",
+    {"id": "hq", "name": "IT desk", "region": "EU-CENTRAL · Zurich HQ", "kind": "office",
      "racks": [{"id": "f1", "name": "Floor 1", "row": 0, "col": 0}, {"id": "f2", "name": "Floor 2", "row": 0, "col": 1},
                {"id": "it", "name": "IT bench", "row": 0, "col": 2}]},
 ]
@@ -34,14 +34,13 @@ PROFILES = {
     ("site-a", "r01", 10): {"memory": 0.3},
     ("site-b", "r02", 8): {"thermal": 0.85},
     ("site-b", "r05", 3): {"disk": 0.3},
-    ("hq", "f1", 3): {"thermal": 1.0},
-    ("hq", "f1", 7): {"ssd": 1.0},
-    ("hq", "f2", 5): {"battery": 1.0},
-    ("hq", "it", 2): {"thermal": 0.8, "battery": 1.0},
+    ("hq", "f1", 1): {"thermal": 1.0},
+    ("hq", "f2", 1): {"battery": 1.0},
+    ("hq", "it", 1): {"ssd": 1.0},
 }
 
 SERVERS_PER_RACK = {"site-a": 12, "site-b": 10}
-LAPTOPS_PER_GROUP = 8
+LAPTOPS_PER_GROUP = 1
 
 
 def _seed(*parts):

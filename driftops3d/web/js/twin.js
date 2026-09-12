@@ -30,11 +30,11 @@ export function renderSidebar(el, { sites, site, rackId }) {
     <div class="side-sec">
       <div class="eyebrow row-between"><span>${esc(rack.name)} · ${rack.devices.length} devices</span><button class="link" data-clear-rack>✕ close</button></div>
       ${rack.devices.map(d => `<button class="dev-row" data-open="${esc(d.id)}" data-hover-device="${esc(d.id)}">
-        <span class="slot">${d.slot ? `U${String(d.slot).padStart(2, '0')}` : '—'}</span>
+        <span class="slot">${d.slot ? `${d.form_factor === 'laptop' ? '' : 'U'}${String(d.slot).padStart(2, '0')}` : '—'}</span>
         <span class="grow"><span class="dname">${esc(d.label)}</span><span class="dmeta">${esc(d.status === 'healthy' ? 'healthy' : short(d.worst.name) + ' · ' + (d.worst.signal || d.status))}</span></span>
         <span class="dtrend">${TREND_ICON(d.trend)}</span>
         <span class="dhealth s-${d.status}">${Math.round(d.health)}</span></button>`).join('')}
-      <p class="side-hint">Click a server to open it in 3D and analyze it.</p>
+      <p class="side-hint">Click a ${site.kind === 'office' ? 'laptop' : 'server'} to open it in 3D and analyze it.</p>
     </div>` : ''}
     <div class="side-sec">
       <div class="eyebrow">Drifting now</div>
@@ -42,7 +42,7 @@ export function renderSidebar(el, { sites, site, rackId }) {
         <span class="grow"><span class="dname">${esc(d.rack_name)}</span><span class="dmeta">${esc(d.label)} · ${Math.round(d.health)}/100 · ${esc(short(d.worst.name))}</span></span>
         <span class="sdot" style="background:${COLORS[d.status]}"></span></button>`).join('') : '<p class="side-hint">Nothing is drifting at this site.</p>'}
     </div>
-    ${site.patterns.length ? `<div class="side-sec"><div class="eyebrow">Rack-level patterns</div>
+    ${site.patterns.length ? `<div class="side-sec"><div class="eyebrow">${site.kind === 'office' ? 'Group' : 'Rack'}-level patterns</div>
       ${site.patterns.map(p => `<button class="pattern" data-rack-pattern="${esc(p.rack_id)}"><b>${esc(p.title)}</b>${esc(p.text)}</button>`).join('')}</div>` : ''}
     ` : ''}`;
 }
@@ -50,10 +50,11 @@ export function renderSidebar(el, { sites, site, rackId }) {
 export function renderTwinHead(head, foot, site, rackId) {
   if (!site) { head.innerHTML = ''; foot.innerHTML = ''; return; }
   const rack = site.racks.find(r => r.id === rackId);
+  const device = site.kind === 'office' ? 'laptop' : 'server';
   head.innerHTML = `<h1>${esc(site.name)} — Digital Twin</h1>
-    <div class="twin-sub">${site.racks.length} ${site.kind === 'office' ? 'groups' : 'racks'} · ${site.nodes} nodes · live temporal health</div>`;
-  foot.innerHTML = `<span>${rack ? `${esc(rack.name)} selected · click a server to open it in 3D · ask "Why?" or "What if I wait?"`
-    : 'Click a rack to inspect it · hover a server for details'}</span><span>colour = health · glow = drifting</span>`;
+    <div class="twin-sub">${site.racks.length} ${site.kind === 'office' ? 'groups' : 'racks'} · ${site.nodes} ${site.kind === 'office' ? 'laptops' : 'nodes'} · live temporal health</div>`;
+  foot.innerHTML = `<span>${rack ? `${esc(rack.name)} selected · click a ${device} to open it in 3D · ask "Why?" or "What if I wait?"`
+    : site.kind === 'office' ? 'Click a laptop to open it in 3D · hover for details' : 'Click a rack to inspect it · hover a server for details'}</span><span>colour = health · glow = drifting</span>`;
 }
 
 // ------------------------------------------------------------------------------------ copilot
@@ -99,11 +100,13 @@ export class Copilot {
     if (this.siteId !== site.id) {
       this.siteId = site.id;
       this.messages = [];
-      this.log.innerHTML = `<div class="cp-empty">Watching <b>${esc(site.name)}</b>. Select a rack or ask a question.</div>`;
+      this.log.innerHTML = `<div class="cp-empty">Watching <b>${esc(site.name)}</b>. Select a ${site.kind === 'office' ? 'group' : 'rack'} or ask a question.</div>`;
       this.chips = DEFAULT_CHIPS;
       this._chips();
     }
     this.ctx = { ...this.ctx, site_id: site.id };
+    this.el.querySelector('#cpInput').placeholder = site.kind === 'office'
+      ? 'Ask about any group, laptop or component…' : 'Ask about any rack, server or component…';
     this.el.querySelector('#cpWatch').textContent = `watching ${site.name}`;
   }
 

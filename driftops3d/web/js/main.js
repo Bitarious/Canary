@@ -136,7 +136,7 @@ function paintTwin() {
   if (state.view === 'twin' && !state.twinScanning) {
     const rack = s?.racks.find(r => r.id === state.rackId);
     els.analyze.innerHTML = `<span class="ico">◎</span> Analyze ${rack ? esc(rack.name) : 'site'}`;
-    els.analyze.title = rack ? `Re-run the model on every server in ${rack.name}` : 'Re-run the model on every device at this site';
+    els.analyze.title = rack ? `Re-run the model on every device in ${rack.name}` : 'Re-run the model on every device at this site';
   }
 }
 

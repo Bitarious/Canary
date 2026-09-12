@@ -1,8 +1,8 @@
 # DriftOps 3D
 
-A digital twin for infrastructure health across several sites. Each site (a data center or an office laptop fleet) is shown as a 3D hall of racks. Every server slot is colored by health, and drifting devices glow.
+A digital twin for infrastructure health across several sites. Data centers are shown as 3D halls of racks; the HQ fleet shows three open laptops with screens, keyboards and trackpads. Devices are colored by health, and drifting devices glow.
 
-- **Picking a device:** pick a site, then click a rack, then click a server. That opens the 3D device view.
+- **Picking a device:** pick a site, then click a rack, then click a server. At HQ, click a laptop directly. That opens the 3D device view.
 - **Analyzing it:** in the device view, **Analyze** makes the chassis transparent and colors every internal component by health.
 - **Component details:** click a component to see its health trajectory, 7-day risk, failure window, evidence, recommended action and a "what if I wait?" simulator.
 
@@ -30,7 +30,7 @@ python server.py            # http://127.0.0.1:8765  (loads the demo sites, ~15 
   Unknown site or rack ids are created automatically.
 - **Offline**: run `python agent/collect.py --out run.json`, then drag the JSON onto the page.
 
-The demo fleet has 168 devices across Site A (7 racks × 12), Site B (6 × 10) and the HQ laptop fleet (3 × 8). It is generated in memory by `driftops/demo_data.py` and labelled `demo`. Its planted scenarios:
+The demo fleet has 147 devices across Site A (7 racks × 12), Site B (6 × 10) and the HQ laptop fleet (3 laptops, one each in Floor 1, Floor 2 and IT bench). It is generated in memory by `driftops/demo_data.py` and labelled `demo`. Its planted scenarios:
 
 - a failing disk combined with a rack-wide cooling problem in Site A Rack 06
 - ECC error growth and PSU voltage drift in other Site A racks
