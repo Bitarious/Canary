@@ -1,0 +1,8 @@
+{
+  "training_sample_windows": 8201,
+  "weighted_pattern_counts": {
+    "falling": 12973,
+    "fluctuating without a clear net trend": 40139,
+    "rising": 12496
+  }
+}

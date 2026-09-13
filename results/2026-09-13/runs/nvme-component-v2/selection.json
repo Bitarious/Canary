@@ -1,0 +1,8 @@
+{
+  "sha256": "46277da8fd6fefd98d8b4a1438e4b3c4bcf5ae1bea3a62348e5e6f1a36a2303c",
+  "epoch": 11,
+  "examples_seen": 562155,
+  "validation_loss": 0.005347541514007996,
+  "validation_sha256": "73138abcbe25176eca3dc0cf538fdc82e06c92e23c7e4e849e373f980b2ccdbb",
+  "test_opened": false
+}

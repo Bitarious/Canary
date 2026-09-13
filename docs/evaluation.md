@@ -120,4 +120,4 @@ Any change informed by these test results needs a new untouched holdout.
 - [Evaluation protocol](../artifacts/tslm/concept-v2/evaluation/protocol.json), [metrics](../artifacts/tslm/concept-v2/evaluation/metrics.json), and [raw predictions](../artifacts/tslm/concept-v2/evaluation/finetuned.jsonl).
 - [Isolated-checkout evidence](../artifacts/tslm/concept-v2/clean-smoke.json) and [reproduction commands](training.md).
 
-Large artifacts remain local and excluded from Git. Nothing has been uploaded or deployed.
+This historical CPU experiment remained local at evaluation time. The later component model release is documented in [the release guide](project-release.md).

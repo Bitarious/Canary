@@ -1,0 +1,25 @@
+MODIFIED MODEL FILE: best.pt
+
+The DriftOps team modified this model through component-specific fine-tuning
+in September 2026. This file is not an unchanged upstream model release.
+
+The model starts from google/gemma-3-270m at revision
+9b0cfec892e2bc2afd938c98eabe4e4a7b1e0ca1 and the OpenTSLM temporal checkpoint
+OpenTSLM/gemma-3-270m-tsqa-sp at revision
+c97bd36131e07d53a7af9cd307eb3db628f9712f.
+
+Fine-tuning updates the time-series encoder, projector, and rank-8 attention
+LoRA parameters. The underlying Gemma parameters remain frozen during training.
+The saved checkpoint also contains Gemma embedding and language-head tensors.
+
+The run manifest and selection.json identify this artifact's component,
+training configuration, selected epoch, and original SHA-256 checksum.
+The release preserves the selected best.pt bytes and checksum.
+This accompanying notice records the modification without rewriting the binary.
+
+The model describes weak numerical pattern targets. It does not establish
+fault detection, failure probability, remaining useful life, or maintenance benefit.
+
+Gemma Terms of Use: https://ai.google.dev/gemma/terms
+Gemma Prohibited Use Policy: https://ai.google.dev/gemma/prohibited_use_policy
+Retain the accompanying Notice, MODEL-TERMS.txt, agreement, and attribution files.

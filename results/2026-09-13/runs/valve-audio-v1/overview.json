@@ -1,0 +1,61 @@
+{
+  "objective": "Test an independent OpenTSLM for valve observed signal descriptions.",
+  "necessity": "The HDD model passed. Twelve component categories now pass. The separate radiator-valve telemetry model failed both original and follow-up checks. This new industrial-valve sound model tests another modality with independent upstream initialization and the authorized unknown-chronology exception. Preserve both dated failures.",
+  "data": {
+    "dataset_manifest_sha256": "b0bfccc9ba5e1b5353537874b83e9c2b4bd1b916a0eb4acd0d7bbf77cd6ca66d",
+    "scope": "Describe two sound-energy bands in short industrial-valve recordings. Acquisition dates are unknown. This benchmark does not measure faults, calendar generalization, or fleet reliability.",
+    "training_windows": 9801,
+    "independent_groups": {
+      "train": 1,
+      "validation": 1,
+      "calibration": 0,
+      "test": 5
+    },
+    "split_rules": {
+      "train": {
+        "start": "1970-01-01T00:00:00+00:00",
+        "stop": "1970-01-01T00:00:11+00:00"
+      },
+      "validation": {
+        "start": "1970-01-01T00:00:00+00:00",
+        "stop": "1970-01-01T00:00:11+00:00"
+      },
+      "calibration": {
+        "start": "1970-01-01T00:00:00+00:00",
+        "stop": "1970-01-01T00:00:11+00:00"
+      },
+      "test": {
+        "start": "1970-01-01T00:00:00+00:00",
+        "stop": "1970-01-01T00:00:11+00:00"
+      }
+    },
+    "test_numeric_data_transferred": false
+  },
+  "updated_parameters": "Temporal encoder, projector, and rank-8 Gemma attention LoRA, initialized independently from pinned upstream OpenTSLM weights.",
+  "frozen_parameters": "All original Gemma language-model parameters. No other component's fitted weights or training examples are used.",
+  "augmentation": "First epoch visits every observed training window. Later epochs use deterministic 50% original, 25% reversed, 25% shuffled views. These order perturbations are labeled numerical counterfactuals, not additional physical histories or failure events.",
+  "selection": "Lowest combined loss on equal-size natural, reversed, and shuffled validation views at completed epochs.",
+  "hardware_cost": "One assigned RTX PRO 6000 GPU trains this model inside the existing eight-GPU Nebius VM. Other GPUs can compute independent frozen evaluation comparisons. Reserve at most two VM hours, including setup and export, for $28.90 with all owned storage. Current conservative spend is $104.51. Keep the shared $600 ceiling.",
+  "stopping": "At most twelve epochs or thirty training minutes. Stop after three nonimproving completed epochs, after at least three epochs. Stop on nonfinite values or cancellation. This new phase stops the provider after verified exports or at 2026-09-13T08:59:46.301799+00:00. The old phase is already provider-stopped.",
+  "evaluation": "Freeze selected weights before releasing up to 1024 fixed-hash windows per held-out machine. Apply five-group industrial numerical-response and baseline-gain checks, unchanged quality thresholds, and 16 exact GPU reload predictions.",
+  "outputs": "Source and split pins, independent model and optimizer checkpoints, validation records, raw test generations, metrics and paired-group intervals, reload proof, and compute ledger.",
+  "created_at": "2026-09-13T06:58:43.283719+00:00",
+  "study_scope": "Unknown-date sound benchmark. One training machine, one validation machine, five test machines. No calibration fitting or calendar-generalization claim.",
+  "success_criteria": {
+    "scope": "Industrial-valve sound description benchmark with unknown acquisition dates, one training machine, one validation machine, and five test machines. No calendar generalization or fault-detection claim.",
+    "minimum_valid_output_rate": 0.95,
+    "test_groups": 5,
+    "windows_per_group": 1024,
+    "minimum_changed_windows_per_group": 32,
+    "baseline_requirement": "Higher supported-class macro F1, positive lower 95% group-bootstrap accuracy gain, and one-sided exact paired group sign-randomization probability at most 0.05.",
+    "baselines": [
+      "starting",
+      "constant",
+      "zero_numerical_embeddings"
+    ],
+    "counterfactual_requirement": "Reversal and shuffle must each change at least 32 targets in every held-out group. Require positive lower group-bootstrap gain and exact paired sign-randomization probability at most 0.05 over unchanged original answers.",
+    "reload_equal_predictions": 16
+  },
+  "study_design_sha256": "84d7623209610a98bdc98704370b6a3a553a32c1654fed098af4bcf09f0b64da",
+  "phase_budget_sha256": "dd672c190ee56fa4c01d9995dc1c7c0e9145c25f802399bbb6d3c602d3c3e065"
+}

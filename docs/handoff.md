@@ -2,7 +2,7 @@
 
 The full-history HDD model passed every frozen success check on 2,048 unseen drives. It completed all 11,315,069 training windows on eight Nebius RTX PRO 6000 GPUs. Channel accuracy is 99.68%, compared with 69.43% for the constant baseline and 86.01% with numerical inputs zeroed. Reversal, shuffle, and sixteen exact reload predictions also pass. All checkpoints and 648 evaluation JSON files are exported with verified hashes. The evaluation VM stopped successfully at 04:20:37 UTC on September 13. Read [full-history training](full-history-training.md) for evidence and limits. This result supports signal descriptions, not failure prediction.
 
-The user also authorized a [separate component TSLM program](component-training-program.md) if the HDD model passes. Research the remaining hardware categories and train separate models within the same total $600 ceiling. Document everything locally in this GitHub repository. Do not commit or push.
+The user also authorized a [separate component TSLM program](component-training-program.md) if the HDD model passes. Research the remaining hardware categories and train separate models within the same total $600 ceiling. Keep source and evidence in this GitHub repository. The user authorized the full project upload on September 13, 2026.
 
 All thirteen component categories now have separate models that pass their declared signal-description checks: HDD, SSD, NVMe, DRAM, CPU, GPU, server power, fan, gearbox, generator bearing, gear-oil pump, slide-rail sound, and industrial-valve sound. All selected weights and evaluation artifacts are exported with verified hashes. Same-GPU reload checks pass for every model. Local CPU checks reproduce sixteen saved answers for ten categories. CPU-component, GPU-component, server, and the failed dated valve model reproduce fifteen. Read [component results](component-model-results.md) for metrics, checkpoints, and limits.
 
@@ -16,7 +16,15 @@ Controller CLI authentication is restored. At 07:29 UTC, all three owned VMs wer
 
 The last valve phase stayed within its $28.90 cap and 08:59:46 UTC deadline. Its complete model export was verified before the completion guard requested provider stop. A later attempt to copy secondary phase logs missed SSH shutdown. Immutable preflight/start evidence, the complete model export, its terminal record, and provider stop proof remain available. See `artifacts/nebius/full-history-v1/valve-audio-phase-v1/completion.json`. Do not restart these job-owned VMs without a fresh budget and valid guest deadline.
 
-The requested component training program is complete within the stated benchmark scope. The operator application and failure-risk modeling remain separate work in the implementation plan. No commit or push is authorized.
+The requested component training program is complete within the stated benchmark scope. The operator application and failure-risk modeling remain separate work in the implementation plan. The user has now authorized commits and the GitHub upload. See [the release guide](project-release.md).
+
+## September 13 publication and private demo
+
+The user authorized the complete GitHub upload and parallel agents for publication and private demo access. The training work and teammates' main branch were merged without conflicts. The [release guide](project-release.md) describes source, selected models, evaluation records, and dataset reproduction.
+
+The administrator-only demo route is `https://projects.home.doodlebeast.com/driftops/#/site/site-a`. It requires the existing WireGuard access and an administrator device grant. The gateway route, browser navigation, fleet data, and analysis requests passed local verification. A remote administrator device connection remains unverified. The app still uses synthetic telemetry and rules.
+
+The gateway and its access configuration belong to the private hosting project, not this source repository. The demo backend binds to loopback. No public app port or new access grant was added.
 
 ## What this revision can run
 

@@ -14,7 +14,10 @@ opentslm_source:
   reviewed_revision: 2968f4b891baab4307f7e9d0043e87677b593a30
 intended_adaptation:
   freeze: [base_language_model]
-  update: [time_series_encoder, projector]
-  lora: false
-  status: verified-frozen-gemma-and-trained-temporal-modules
+  update: [time_series_encoder, projector, attention_lora]
+  lora: true
+  lora_rank: 8
+  lora_alpha: 16
+  lora_targets: [q_proj, k_proj, v_proj, o_proj]
+  status: verified-frozen-gemma-and-trained-temporal-modules-with-attention-lora
 training_started: true

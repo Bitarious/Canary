@@ -1,0 +1,31 @@
+DriftOps model artifact terms
+
+These terms govern the selected .pt model checkpoints in this release.
+They do not replace the separate licenses for source code or dataset records.
+
+Use, reproduction, modification, and distribution of these model derivatives
+are subject to the Gemma Terms of Use at https://ai.google.dev/gemma/terms.
+A copy of that agreement accompanies this release in gemma-terms.html.
+
+The restrictions in Section 3.2 of that agreement are incorporated into these
+terms as conditions of all permitted use and distribution. You must not use
+these models for a use prohibited by the Gemma Prohibited Use Policy at
+https://ai.google.dev/gemma/prohibited_use_policy or in violation of applicable
+laws and regulations. You must not permit another person to make a prohibited
+use of the models. A copy of the incorporated policy accompanies this release
+in gemma-prohibited-use-policy.html.
+
+Any onward distribution must meet Section 3.1 of the Gemma Terms of Use.
+Keep the agreement, required Notice, use restrictions, modification notice,
+and applicable attribution with the model artifact.
+
+The DRAM, slide-rail sound, and industrial-valve sound checkpoints are released
+for noncommercial research and evaluation only. Their training data carries
+noncommercial conditions. This release does not establish commercial clearance
+for those checkpoints. See ../model-licenses.md for the source license matrix.
+
+The OpenTSLM MIT notice applies to the upstream OpenTSLM material.
+It does not remove the Gemma terms from the Gemma model derivatives.
+Dataset records and derived data retain their own source license conditions.
+No additional restriction in this file applies to Ceph data licensed under
+CDLA-Sharing-1.0 or to other separately licensed dataset records.

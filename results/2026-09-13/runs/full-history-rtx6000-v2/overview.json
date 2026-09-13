@@ -1,0 +1,107 @@
+{
+  "objective": "Continue full historical HDD fine-tuning from the verified optimizer and cursor checkpoint, with each GPU preparing only its assigned input windows.",
+  "necessity": "The original distributed input iterator normalized all 512 global examples on each GPU process before selecting 64. Local timing was 0.334 seconds versus 0.042 seconds. Removing duplicated preparation preserves all inputs, targets, global ordering, incomplete batches, and resume positions. Tests matched 6144 real examples against pre-change hashes.",
+  "source": {
+    "archives": 44,
+    "dataset_manifest_sha256": "fe868c96983b7688bab01fb6580c63931df188ae1ba6e90f79c0bfc37c3e48cd",
+    "config": {
+      "version": "full-history-v1",
+      "source_root": "data/backblaze-full",
+      "scope": "Every official historical Backblaze Drive Stats ZIP archive through Q1 2026.",
+      "language_channels": [
+        "smart_5_raw",
+        "smart_187_raw",
+        "smart_194_raw",
+        "smart_197_raw"
+      ],
+      "lookback_days": 28,
+      "task_stride_days": 28,
+      "drive_hash_salt": "driftops-split-v1:",
+      "partitions": {
+        "train": {
+          "buckets": [
+            0,
+            60
+          ],
+          "start": "2013-01-01",
+          "end": "2024-12-31"
+        },
+        "validation": {
+          "buckets": [
+            60,
+            75
+          ],
+          "start": "2025-01-01",
+          "end": "2025-09-30"
+        },
+        "calibration": {
+          "buckets": [
+            75,
+            85
+          ],
+          "start": "2025-01-01",
+          "end": "2025-09-30"
+        },
+        "test": {
+          "buckets": [
+            85,
+            100
+          ],
+          "start": "2025-10-01",
+          "end": "2026-03-31"
+        }
+      },
+      "split_policy": "Each serial belongs to one split. The entire input window must fall inside that split's date interval.",
+      "selection_policy": "Use validation to select the checkpoint. Open test examples only after checkpoint selection is frozen.",
+      "coverage_policy": "Use every eligible nonoverlapping training window. Report all excluded rows, devices, and windows."
+    }
+  },
+  "data_splits": {
+    "train_windows": 11315069,
+    "validation_selection_drives": 512,
+    "test_evaluation_drives": 2048,
+    "rule": "Disjoint serials and ordered dates. All numeric windows pass native TimeF read-back. Test files stay on the controller until selection is frozen."
+  },
+  "updated_parameters": {
+    "temporal_encoder": true,
+    "projector": true,
+    "gemma_attention_lora": {
+      "lora_r": 8,
+      "lora_alpha": 16,
+      "lora_dropout": 0.0,
+      "target_modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj"
+      ]
+    }
+  },
+  "frozen_parameters": "All original Gemma parameters. Start from the pinned upstream TSQA adapter, not the prior pilot checkpoint.",
+  "supervision": "Existing window-description-v1 deterministic labels. These are weak targets, not technician reports or failure predictions.",
+  "normalization": "Observed-window z-score. Channel text includes the same window's raw standard deviation. No identity, dates, failure flags, labels, or future observations enter prompts.",
+  "hardware_cost": {
+    "provider": "Nebius",
+    "preferred_gpu": "8 NVIDIA RTX PRO 6000 GPUs, 96 GB each",
+    "vm_rate_usd_hour": 14.4,
+    "disk_128_gib_rate_usd_hour": 0.01244928,
+    "training_hours_limit": 7,
+    "vm_hours_limit": 8,
+    "quoted_vm_limit_usd": 115.29959424,
+    "project_ceiling_usd": 600,
+    "balance_user_reported_usd": 605,
+    "absolute_provider_stop_utc": "2026-09-13T08:34:30.531495+00:00",
+    "training_time_limit_includes_parent_elapsed_seconds": 723.493283643
+  },
+  "stopping_conditions": "At most two complete epochs across the parent and resumed run, seven cumulative training hours, nonfinite loss/gradients, signal cancellation, or the unchanged absolute provider/controller deadline. A partial first epoch does not qualify as full-data training.",
+  "evaluation": "Unweighted validation answer loss selects only completed-epoch checkpoints. Freeze checkpoint hash before test. Compare the upstream model, fitted model, all-constant baseline, and zero/reversed/shuffled numerical inputs. Report syntax validity, channel accuracy, macro F1, drive bootstrap intervals, and raw outputs.",
+  "outputs": "Pinned data/split/source manifests, optimizer and cursor checkpoints, selected temporal/LoRA weights, progress and costs, test predictions/metrics, ablations, and verified reload results.",
+  "created_at": "2026-09-13T01:11:46.175368+00:00",
+  "initialization": {
+    "parent_run": "artifacts/tslm/full-history-rtx6000-v1",
+    "checkpoint_sha256": "949205b40f2f4770c04e831e025f6b38f343e019edea7dd86e299c555b3a9d16",
+    "steps_already_completed": 795,
+    "examples_already_seen": 404525,
+    "restored": "Model, optimizer, CPU and per-rank CUDA RNG state, and exact data cursor. Original initialization used pinned upstream weights."
+  }
+}

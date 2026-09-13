@@ -1,0 +1,272 @@
+{
+  "format": "component-windows-v1",
+  "config": {
+    "version": "industrial-v1",
+    "study": "small-industrial-v1",
+    "split_salt": "unused-explicit-cohort",
+    "provider": "Cubico Sustainable Investments",
+    "source_type": "cubico-scada",
+    "source_url": "https://zenodo.org/records/8252025",
+    "license": "CC-BY-4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "citation": "Kelmarsh 8252025 and Penmanshiel 8253010, source signal mappings and UTC SCADA exports",
+    "cadence_us": 600000000,
+    "cadence_text": "ten-minute recorded values available after a full interval",
+    "availability": "Conservative full-interval delay. Unknown publication-bin start/end convention cannot move values earlier.",
+    "group_partitions": {
+      "cubico:Kelmarsh:1": "train",
+      "cubico:Penmanshiel:8": "train",
+      "cubico:Penmanshiel:11": "train",
+      "cubico:Kelmarsh:5": "train",
+      "cubico:Penmanshiel:15": "train",
+      "cubico:Penmanshiel:7": "train",
+      "cubico:Kelmarsh:3": "train",
+      "cubico:Penmanshiel:1": "train",
+      "cubico:Penmanshiel:5": "train",
+      "cubico:Kelmarsh:6": "train",
+      "cubico:Kelmarsh:2": "validation",
+      "cubico:Penmanshiel:13": "validation",
+      "cubico:Penmanshiel:12": "validation",
+      "cubico:Penmanshiel:2": "calibration",
+      "cubico:Kelmarsh:4": "calibration",
+      "cubico:Penmanshiel:10": "test",
+      "cubico:Penmanshiel:14": "test",
+      "cubico:Penmanshiel:4": "test",
+      "cubico:Penmanshiel:6": "test",
+      "cubico:Penmanshiel:9": "test"
+    },
+    "partitions": {
+      "train": {
+        "start": "2018-01-01T00:00:00+00:00",
+        "stop": "2019-01-01T00:00:00+00:00"
+      },
+      "validation": {
+        "start": "2019-01-01T00:00:00+00:00",
+        "stop": "2019-07-01T00:00:00+00:00"
+      },
+      "calibration": {
+        "start": "2019-07-01T00:00:00+00:00",
+        "stop": "2020-01-01T00:00:00+00:00"
+      },
+      "test": {
+        "start": "2020-01-01T00:00:00+00:00",
+        "stop": "2021-01-01T00:00:00+00:00"
+      }
+    },
+    "component": "bearing",
+    "scope": "Describe observed bearing signals on a small held-out turbine cohort. No failure or fleet-wide reliability claim.",
+    "channels": {
+      "generator_bearing_front_temperature": {
+        "source_column": "Generator bearing front temperature (\u00b0C)",
+        "unit": "degC",
+        "minimum_band": 1.0,
+        "description": "generator front bearing temperature in Celsius"
+      },
+      "generator_bearing_rear_temperature": {
+        "source_column": "Generator bearing rear temperature (\u00b0C)",
+        "unit": "degC",
+        "minimum_band": 1.0,
+        "description": "generator rear bearing temperature in Celsius"
+      }
+    }
+  },
+  "source_manifest_sha256": "9aca01a18232264b397a43867ee4b302d96fb8c3900180e88fd9cd60a14a1bab",
+  "audit": {
+    "windows_validation": 2780,
+    "patterns_validation:falling": 1935,
+    "patterns_validation:fluctuating without a clear net trend": 1748,
+    "patterns_validation:rising": 1877,
+    "windows_calibration": 1875,
+    "patterns_calibration:falling": 1212,
+    "patterns_calibration:rising": 1202,
+    "patterns_calibration:fluctuating without a clear net trend": 1336,
+    "windows_train": 18405,
+    "patterns_train:falling": 12652,
+    "patterns_train:rising": 11585,
+    "patterns_train:fluctuating without a clear net trend": 12572,
+    "patterns_train:constant": 1,
+    "windows_test": 8851,
+    "patterns_test:falling": 6018,
+    "patterns_test:rising": 5502,
+    "patterns_test:fluctuating without a clear net trend": 6182
+  },
+  "drives": {
+    "train": [
+      "cubico:Kelmarsh:1:bearing",
+      "cubico:Kelmarsh:3:bearing",
+      "cubico:Kelmarsh:5:bearing",
+      "cubico:Kelmarsh:6:bearing",
+      "cubico:Penmanshiel:11:bearing",
+      "cubico:Penmanshiel:15:bearing",
+      "cubico:Penmanshiel:1:bearing",
+      "cubico:Penmanshiel:5:bearing",
+      "cubico:Penmanshiel:7:bearing",
+      "cubico:Penmanshiel:8:bearing"
+    ],
+    "validation": [
+      "cubico:Kelmarsh:2:bearing",
+      "cubico:Penmanshiel:12:bearing",
+      "cubico:Penmanshiel:13:bearing"
+    ],
+    "calibration": [
+      "cubico:Kelmarsh:4:bearing",
+      "cubico:Penmanshiel:2:bearing"
+    ],
+    "test": [
+      "cubico:Penmanshiel:10:bearing",
+      "cubico:Penmanshiel:14:bearing",
+      "cubico:Penmanshiel:4:bearing",
+      "cubico:Penmanshiel:6:bearing",
+      "cubico:Penmanshiel:9:bearing"
+    ]
+  },
+  "groups": {
+    "train": [
+      "cubico:Kelmarsh:1",
+      "cubico:Kelmarsh:3",
+      "cubico:Kelmarsh:5",
+      "cubico:Kelmarsh:6",
+      "cubico:Penmanshiel:1",
+      "cubico:Penmanshiel:11",
+      "cubico:Penmanshiel:15",
+      "cubico:Penmanshiel:5",
+      "cubico:Penmanshiel:7",
+      "cubico:Penmanshiel:8"
+    ],
+    "validation": [
+      "cubico:Kelmarsh:2",
+      "cubico:Penmanshiel:12",
+      "cubico:Penmanshiel:13"
+    ],
+    "calibration": [
+      "cubico:Kelmarsh:4",
+      "cubico:Penmanshiel:2"
+    ],
+    "test": [
+      "cubico:Penmanshiel:10",
+      "cubico:Penmanshiel:14",
+      "cubico:Penmanshiel:4",
+      "cubico:Penmanshiel:6",
+      "cubico:Penmanshiel:9"
+    ]
+  },
+  "shards": {
+    "0000": {
+      "train.parquet": "5033dd3c172980d78e194a7150bb963b9296d335e20a86752598f3eeb9ece9a4",
+      "validation.parquet": "49ae44aadf725551993df9012306cd13534f4343d22a1ff5e6d1e56d3db6c4d6",
+      "calibration.parquet": "986c3da3bca4de5690567ee2b23f81af3961aa4b9f92140503bcc5fb2abb94c8",
+      "test.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "native_manifest_sha256": "89f8ceb72b405dbc39bbe877020e744a1c2f12bc2883c2747018752244cb83e3"
+    },
+    "0001": {
+      "train.parquet": "6448c94a576f569099fba98fee4388d46fdc0295ea529f656e3b372e0425b9cd",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "native_manifest_sha256": "7bca2bfe8183db63a860cb428fef0010b1fc71e4c0e3037e7198d3a7cde8272c"
+    },
+    "0002": {
+      "train.parquet": "99ce9b13ac3d5262826c433829a5b66ed410c51eaa374cf1bb7a1e28232f3b85",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "native_manifest_sha256": "cb9daae5df1ec4dafbc48baa32145ded918558a214bea27d87733fe6831b97dc"
+    },
+    "0003": {
+      "train.parquet": "c1d36b536879d7a300a00403e755aa33277121184f35bb04b66c4522deeb7464",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "native_manifest_sha256": "21e09a1c42d5d9c1ac3a8f53b2904bd6fbbbaab73fbd5cbafb73959457a3e424"
+    },
+    "0004": {
+      "train.parquet": "5f46bd6621f13ddf019aa9ef8d1224a43effa8a3ab58b3f78ef7377486035c61",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "native_manifest_sha256": "61de53f7f5ddba7caee6e175511caec18cb8207abfd54ffd3fea947a732305ef"
+    },
+    "0005": {
+      "train.parquet": "09ca2d3d1b52b6bb1683eeea93838efdf7f52480c7d6f4a30891ac369e2b220a",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "native_manifest_sha256": "53213fb6e401831124201f0b6ba3d25620d806ea912502c7f06cf4492dd1405b"
+    },
+    "0006": {
+      "train.parquet": "8bb7fe392f4eae8512f6148bbe29b2a6e0c9190223aaef4235488eef94241734",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "native_manifest_sha256": "3264bfc166f87eb1cd935ec66a67d0f022e6756fe4b86e806c855de1dceae242"
+    },
+    "0007": {
+      "train.parquet": "a16969e065912462b7201de8916213ebc92099e5590356915cdaab97a9cacac6",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "native_manifest_sha256": "c8ea57b6f20f5e4b8be528f3f2cc482ad66ef5d6a142966a39887ed34171b19e"
+    },
+    "0008": {
+      "train.parquet": "25351e417caba38ef5d3de7b4880423ddb67b3ea63a9a63387eeb71aab3c83c8",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "native_manifest_sha256": "b255456485b5793172be72ea08f05c92202715117b3175ad24d911ff559fbffc"
+    },
+    "0009": {
+      "train.parquet": "a54818ea3a32bbfa0bb4eeaff28d4a87c9a138a72ad00a9ed8e98a4331d139fa",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "a4bd9ed9db43572a7ee941ee9d4d982baad76f8e1e817fadda3c6566abed70eb",
+      "test.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "native_manifest_sha256": "ede20c26a62488db70933a8d3c50598bdb1e60f668c98e7d0f3b8461298d6836"
+    },
+    "0010": {
+      "train.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "validation.parquet": "a18683cbc39155de7b97762ed855b8f5593c69433e66c6e2361059a8ba06a7d8",
+      "calibration.parquet": "f849f26de3d656df63d91b63251359c0cc061b28f410e16c0bb637dd668105f3",
+      "test.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "native_manifest_sha256": "6263c330768115ef1e3057e7f17cdb04c6e563057e39ed2e2c7bb5b81378f129"
+    },
+    "0011": {
+      "train.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "validation.parquet": "6dc165b7dda79a04034318af5374c6b48103c429ceb265d1e69ed6f4ef99df53",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "250ec66fe558895f9767c58dc263649a7cd32b203b9de2cb1aae4ae2978e678a",
+      "native_manifest_sha256": "47c81eaa3049363e581bf16b8a1cc20717cc3f6d8ec73fe7deb385f9961240f1"
+    },
+    "0012": {
+      "train.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "ac961df2a5c1c0140ec093e2d061c661e0633c0fd59c77eb73512b98e96f0eb5",
+      "native_manifest_sha256": "115c930010f17634dfdfeb7fe1b0bc523a92765801c41f590828bfd33b780ea3"
+    },
+    "0013": {
+      "train.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "e43a9a1724985e0bf75ba9f807f419ab6be06b8c28026023132e5485c56b7cc4",
+      "native_manifest_sha256": "5a7e1d2e44f0e9a760634cc3be3f9bfcd22958e76a3e69326b7f2517aa249541"
+    },
+    "0014": {
+      "train.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "9fb401d689ce2e31c5bcedafdd2e9249e1d9321bfdbb4a3b2c380d3b1a3eeb0c",
+      "native_manifest_sha256": "6499d2b45c80e97fb0e1ca21ec6cc41cd8688b0c1adc43666bac747f2e02e733"
+    },
+    "0015": {
+      "train.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "4d68b06d71f668a2354f0f14d4dd339d7dad8799b7ec4b525649ae193fe6a270",
+      "native_manifest_sha256": "f4e03429a0fc568bec3afe32954df034643b4b5620fa4e267b6d356cec0681d0"
+    }
+  },
+  "verification": "Every native record, value, timestamp, annotation, task, and scoped input matched.",
+  "source_audit": {
+    "source_rows": 1051920,
+    "excluded_rows": 154429
+  }
+}

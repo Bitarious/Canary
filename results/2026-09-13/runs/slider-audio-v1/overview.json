@@ -1,0 +1,60 @@
+{
+  "objective": "Test an independent OpenTSLM for slide_rail observed signal descriptions.",
+  "necessity": "The HDD model passed its held-out gate. This component has different signals and requires separate weights and evidence.",
+  "data": {
+    "dataset_manifest_sha256": "5ad463c95f56bd20f29c131a9749ccff143baf099f2f389efcedf13b660bc37b",
+    "scope": "Describe two sound-energy bands in short slide-rail recordings. Acquisition dates are unknown. This benchmark does not measure faults, calendar generalization, or fleet reliability.",
+    "training_windows": 10648,
+    "independent_groups": {
+      "train": 1,
+      "validation": 1,
+      "calibration": 0,
+      "test": 5
+    },
+    "split_rules": {
+      "train": {
+        "start": "1970-01-01T00:00:00+00:00",
+        "stop": "1970-01-01T00:00:11+00:00"
+      },
+      "validation": {
+        "start": "1970-01-01T00:00:00+00:00",
+        "stop": "1970-01-01T00:00:11+00:00"
+      },
+      "calibration": {
+        "start": "1970-01-01T00:00:00+00:00",
+        "stop": "1970-01-01T00:00:11+00:00"
+      },
+      "test": {
+        "start": "1970-01-01T00:00:00+00:00",
+        "stop": "1970-01-01T00:00:11+00:00"
+      }
+    },
+    "test_numeric_data_transferred": false
+  },
+  "updated_parameters": "Temporal encoder, projector, and rank-8 Gemma attention LoRA, initialized independently from pinned upstream OpenTSLM weights.",
+  "frozen_parameters": "All original Gemma language-model parameters. No other component's fitted weights or training examples are used.",
+  "augmentation": "First epoch visits every observed training window. Later epochs use deterministic 50% original, 25% reversed, 25% shuffled views. These order perturbations are labeled numerical counterfactuals, not additional physical histories or failure events.",
+  "selection": "Lowest combined loss on equal-size natural, reversed, and shuffled validation views at completed epochs.",
+  "hardware_cost": "One free RTX PRO 6000 GPU in the existing eight-GPU Nebius VM. The whole VM costs $14.40/hour plus disk. This run shares the existing $50.45 phase reservation and absolute deadline. The parent completion stop can interrupt this supplementary job.",
+  "stopping": "At most 12 epochs or 30 training minutes. Stop after three nonimproving completed epochs after at least three epochs. Stop on nonfinite values or the parent provider stop. Export completed checkpoints before any bounded resume.",
+  "evaluation": "Freeze selected weights before releasing up to 1024 fixed-hash windows per held-out machine. Apply five-group industrial numerical-response and baseline-gain checks, unchanged quality thresholds, and 16 exact GPU reload predictions.",
+  "outputs": "Source and split pins, independent model and optimizer checkpoints, validation records, raw test generations, metrics and paired-group intervals, reload proof, and compute ledger.",
+  "created_at": "2026-09-13T06:04:40.436314+00:00",
+  "study_scope": "Unknown-date sound benchmark. One training machine, one validation machine, five test machines. No calibration fitting or calendar-generalization claim.",
+  "success_criteria": {
+    "scope": "Slide-rail sound description benchmark with unknown acquisition dates, one training machine, one validation machine, and five test machines. No calendar generalization or fault-detection claim.",
+    "minimum_valid_output_rate": 0.95,
+    "test_groups": 5,
+    "windows_per_group": 1024,
+    "minimum_changed_windows_per_group": 32,
+    "baseline_requirement": "Higher supported-class macro F1, positive lower 95% group-bootstrap accuracy gain, and one-sided exact paired group sign-randomization probability at most 0.05.",
+    "baselines": [
+      "starting",
+      "constant",
+      "zero_numerical_embeddings"
+    ],
+    "counterfactual_requirement": "Reversal and shuffle must each change at least 32 targets in every held-out group. Require positive lower group-bootstrap gain and exact paired sign-randomization probability at most 0.05 over unchanged original answers.",
+    "reload_equal_predictions": 16
+  },
+  "study_design_sha256": "c501782701274e613214d608c0de531da0fb6fe723242e11483105ce30269378"
+}

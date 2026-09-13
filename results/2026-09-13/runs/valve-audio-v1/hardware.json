@@ -1,0 +1,10 @@
+{
+  "torch": "2.8.0+cu128",
+  "cuda": "12.8",
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+  "gpu_bytes": 101973819392,
+  "gpu_count": 1,
+  "global_batch_size": 64,
+  "trainable_parameters": 2931072,
+  "frozen_parameters": 268098816
+}

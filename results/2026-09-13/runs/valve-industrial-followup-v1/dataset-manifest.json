@@ -1,0 +1,267 @@
+{
+  "format": "component-windows-v1",
+  "config": {
+    "version": "industrial-v1",
+    "study": "small-industrial-v1",
+    "component": "valve",
+    "scope": "Describe observed thermostatic-valve signals on a small held-out household cohort. No valve failure, occupancy, or household-behavior inference.",
+    "split_salt": "unused-explicit-cohort",
+    "provider": "Open University of the Netherlands / HOMESENSE",
+    "source_type": "homesense-observed-valve",
+    "source_url": "https://zenodo.org/records/21687970",
+    "license": "CC-BY-4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "citation": "HOMESENSE 21687970 version1.0.0, observed Vicki valve fields only",
+    "cadence_us": 600000000,
+    "cadence_text": "ten-minute observed valve values available at interval end",
+    "availability": "Use explicit UTC offsets, add ten minutes, require observed QC for every field. Exclude imputation and all non-valve fields.",
+    "group_partitions": {
+      "homesense:H06": "train",
+      "homesense:H03": "train",
+      "homesense:H04": "train",
+      "homesense:H01": "validation",
+      "homesense:H11": "validation",
+      "homesense:H07": "calibration",
+      "homesense:H08": "test",
+      "homesense:H05": "test",
+      "homesense:H09": "test",
+      "homesense:H02": "test",
+      "homesense:H10": "test"
+    },
+    "partitions": {
+      "train": {
+        "start": "2024-11-25T00:00:00+00:00",
+        "stop": "2025-03-01T00:00:00+00:00"
+      },
+      "validation": {
+        "start": "2025-03-01T00:00:00+00:00",
+        "stop": "2025-05-01T00:00:00+00:00"
+      },
+      "calibration": {
+        "start": "2025-05-01T00:00:00+00:00",
+        "stop": "2025-07-01T00:00:00+00:00"
+      },
+      "test": {
+        "start": "2025-07-01T00:00:00+00:00",
+        "stop": "2025-11-27T00:00:00+00:00"
+      }
+    },
+    "channels": {
+      "motor_position": {
+        "source_variable": "motorposition",
+        "unit": "dimensionless",
+        "description": "valve motor position in raw motor steps, from zero to 800",
+        "minimum_band": 1.0
+      },
+      "device_temperature": {
+        "source_variable": "temperature",
+        "unit": "degC",
+        "description": "valve device temperature in Celsius",
+        "minimum_band": 1.0
+      },
+      "temperature_setpoint": {
+        "source_variable": "temperatureset",
+        "unit": "degC",
+        "description": "commanded valve temperature setpoint in Celsius",
+        "minimum_band": 1.0
+      }
+    }
+  },
+  "source_manifest_sha256": "438bce8c131751565a8f637d74fc3ce2063e79f54810e5bdaed3b7fd49427735",
+  "audit": {
+    "windows_train": 6203,
+    "patterns_train:constant": 12047,
+    "patterns_train:falling": 929,
+    "patterns_train:fluctuating without a clear net trend": 4751,
+    "patterns_train:rising": 882,
+    "windows_validation": 2487,
+    "patterns_validation:constant": 4656,
+    "patterns_validation:rising": 524,
+    "patterns_validation:fluctuating without a clear net trend": 1731,
+    "patterns_validation:falling": 550,
+    "windows_calibration": 1377,
+    "patterns_calibration:constant": 2639,
+    "patterns_calibration:fluctuating without a clear net trend": 1107,
+    "patterns_calibration:rising": 175,
+    "patterns_calibration:falling": 210,
+    "windows_test": 13615,
+    "patterns_test:constant": 26142,
+    "patterns_test:fluctuating without a clear net trend": 11279,
+    "patterns_test:rising": 1698,
+    "patterns_test:falling": 1726
+  },
+  "drives": {
+    "train": [
+      "homesense:H03:bathroom__vicki",
+      "homesense:H03:bedroom_1__vicki",
+      "homesense:H03:bedroom_2__vicki",
+      "homesense:H03:downstairs_hall__vicki",
+      "homesense:H03:kitchen__vicki",
+      "homesense:H04:bathroom__vicki",
+      "homesense:H04:bedroom_1__vicki",
+      "homesense:H04:bedroom_2__vicki",
+      "homesense:H04:downstairs_hall__vicki",
+      "homesense:H06:bathroom__vicki",
+      "homesense:H06:bedroom_1__vicki",
+      "homesense:H06:bedroom_2__vicki",
+      "homesense:H06:bedroom_3__vicki",
+      "homesense:H06:downstairs_hall__vicki",
+      "homesense:H06:kitchen__vicki"
+    ],
+    "validation": [
+      "homesense:H01:bathroom__vicki",
+      "homesense:H01:bedroom_1__vicki",
+      "homesense:H01:bedroom_2__vicki",
+      "homesense:H01:bedroom_3__vicki",
+      "homesense:H01:kitchen__vicki",
+      "homesense:H11:bathroom__vicki",
+      "homesense:H11:bedroom_1__vicki",
+      "homesense:H11:bedroom_2__vicki",
+      "homesense:H11:bedroom_3__vicki",
+      "homesense:H11:downstairs_hall__vicki"
+    ],
+    "calibration": [
+      "homesense:H07:bathroom__vicki",
+      "homesense:H07:bedroom_1__vicki",
+      "homesense:H07:bedroom_2__vicki",
+      "homesense:H07:bedroom_3__vicki",
+      "homesense:H07:kitchen__vicki"
+    ],
+    "test": [
+      "homesense:H02:bathroom__vicki",
+      "homesense:H02:bedroom_1__vicki",
+      "homesense:H02:bedroom_2__vicki",
+      "homesense:H02:bedroom_3__vicki",
+      "homesense:H02:downstairs_hall__vicki",
+      "homesense:H05:bathroom__vicki",
+      "homesense:H05:bedroom_1__vicki",
+      "homesense:H05:bedroom_2__vicki",
+      "homesense:H05:bedroom_3__vicki",
+      "homesense:H05:downstairs_hall__vicki",
+      "homesense:H05:kitchen__vicki",
+      "homesense:H08:bathroom__vicki",
+      "homesense:H08:bedroom_1__vicki",
+      "homesense:H08:bedroom_2__vicki",
+      "homesense:H08:bedroom_3__vicki",
+      "homesense:H09:bedroom_1__vicki",
+      "homesense:H09:bedroom_2__vicki",
+      "homesense:H10:bathroom__vicki",
+      "homesense:H10:bedroom_1__vicki",
+      "homesense:H10:bedroom_2__vicki",
+      "homesense:H10:downstairs_hall__vicki",
+      "homesense:H10:kitchen__vicki"
+    ]
+  },
+  "groups": {
+    "train": [
+      "homesense:H03",
+      "homesense:H04",
+      "homesense:H06"
+    ],
+    "validation": [
+      "homesense:H01",
+      "homesense:H11"
+    ],
+    "calibration": [
+      "homesense:H07"
+    ],
+    "test": [
+      "homesense:H02",
+      "homesense:H05",
+      "homesense:H08",
+      "homesense:H09",
+      "homesense:H10"
+    ]
+  },
+  "shards": {
+    "0000": {
+      "train.parquet": "0ae1f34048ca43e2d34de40ed535248d3d85d8fa0cae93b7b0a60891ae1b283d",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "native_manifest_sha256": "034e821ea5e203d2537531905548c7c4d4d21b7e87fb5da27c99e99cffd7e02d"
+    },
+    "0001": {
+      "train.parquet": "cdfbef413aa0fbc224dc9d652373130d30c5b60316390f937a7e16836f0e9ee2",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "native_manifest_sha256": "73e51e25293ebe4be8cd2ed19c3c82cd87b265aef1c6e8dad321cd50ea2f9ca3"
+    },
+    "0002": {
+      "train.parquet": "7e19174ed1d33d1b829cb49270ee09f7d64afe6a23388a8e8379c0d0a3e13c2a",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "native_manifest_sha256": "a4c2a862d0db2cb0695e308f5da9839bff1353b226bbbc7bb999e5c62d2335c9"
+    },
+    "0003": {
+      "train.parquet": "96f92adcda2dc3a714ae196248197545a43e64c10f3003da0601edcab6a183ad",
+      "validation.parquet": "f3cad32efc3cf26d67692c88f8a08d7c0fe563ef8ab4e8ca706a049effd00067",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "native_manifest_sha256": "6889c7c611c8ed56932ed1a9964aa06025b06348dec92f24763ec9c0e8d874c9"
+    },
+    "0004": {
+      "train.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "validation.parquet": "f854d14312f97495b6d6b4ee91d168b0dab9e94c005083db4f16849aae1fc9a5",
+      "calibration.parquet": "39c8f239b2175e6060ed6d95a22718e5985c136501d34a541d5b268485f374aa",
+      "test.parquet": "86718039d2915f449a5332b5ed760f3a72116c5c0d2075c78171d23e6375f2b8",
+      "native_manifest_sha256": "1d40d036913cbd2c39262f229f2c318f2f029a4a6841f181f73755d29695fbf5"
+    },
+    "0005": {
+      "train.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "dc2172b712855baaaf5a46abc14ceacdebdc990711ec20387ba1abe4803a45a4",
+      "native_manifest_sha256": "9da9558afc539fa22ec4ce7fc7d46be69158e5fdc3cfa56c5365c320a18cd268"
+    },
+    "0006": {
+      "train.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "dec6e76e6922c612de6bdb68235d674a63dc796e24dd1f0d39c0779a4b6ed04d",
+      "native_manifest_sha256": "d1ec780475f9effb0728580e9515af568a64624d010eeb6abd5ddb3d94c2af95"
+    },
+    "0007": {
+      "train.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "41a38efbae9bedb6ef94b5493b9bf1b1c72ed3db0664f29d0bde05a4264b1c6c",
+      "native_manifest_sha256": "25c91e30cd2957ef49f01f2d11bfdf07d5c9e01400bfb7ff11602ed6a35efdbe"
+    },
+    "0008": {
+      "train.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "2b0c0add9e5ad39b1000f067e482b6a47cd5c94c6b7bd0fd796429667f709bed",
+      "native_manifest_sha256": "0301633d8185c023434562289b794d0675d7b5bb38031d78be088b8e8f982853"
+    },
+    "0009": {
+      "train.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "4ae9decc4a78e946ca06fe1825a0726ac684fa45ff55c5305e740fe42c0b418b",
+      "native_manifest_sha256": "fe6a6bcd5dc07c86d01ff1beec76986559b7e646cdc9a0a78747a1b95b8d13e7"
+    },
+    "0010": {
+      "train.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "03f02bf6f3905f15263874c8d358a4341bb4965b186a0f686181f54888bc8dad",
+      "native_manifest_sha256": "9af65f33c68902eab7a30abd694f7c5069b908a6ef90816e3465a15386ea4e50"
+    },
+    "0011": {
+      "train.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "23d71b3cdbf3af6caed3cfec411bb9ecb8730e45d7140d2a987ceb5ee8b140ea",
+      "native_manifest_sha256": "85899b201f94621660168b9bd8b67f817ff911a2a14912855ad6bd35ac2fde22"
+    }
+  },
+  "verification": "Every native record, value, timestamp, annotation, task, and scoped input matched.",
+  "source_audit": {
+    "source_device_rows": 2740608,
+    "excluded_rows": 1968347
+  }
+}

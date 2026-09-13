@@ -1,0 +1,13 @@
+{
+  "epoch": 10,
+  "completed_epochs": 10,
+  "cursor": null,
+  "steps": 5430,
+  "examples_seen": 340890,
+  "elapsed_seconds": 1891.8539679630003,
+  "best_validation_loss": 0.013334033389886221,
+  "validation_no_improvement": 3,
+  "stop_reason": "validation_patience",
+  "full_data_training_complete": true,
+  "selected_checkpoint": "best.pt"
+}

@@ -1,0 +1,17 @@
+{
+  "epoch": 4,
+  "completed_epochs": 4,
+  "cursor": {
+    "file": 17,
+    "group": 0,
+    "batch": 8
+  },
+  "steps": 22000,
+  "examples_seen": 1407720,
+  "elapsed_seconds": 7207.138105782,
+  "best_validation_loss": 0.01695284384117785,
+  "validation_no_improvement": 0,
+  "stop_reason": "training_time_limit",
+  "full_data_training_complete": true,
+  "selected_checkpoint": "best.pt"
+}

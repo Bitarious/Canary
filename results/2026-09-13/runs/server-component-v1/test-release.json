@@ -1,0 +1,7 @@
+{
+  "checkpoint_sha256": "54b5ea4d851460a08db9a26d7cfea5e8fc45d4dd8a056beeda3ac8b9eb6d307c",
+  "test_sha256": "2bbaba08d4892a59feca473ec528c065efb39d2e8a18f0b95229e9b9604482d6",
+  "protocol_sha256": "a9e28d69d00a81eaf260f2ad084510f5d1843406fdcf8732770bcdb0c350e27b",
+  "released_at": "2026-09-13T05:34:00.229389+00:00",
+  "further_training_allowed": false
+}

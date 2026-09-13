@@ -1,0 +1,900 @@
+{
+  "models": [
+    {
+      "model": " 00MD00",
+      "rows": 7,
+      "media_type": "unidentified"
+    },
+    {
+      "model": "CT250MX500SSD1",
+      "rows": 883986,
+      "media_type": "ssd"
+    },
+    {
+      "model": "DELLBOSS VD",
+      "rows": 733227,
+      "media_type": "ssd"
+    },
+    {
+      "model": "HGST HDS5C4040ALE630",
+      "rows": 145113,
+      "media_type": "hdd"
+    },
+    {
+      "model": "HGST HDS724040ALE640",
+      "rows": 59374,
+      "media_type": "hdd"
+    },
+    {
+      "model": "HGST HMS5C4040ALE640",
+      "rows": 16787424,
+      "media_type": "hdd"
+    },
+    {
+      "model": "HGST HMS5C4040BLE640",
+      "rows": 41176381,
+      "media_type": "hdd"
+    },
+    {
+      "model": "HGST HMS5C4040BLE641",
+      "rows": 2170,
+      "media_type": "hdd"
+    },
+    {
+      "model": "HGST HUH721010ALE600",
+      "rows": 52764,
+      "media_type": "hdd"
+    },
+    {
+      "model": "HGST HUH721212ALE600",
+      "rows": 6112807,
+      "media_type": "hdd"
+    },
+    {
+      "model": "HGST HUH721212ALE604",
+      "rows": 24005795,
+      "media_type": "hdd"
+    },
+    {
+      "model": "HGST HUH721212ALN604",
+      "rows": 26904023,
+      "media_type": "hdd"
+    },
+    {
+      "model": "HGST HUH728080ALE600",
+      "rows": 3250935,
+      "media_type": "hdd"
+    },
+    {
+      "model": "HGST HUH728080ALE604",
+      "rows": 127571,
+      "media_type": "hdd"
+    },
+    {
+      "model": "HGST HUS726040ALE610",
+      "rows": 77954,
+      "media_type": "hdd"
+    },
+    {
+      "model": "HGST HUS726040ALN610",
+      "rows": 4334,
+      "media_type": "hdd"
+    },
+    {
+      "model": "HGST HUS728T8TALE6L4",
+      "rows": 25265,
+      "media_type": "hdd"
+    },
+    {
+      "model": "HP SSD S700 250GB",
+      "rows": 5002,
+      "media_type": "ssd"
+    },
+    {
+      "model": "Hitachi HDS5C3030ALA630",
+      "rows": 6641559,
+      "media_type": "hdd"
+    },
+    {
+      "model": "Hitachi HDS5C3030BLE630",
+      "rows": 1415,
+      "media_type": "hdd"
+    },
+    {
+      "model": "Hitachi HDS5C4040ALE630",
+      "rows": 4408684,
+      "media_type": "hdd"
+    },
+    {
+      "model": "Hitachi HDS722020ALA330",
+      "rows": 5306511,
+      "media_type": "hdd"
+    },
+    {
+      "model": "Hitachi HDS723020BLA642",
+      "rows": 9620,
+      "media_type": "hdd"
+    },
+    {
+      "model": "Hitachi HDS723030ALA640",
+      "rows": 1429666,
+      "media_type": "hdd"
+    },
+    {
+      "model": "Hitachi HDS723030BLE640",
+      "rows": 13232,
+      "media_type": "hdd"
+    },
+    {
+      "model": "Hitachi HDS724040ALE640",
+      "rows": 3753,
+      "media_type": "hdd"
+    },
+    {
+      "model": "Hitachi HDT721010SLA360",
+      "rows": 4159,
+      "media_type": "hdd"
+    },
+    {
+      "model": "Hitachi HDT725025VLA380",
+      "rows": 1154,
+      "media_type": "hdd"
+    },
+    {
+      "model": "MTFDDAV240TCB",
+      "rows": 169607,
+      "media_type": "ssd"
+    },
+    {
+      "model": "MTFDDAV240TDU",
+      "rows": 273,
+      "media_type": "ssd"
+    },
+    {
+      "model": "MTFDDAV480TCB",
+      "rows": 1821,
+      "media_type": "ssd"
+    },
+    {
+      "model": "MTFDDAV480TDS",
+      "rows": 12,
+      "media_type": "ssd"
+    },
+    {
+      "model": "Micron 5300 MTFDDAK480TDS",
+      "rows": 2020,
+      "media_type": "ssd"
+    },
+    {
+      "model": "Micron 5400 MTFDDAK480TGA",
+      "rows": 61,
+      "media_type": "ssd"
+    },
+    {
+      "model": "SAMSUNG HD103UJ",
+      "rows": 3710,
+      "media_type": "hdd"
+    },
+    {
+      "model": "SAMSUNG HD154UI",
+      "rows": 1972,
+      "media_type": "hdd"
+    },
+    {
+      "model": "SSDSCKKB240GZR",
+      "rows": 1138,
+      "media_type": "ssd"
+    },
+    {
+      "model": "SSDSCKKB480G8R",
+      "rows": 648,
+      "media_type": "ssd"
+    },
+    {
+      "model": "ST10000NM001G",
+      "rows": 41868,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST10000NM0086",
+      "rows": 3565542,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST1000LM024 HN",
+      "rows": 3344,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST12000NM0007",
+      "rows": 37324458,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST12000NM0008",
+      "rows": 42992989,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST12000NM000J",
+      "rows": 632857,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST12000NM001G",
+      "rows": 25094102,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST12000NM003G",
+      "rows": 12172,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST12000NM0117",
+      "rows": 18178,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST14000NM000J",
+      "rows": 215961,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST14000NM0018",
+      "rows": 93025,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST14000NM001G",
+      "rows": 20015159,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST14000NM002J",
+      "rows": 6318,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST14000NM0138",
+      "rows": 2766128,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST1500DL001",
+      "rows": 1314,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST1500DL003",
+      "rows": 30913,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST1500DM003",
+      "rows": 2827,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST16000NM000G",
+      "rows": 2975,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST16000NM000J",
+      "rows": 68146,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST16000NM001G",
+      "rows": 44044708,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST16000NM002J",
+      "rows": 552263,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST16000NM005G",
+      "rows": 48620,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST18000NM000J",
+      "rows": 120481,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST2000DL001",
+      "rows": 1447,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST2000DL003",
+      "rows": 1237,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST2000DM001",
+      "rows": 2114,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST2000VN000",
+      "rows": 4438,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST24000NM002H",
+      "rows": 2779100,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST250LM004 HN",
+      "rows": 48480,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST250LT007",
+      "rows": 3593,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST3000DM001",
+      "rows": 2205148,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST31500341AS",
+      "rows": 330431,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST31500541AS",
+      "rows": 1445217,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST3160316AS",
+      "rows": 64817,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST3160318AS",
+      "rows": 49199,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST32000542AS",
+      "rows": 119309,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST320005XXXX",
+      "rows": 5032,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST320LT007",
+      "rows": 73030,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST33000651AS",
+      "rows": 222587,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST3500320AS",
+      "rows": 992,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST4000DM000",
+      "rows": 80436155,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST4000DM001",
+      "rows": 96119,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST4000DM004",
+      "rows": 13634,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST4000DM005",
+      "rows": 95850,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST4000DX000",
+      "rows": 293560,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST4000DX002",
+      "rows": 2323,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST500LM012 HN",
+      "rows": 1779460,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST500LM021",
+      "rows": 78250,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST500LM030",
+      "rows": 560960,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST6000DM001",
+      "rows": 17479,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST6000DM004",
+      "rows": 2759,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST6000DX000",
+      "rows": 4286129,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST8000DM002",
+      "rows": 33106299,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST8000DM004",
+      "rows": 2822,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST8000DM005",
+      "rows": 68643,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST8000NM000A",
+      "rows": 285048,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST8000NM0055",
+      "rows": 45117009,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST9250315AS",
+      "rows": 85136,
+      "media_type": "hdd"
+    },
+    {
+      "model": "ST9320325AS",
+      "rows": 36563,
+      "media_type": "hdd"
+    },
+    {
+      "model": "Samsung SSD 850 EVO 1TB",
+      "rows": 1144,
+      "media_type": "ssd"
+    },
+    {
+      "model": "Samsung SSD 850 PRO 1TB",
+      "rows": 389,
+      "media_type": "ssd"
+    },
+    {
+      "model": "Samsung SSD 860 PRO 2TB",
+      "rows": 918,
+      "media_type": "ssd"
+    },
+    {
+      "model": "Samsung SSD 870 EVO 2TB",
+      "rows": 346,
+      "media_type": "ssd"
+    },
+    {
+      "model": "Seagate BarraCuda 120 SSD ZA250CM10003",
+      "rows": 2021382,
+      "media_type": "ssd"
+    },
+    {
+      "model": "Seagate BarraCuda 120 SSD ZA500CM10003",
+      "rows": 4134,
+      "media_type": "ssd"
+    },
+    {
+      "model": "Seagate BarraCuda SSD ZA2000CM10002",
+      "rows": 7991,
+      "media_type": "ssd"
+    },
+    {
+      "model": "Seagate BarraCuda SSD ZA250CM10002",
+      "rows": 1173265,
+      "media_type": "ssd"
+    },
+    {
+      "model": "Seagate BarraCuda SSD ZA500CM10002",
+      "rows": 42871,
+      "media_type": "ssd"
+    },
+    {
+      "model": "Seagate FireCuda 120 SSD ZA500GM10001",
+      "rows": 6468,
+      "media_type": "ssd"
+    },
+    {
+      "model": "Seagate IronWolf ZA250NM10002",
+      "rows": 153809,
+      "media_type": "ssd"
+    },
+    {
+      "model": "Seagate SSD",
+      "rows": 252301,
+      "media_type": "ssd"
+    },
+    {
+      "model": "TOSHIBA DT01ACA300",
+      "rows": 74177,
+      "media_type": "hdd"
+    },
+    {
+      "model": "TOSHIBA HDWE160",
+      "rows": 10436,
+      "media_type": "hdd"
+    },
+    {
+      "model": "TOSHIBA HDWF180",
+      "rows": 97681,
+      "media_type": "hdd"
+    },
+    {
+      "model": "TOSHIBA MD04ABA400V",
+      "rows": 376503,
+      "media_type": "hdd"
+    },
+    {
+      "model": "TOSHIBA MD04ABA500V",
+      "rows": 66870,
+      "media_type": "hdd"
+    },
+    {
+      "model": "TOSHIBA MG07ACA14TA",
+      "rows": 74979898,
+      "media_type": "hdd"
+    },
+    {
+      "model": "TOSHIBA MG07ACA14TEY",
+      "rows": 1235256,
+      "media_type": "hdd"
+    },
+    {
+      "model": "TOSHIBA MG08ACA16TA",
+      "rows": 37902696,
+      "media_type": "hdd"
+    },
+    {
+      "model": "TOSHIBA MG08ACA16TE",
+      "rows": 9538752,
+      "media_type": "hdd"
+    },
+    {
+      "model": "TOSHIBA MG08ACA16TEY",
+      "rows": 8030493,
+      "media_type": "hdd"
+    },
+    {
+      "model": "TOSHIBA MG09ACA16TE",
+      "rows": 101383,
+      "media_type": "hdd"
+    },
+    {
+      "model": "TOSHIBA MG10ACA20TE",
+      "rows": 7206903,
+      "media_type": "hdd"
+    },
+    {
+      "model": "TOSHIBA MG11ACA16TE",
+      "rows": 159,
+      "media_type": "hdd"
+    },
+    {
+      "model": "TOSHIBA MG11ACA24TE",
+      "rows": 869474,
+      "media_type": "hdd"
+    },
+    {
+      "model": "TOSHIBA MQ01ABF050",
+      "rows": 1037217,
+      "media_type": "hdd"
+    },
+    {
+      "model": "TOSHIBA MQ01ABF050M",
+      "rows": 836755,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WD Blue SA510 2.5 250GB",
+      "rows": 126154,
+      "media_type": "ssd"
+    },
+    {
+      "model": "WDC  WDS250G2B0A",
+      "rows": 190,
+      "media_type": "ssd"
+    },
+    {
+      "model": "WDC  WUH721414ALE6L4",
+      "rows": 84671,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC  WUH721816ALE6L0",
+      "rows": 31706,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC  WUH721816ALE6L4",
+      "rows": 4396,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD1000FYPS",
+      "rows": 20,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD1001FALS",
+      "rows": 1366,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD10EACS",
+      "rows": 60951,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD10EADS",
+      "rows": 370505,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD10EADX",
+      "rows": 15597,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD10EALS",
+      "rows": 532,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD10EARS",
+      "rows": 3442,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD10EARX",
+      "rows": 2528,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD15EADS",
+      "rows": 139,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD15EARS",
+      "rows": 1279,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD1600AAJB",
+      "rows": 5757,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD1600AAJS",
+      "rows": 126941,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD1600BPVT",
+      "rows": 2494,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD20EFRX",
+      "rows": 67422,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD2500AAJB",
+      "rows": 1116,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD2500AAJS",
+      "rows": 4531,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD2500BEVT",
+      "rows": 1140,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD2500BPVT",
+      "rows": 11572,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD2500JB",
+      "rows": 39,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD30EFRX",
+      "rows": 1271769,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD30EZRS",
+      "rows": 4424,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD30EZRX",
+      "rows": 123577,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD3200AAJB",
+      "rows": 1930,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD3200AAJS",
+      "rows": 5451,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD3200AAKS",
+      "rows": 1188,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD3200BEKT",
+      "rows": 782,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD3200BEKX",
+      "rows": 12685,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD3200LPVX",
+      "rows": 1808,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD40EFRX",
+      "rows": 76828,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD5000AAJS",
+      "rows": 327,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD5000BPKT",
+      "rows": 60024,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD5000LPCX",
+      "rows": 183547,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD5000LPVX",
+      "rows": 859143,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD5002ABYS",
+      "rows": 5544,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD5003ABYX",
+      "rows": 2254,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD60EFRX",
+      "rows": 689771,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD800AAJB",
+      "rows": 11018,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD800AAJS",
+      "rows": 14703,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD800BB",
+      "rows": 23656,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD800JB",
+      "rows": 10383,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD800JD",
+      "rows": 763,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WD800LB",
+      "rows": 1155,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WDS250G2B0A",
+      "rows": 199112,
+      "media_type": "ssd"
+    },
+    {
+      "model": "WDC WUH721414ALE6L4",
+      "rows": 16250952,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WUH721816ALE6L0",
+      "rows": 4631010,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WUH721816ALE6L4",
+      "rows": 28329363,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WUH722222ALE6L4",
+      "rows": 22472050,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WDC WUH722626ALE6L4",
+      "rows": 274161,
+      "media_type": "hdd"
+    },
+    {
+      "model": "WUH721816ALE6L4",
+      "rows": 118655,
+      "media_type": "hdd"
+    }
+  ],
+  "hdd_rule": "Source model family allowlist. SSD boot drives are retained in original archives and excluded from HDD training."
+}

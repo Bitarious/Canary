@@ -1,0 +1,42 @@
+{
+  "version": "gearbox-industrial-v1",
+  "seed": 20260913,
+  "device": "cuda",
+  "epochs": 12,
+  "batch_size": 64,
+  "world_size": 1,
+  "max_train_hours": 0.75,
+  "max_vm_hours": 3.5,
+  "gpu_name": "NVIDIA RTX PRO 6000",
+  "gpu_memory_gb": 96,
+  "vm_hourly_usd": 14.4,
+  "disk_hourly_usd": 0.01244928,
+  "budget_usd": 600,
+  "checkpoint_every_steps": 500,
+  "validation_every_steps": 2000,
+  "validation_drives": 192,
+  "test_drives": 5,
+  "encoder_lr": 0.0001,
+  "projector_lr": 0.0001,
+  "lora_lr": 5e-05,
+  "weight_decay": 0.01,
+  "clip_grad_norm": 1.0,
+  "lora": {
+    "lora_r": 8,
+    "lora_alpha": 16,
+    "lora_dropout": 0.0,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj"
+    ]
+  },
+  "objective": "Class-weighted answer-token loss on component-only observed windows and declared order perturbations.",
+  "coverage": "First epoch visits every observed training window. Later epochs use deterministic 50% original, 25% reversed, 25% shuffled views.",
+  "selection": "Lowest combined loss on equal-size natural, reversed, and shuffled validation views at completed epochs.",
+  "early_stopping_patience": 3,
+  "minimum_epochs": 3,
+  "evaluation_kind": "small-industrial-v1",
+  "test_windows_per_group": 256
+}

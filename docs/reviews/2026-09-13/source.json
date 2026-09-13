@@ -1,0 +1,7 @@
+{
+  "remote": "https://github.com/M-10001/EHL_Zurich_hackathon_team_piloty.git",
+  "main_revision": "6155189b10946db49f532be0f6dcf10df297d808",
+  "frontend_revision": "1e544380d0413d84271db4cc58c44b258c03f6a3",
+  "checkout": "/home/china/EHL_Zurich_hackathon_team_piloty/.local/reviews/github-20260913/main",
+  "reason": "The latest README and handoff overlap uncommitted local training documentation. An isolated checkout preserves both versions for review."
+}

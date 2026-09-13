@@ -1,0 +1,12 @@
+{
+  "objective": "Evaluate the unchanged radiator-valve model on every previously unopened eligible test window.",
+  "necessity": "The original test passed numerical and baseline gains but one household supplied only 14 changing windows, below the unchanged 32-window support threshold.",
+  "data_splits": "Same source dataset and original five held-out households. Exclude all 1,280 previously opened windows. Include every remaining eligible test window without target-based selection. Training, validation, and calibration remain unused.",
+  "parameters": "No weights or transforms change. Use the exact original validation-selected epoch-6 checkpoint, SHA256 832849aa9e65ee86d6671ccf248a2b66f3fbe71de49b21de6f6a43e0a60a0e5e.",
+  "hardware": "GPU 0 of the existing eight RTX PRO 6000 Nebius VM, after verifying it is free. No additional VM.",
+  "cost_limit": "Share the existing $50.45 component-phase reservation and $600 project ceiling. No extension to the provider deadline.",
+  "stopping": "At most 3,600 evaluation seconds plus 120 seconds setup. The parent service may stop the VM earlier. Absolute deadline 2026-09-13T07:51:32.667953+00:00",
+  "evaluation": "Same validity, paired group intervals, exact group sign test, numerical perturbations, minimum 32 changed windows per group, and sixteen exact reload predictions. Only test sample size changes.",
+  "outputs": "Separate protocol, test release, original report, original test IDs, raw predictions, metrics, and verified export. Preserve the original failed gate.",
+  "limits": "This follow-up was designed after an insufficient-support result. It uses the same five households and is not an independent replication or the original predeclared test."
+}

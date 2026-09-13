@@ -1,0 +1,14 @@
+{
+  "created_at": "2026-09-13T02:52:15.272124+00:00",
+  "objective": "Complete the required first pass through every eligible historical HDD training window, then evaluate the selected model.",
+  "decision": "Request a graceful stop after the first completed epoch if its frozen validation loss is at most 0.01. Otherwise retain the original two-epoch or seven-hour limit.",
+  "necessity": "Validation loss is low and the separate 32-device validation generation check shows numerical and order dependence. The optional second pass has no guaranteed benefit. Preserve shared compute for other component models.",
+  "data_splits": "Unchanged 11,315,069 training windows and frozen 512 validation devices. No test or calibration inputs are released before final checkpoint selection.",
+  "updated_parameters": "Unchanged temporal encoder, projector, rank-8 Gemma attention LoRA.",
+  "frozen_parameters": "All original Gemma parameters and the original data, weights, and optimizer configuration.",
+  "hardware_cost": "Existing eight-RTX PRO 6000 VM. Original $14.40/hour quote, shared $600 ceiling, and 08:34:30 UTC provider/controller stop deadline remain active.",
+  "stopping": "Signal a verified training worker only after a completed-epoch checkpoint and validation score exist. Allow the distributed loop to save a terminal result. Do not stop before a full pass.",
+  "evaluation": "Unchanged predeclared held-out success gate, numerical ablations, counterfactual comparisons, baselines, bootstrap intervals, and exact reload check.",
+  "outputs": "Keep the selected checkpoint, terminal optimizer/cursor checkpoint, original training history, this amendment, export checksums, and final test results.",
+  "training_source_changed": false
+}

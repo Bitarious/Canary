@@ -1,0 +1,46 @@
+{
+  "gemma-terms.html": {
+    "url": "https://ai.google.dev/gemma/terms",
+    "resolved_url": "https://ai.google.dev/gemma/terms",
+    "http_status": 200,
+    "retrieved_at": "2026-09-13T08:53:36.131161+00:00",
+    "source_bytes": 143794,
+    "source_sha256": "11c62745f81061c5e359a2bd542098673ed6751588714472e4febd2a9e9e7db4",
+    "stored_bytes": 13495,
+    "stored_sha256": "ca446ebab223baba2e9447b186c816f1352d61d94478b91b1bb36fbc90a20706",
+    "transformation": "Official article HTML copied without paraphrase into a standalone wrapper. Header and footer navigation omitted."
+  },
+  "gemma-prohibited-use-policy.html": {
+    "url": "https://ai.google.dev/gemma/prohibited_use_policy",
+    "resolved_url": "https://ai.google.dev/gemma/prohibited_use_policy",
+    "http_status": 200,
+    "retrieved_at": "2026-09-13T08:53:36.728250+00:00",
+    "source_bytes": 134827,
+    "source_sha256": "dbf283993ca8fc63410c1968ba9d1667f739b0322f17a1364385416de97d07a3",
+    "stored_bytes": 4430,
+    "stored_sha256": "618ca5f5fde11f52e981ba9ab5351b768a63efc43f2939962ece031652978eb5",
+    "transformation": "Official article HTML copied without paraphrase into a standalone wrapper. Header and footer navigation omitted."
+  },
+  "OpenTSLM-MIT.txt": {
+    "url": "https://raw.githubusercontent.com/OpenTSLM/OpenTSLM/2968f4b891baab4307f7e9d0043e87677b593a30/LICENSE.md",
+    "resolved_url": "https://raw.githubusercontent.com/OpenTSLM/OpenTSLM/2968f4b891baab4307f7e9d0043e87677b593a30/LICENSE.md",
+    "http_status": 200,
+    "retrieved_at": "2026-09-13T08:53:36.750951+00:00",
+    "source_bytes": 1135,
+    "source_sha256": "6c2252389337981e60871d2b27db85043bc2456d31d708965b71ea58f94a2e37",
+    "stored_bytes": 1135,
+    "stored_sha256": "6c2252389337981e60871d2b27db85043bc2456d31d708965b71ea58f94a2e37",
+    "transformation": "Unmodified source bytes."
+  },
+  "OpenTSLM-CONTRIBUTORS.md": {
+    "url": "https://raw.githubusercontent.com/OpenTSLM/OpenTSLM/2968f4b891baab4307f7e9d0043e87677b593a30/CONTRIBUTORS.md",
+    "resolved_url": "https://raw.githubusercontent.com/OpenTSLM/OpenTSLM/2968f4b891baab4307f7e9d0043e87677b593a30/CONTRIBUTORS.md",
+    "http_status": 200,
+    "retrieved_at": "2026-09-13T08:53:36.772701+00:00",
+    "source_bytes": 666,
+    "source_sha256": "e7deecb77acfbaf008454e491ffe1f3f7cbcf1fa09d19d6ae65ada523178c9ce",
+    "stored_bytes": 666,
+    "stored_sha256": "e7deecb77acfbaf008454e491ffe1f3f7cbcf1fa09d19d6ae65ada523178c9ce",
+    "transformation": "Unmodified source bytes."
+  }
+}

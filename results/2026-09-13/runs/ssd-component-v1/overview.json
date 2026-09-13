@@ -1,0 +1,59 @@
+{
+  "objective": "Test an independent OpenTSLM for ssd observed signal descriptions.",
+  "necessity": "The HDD model passed its held-out gate. This component has different signals and requires separate weights and evidence.",
+  "data": {
+    "dataset_manifest_sha256": "ebe3b8b62f0d951ed591783a1d6ef56928a37b5404ec9591d6d50b91199b843c",
+    "scope": "Describe observed signal patterns with weak rule targets. No model predicts failure or a maintenance benefit.",
+    "training_windows": 31269,
+    "independent_groups": {
+      "train": 703,
+      "validation": 166,
+      "calibration": 112,
+      "test": 159
+    },
+    "split_rules": {
+      "train": {
+        "buckets": [
+          0,
+          60
+        ],
+        "start": "2019-01-01T00:00:00+00:00",
+        "stop": "2025-01-01T00:00:00+00:00"
+      },
+      "validation": {
+        "buckets": [
+          60,
+          75
+        ],
+        "start": "2025-01-01T00:00:00+00:00",
+        "stop": "2025-10-01T00:00:00+00:00"
+      },
+      "calibration": {
+        "buckets": [
+          75,
+          85
+        ],
+        "start": "2025-01-01T00:00:00+00:00",
+        "stop": "2025-10-01T00:00:00+00:00"
+      },
+      "test": {
+        "buckets": [
+          85,
+          100
+        ],
+        "start": "2025-10-01T00:00:00+00:00",
+        "stop": "2026-04-02T00:00:00+00:00"
+      }
+    },
+    "test_numeric_data_transferred": false
+  },
+  "updated_parameters": "Temporal encoder, projector, and rank-8 Gemma attention LoRA, initialized independently from pinned upstream OpenTSLM weights.",
+  "frozen_parameters": "All original Gemma language-model parameters. No other component's fitted weights or training examples are used.",
+  "augmentation": "First epoch visits every observed training window. Later epochs use deterministic 50% original, 25% reversed, 25% shuffled views. These order perturbations are labeled numerical counterfactuals, not additional physical histories or failure events.",
+  "selection": "Lowest combined loss on equal-size natural, reversed, and shuffled validation views at completed epochs.",
+  "hardware_cost": "One assigned RTX PRO 6000 GPU inside the existing eight-GPU Nebius VM. The whole VM costs $14.40/hour plus its disk. A shared 3.5-hour component phase costs at most $50.45 and must remain inside the shared $600 ceiling and absolute VM deadline.",
+  "stopping": "At most 12 epochs or two training hours. Stop after three completed epochs without validation improvement, after at least three epochs. Stop on nonfinite values, cancellation, or the independent VM guard.",
+  "evaluation": "Freeze selected checkpoint before test release. Use one window per held-out group. Compare upstream, constant, fitted, zero numerical values, reversal, and shuffle. Require valid output, baseline gains, numerical dependence, target response, and 16 exact reload predictions.",
+  "outputs": "Source and split pins, independent model and optimizer checkpoints, validation records, raw test generations, metrics and paired-group intervals, reload proof, and compute ledger.",
+  "created_at": "2026-09-13T04:15:54.422022+00:00"
+}

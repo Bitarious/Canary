@@ -1,0 +1,60 @@
+{
+  "objective": "Test an independent OpenTSLM for pump observed signal descriptions.",
+  "necessity": "The HDD model passed its held-out gate. This component has different signals and requires separate weights and evidence.",
+  "data": {
+    "dataset_manifest_sha256": "75e6a42b87eef6551814b8df6181be6264aff819046fd26e22bc59979f5dc7e5",
+    "scope": "Describe observed pump signals on a small held-out turbine cohort. No failure or fleet-wide reliability claim.",
+    "training_windows": 18405,
+    "independent_groups": {
+      "train": 10,
+      "validation": 3,
+      "calibration": 2,
+      "test": 5
+    },
+    "split_rules": {
+      "train": {
+        "start": "2018-01-01T00:00:00+00:00",
+        "stop": "2019-01-01T00:00:00+00:00"
+      },
+      "validation": {
+        "start": "2019-01-01T00:00:00+00:00",
+        "stop": "2019-07-01T00:00:00+00:00"
+      },
+      "calibration": {
+        "start": "2019-07-01T00:00:00+00:00",
+        "stop": "2020-01-01T00:00:00+00:00"
+      },
+      "test": {
+        "start": "2020-01-01T00:00:00+00:00",
+        "stop": "2021-01-01T00:00:00+00:00"
+      }
+    },
+    "test_numeric_data_transferred": false
+  },
+  "updated_parameters": "Temporal encoder, projector, and rank-8 Gemma attention LoRA, initialized independently from pinned upstream OpenTSLM weights.",
+  "frozen_parameters": "All original Gemma language-model parameters. No other component's fitted weights or training examples are used.",
+  "augmentation": "First epoch visits every observed training window. Later epochs use deterministic 50% original, 25% reversed, 25% shuffled views. These order perturbations are labeled numerical counterfactuals, not additional physical histories or failure events.",
+  "selection": "Lowest combined loss on equal-size natural, reversed, and shuffled validation views at completed epochs.",
+  "hardware_cost": "Four independent small-study processes share the unused eighth RTX PRO 6000 GPU on the already-running eight-GPU VM. The existing total VM phase cap remains $50.45. No additional VM is allocated. The parent component phase owns provider stopping and may interrupt these jobs when it completes. Preserve checkpoints and inspect any interruption before a bounded resume.",
+  "stopping": "At most 12 epochs or 45 training minutes per model. Stop after three nonimproving completed epochs, with at least three epochs. The shared industrial service has a 90-minute limit. The parent VM's existing completion stop and absolute deadline remain controlling.",
+  "evaluation": "Freeze the selected checkpoint, then select up to 256 windows per held-out group. Average accuracy within groups before uncertainty calculations. Require five groups, positive paired group gains, exact one-sided group sign-randomization probability at most 0.05, valid outputs, correct numerical perturbation responses, and 16 exact reload predictions.",
+  "outputs": "Source and split pins, independent model and optimizer checkpoints, validation records, raw test generations, metrics and paired-group intervals, reload proof, and compute ledger.",
+  "created_at": "2026-09-13T04:51:26.860006+00:00",
+  "study_scope": "Separate small-cohort experiment. It does not inherit the large-cohort success label.",
+  "success_criteria": {
+    "scope": "Small-cohort signal interpretation. No large-cohort reliability or failure-prediction claim.",
+    "minimum_valid_output_rate": 0.95,
+    "test_groups": 5,
+    "windows_per_group": 256,
+    "minimum_changed_windows_per_group": 32,
+    "baseline_requirement": "Higher supported-class macro F1, positive lower 95% group-bootstrap accuracy gain, and one-sided exact paired group sign-randomization probability at most 0.05.",
+    "baselines": [
+      "starting",
+      "constant",
+      "zero_numerical_embeddings"
+    ],
+    "counterfactual_requirement": "Reversal and shuffle must each change at least 32 targets in every held-out group. Require positive lower group-bootstrap gain and exact paired sign-randomization probability at most 0.05 over unchanged original answers.",
+    "reload_equal_predictions": 16
+  },
+  "study_design_sha256": "b9db8764045e0c46caf3213f697085c3130c6a0825c322d1409ca0eb1c590f64"
+}

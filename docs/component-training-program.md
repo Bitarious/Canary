@@ -4,7 +4,7 @@ The user authorized this program on September 12, 2026. First, complete and eval
 
 The total compute ceiling is $600 across setup, diagnostics, HDD training, evaluation, and all later component runs. The earlier $605 console balance was user-reported before spending. It is not a current measured balance. Keep an evaluation and artifact-export reserve inside the ceiling. Do not spend on invalid data or report a failed model as working to exhaust the budget.
 
-Keep documentation and code in this local GitHub repository. The user explicitly prohibited commits and pushes. Preserve the existing Entire recording configuration and hooks.
+Keep documentation and code in this GitHub repository. The user authorized commits and upload on September 13, 2026. This supersedes the earlier prohibition. Preserve the existing Entire recording configuration and hooks.
 
 ## Success gate
 

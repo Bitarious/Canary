@@ -45,7 +45,7 @@ These checks removed targets and audit metadata before generation. No weights ch
 
 The machine-readable `artifacts/component-audit/v1/model-catalog.json` records selected checkpoint hashes, dataset pins, split counts, metrics, gate outcomes, and CPU reload counts. The catalog records fifteen evaluated runs and fourteen distinct selected checkpoints. Thirteen component categories pass. Both dated valve failures remain included.
 
-All paths are relative to the repository root. The local run directories contain selected and terminal checkpoints, source hashes, configuration, advance overviews, selection records, test protocols, raw predictions, metrics, and export receipts. Large data and model artifacts remain in the ignored local `data/` and `artifacts/` directories. No commit, push, or remote publication has occurred.
+All paths are relative to the repository root. The local run directories contain selected and terminal checkpoints, source hashes, configuration, advance overviews, selection records, test protocols, raw predictions, metrics, and export receipts. The [versioned evidence](../results/2026-09-13/README.md) copies the catalog, metrics, split manifests, and reload receipts into Git. The [release guide](project-release.md) describes selected-checkpoint and full-evaluation downloads. Raw data and machine runtime logs remain local.
 
 | Model | Run directory | Selected epoch | Selected checkpoint SHA-256 |
 | --- | --- | ---: | --- |
@@ -94,4 +94,4 @@ Controller CLI authentication is restored. All three owned VMs are stopped, with
 
 Three cloud disks remain retained. Their combined quoted storage rate is about $0.03734 per hour. No GPU compute is running. The checkpoints and full verified evaluation exports are also stored locally.
 
-All 93 tests passed in the working tree and in a fresh locked checkout. The fresh checkout rebuilt the native pilot. Entire remains enabled with its hooks and approval records present. Doctor flags the existing session's exited process, so complete session capture is not claimed. The warning and preserved history are documented in the handoff. Working tree changes remain uncommitted and unpushed.
+All 93 tests passed in the working tree and in a fresh locked checkout. The fresh checkout rebuilt the native pilot. Entire remains enabled with its hooks and approval records present. The earlier exited-session warning remains documented in the handoff. The publication preflight found no stuck sessions, and the training-source commit received an Entire checkpoint trailer. The user authorized commits and upload on September 13.

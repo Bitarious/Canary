@@ -1,0 +1,16 @@
+{
+  "epoch": 1,
+  "completed_epochs": 1,
+  "cursor": {
+    "file": 0,
+    "group": 5,
+    "batch": 1
+  },
+  "steps": 22271,
+  "examples_seen": 11335861,
+  "elapsed_seconds": 9804.573636684001,
+  "best_validation_loss": 0.00022362074014381506,
+  "stop_reason": "signal",
+  "full_data_training_complete": true,
+  "selected_checkpoint": "best.pt"
+}

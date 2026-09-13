@@ -1,0 +1,316 @@
+{
+  "source_url": "https://www.backblaze.com/cloud-storage/resources/hard-drive-test-data",
+  "discovered_at": "2026-09-12T21:33:28.334018+00:00",
+  "scope": "Every ZIP archive linked on the official Drive Stats page. No model or drive sampling.",
+  "archives": [
+    {
+      "name": "data_2013.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_2013.zip",
+      "bytes": 80983520,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_2014.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_2014.zip",
+      "bytes": 587751755,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_2015.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_2015.zip",
+      "bytes": 843026671,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q1_2016.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q1_2016.zip",
+      "bytes": 270281914,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q1_2017.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q1_2017.zip",
+      "bytes": 339084144,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q1_2018.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q1_2018.zip",
+      "bytes": 507437557,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q1_2019.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q1_2019.zip",
+      "bytes": 567789964,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q1_2020.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q1_2020.zip",
+      "bytes": 690000072,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q1_2021.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q1_2021.zip",
+      "bytes": 889786067,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q1_2022.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q1_2022.zip",
+      "bytes": 1064968390,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q1_2023.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q1_2023.zip",
+      "bytes": 819095135,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q1_2024.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q1_2024.zip",
+      "bytes": 1006502769,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q1_2025.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q1_2025.zip",
+      "bytes": 1020483699,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q1_2026.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q1_2026.zip",
+      "bytes": 1312921361,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q2_2016.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q2_2016.zip",
+      "bytes": 292369418,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q2_2017.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q2_2017.zip",
+      "bytes": 387036146,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q2_2018.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q2_2018.zip",
+      "bytes": 527461011,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q2_2019.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q2_2019.zip",
+      "bytes": 574522473,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q2_2020.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q2_2020.zip",
+      "bytes": 749304173,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q2_2021.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q2_2021.zip",
+      "bytes": 908205847,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q2_2022.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q2_2022.zip",
+      "bytes": 1103613198,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q2_2023.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q2_2023.zip",
+      "bytes": 859566204,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q2_2024.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q2_2024.zip",
+      "bytes": 1020665037,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q2_2025.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q2_2025.zip",
+      "bytes": 1067562257,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q3_2016.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q3_2016.zip",
+      "bytes": 322384270,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q3_2017.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q3_2017.zip",
+      "bytes": 426033491,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q3_2018.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q3_2018.zip",
+      "bytes": 535379672,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q3_2019.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q3_2019.zip",
+      "bytes": 600893581,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q3_2020.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q3_2020.zip",
+      "bytes": 809739697,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q3_2021.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q3_2021.zip",
+      "bytes": 972603644,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q3_2022.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q3_2022.zip",
+      "bytes": 792884358,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q3_2023.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q3_2023.zip",
+      "bytes": 983387372,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q3_2024.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q3_2024.zip",
+      "bytes": 1049339634,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q3_2025.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q3_2025.zip",
+      "bytes": 1111587745,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q4_2016.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q4_2016.zip",
+      "bytes": 337175346,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q4_2017.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q4_2017.zip",
+      "bytes": 455636340,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q4_2018.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q4_2018.zip",
+      "bytes": 547622458,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q4_2019.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q4_2019.zip",
+      "bytes": 645485182,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q4_2020.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q4_2020.zip",
+      "bytes": 866123519,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q4_2021.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q4_2021.zip",
+      "bytes": 1031929194,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q4_2022.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q4_2022.zip",
+      "bytes": 821370492,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q4_2023.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q4_2023.zip",
+      "bytes": 1010626705,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q4_2024.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q4_2024.zip",
+      "bytes": 1066033183,
+      "etag": null,
+      "last_modified": null
+    },
+    {
+      "name": "data_Q4_2025.zip",
+      "url": "https://f001.backblazeb2.com/file/Backblaze-Hard-Drive-Data/data_Q4_2025.zip",
+      "bytes": 1157851346,
+      "etag": null,
+      "last_modified": null
+    }
+  ],
+  "total_bytes": 33034506011
+}

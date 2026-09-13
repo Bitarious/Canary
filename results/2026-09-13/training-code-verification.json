@@ -1,0 +1,12 @@
+{
+  "verified_at": "2026-09-13T06:58:12.184920+00:00",
+  "passed": true,
+  "source_files": 137,
+  "checks": [
+    "fresh clone with current source overlay",
+    "locked environment",
+    "native pilot rebuild",
+    "full test suite"
+  ],
+  "pytest": "........................................................................ [ 77%]\n.....................                                                    [100%]\n93 passed in 9.48s\n"
+}

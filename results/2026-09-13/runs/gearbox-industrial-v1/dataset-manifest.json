@@ -1,0 +1,257 @@
+{
+  "format": "component-windows-v1",
+  "config": {
+    "version": "industrial-v1",
+    "study": "small-industrial-v1",
+    "split_salt": "unused-explicit-cohort",
+    "provider": "Cubico Sustainable Investments",
+    "source_type": "cubico-scada",
+    "source_url": "https://zenodo.org/records/8252025",
+    "license": "CC-BY-4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "citation": "Kelmarsh 8252025 and Penmanshiel 8253010, source signal mappings and UTC SCADA exports",
+    "cadence_us": 600000000,
+    "cadence_text": "ten-minute recorded values available after a full interval",
+    "availability": "Conservative full-interval delay. Unknown publication-bin start/end convention cannot move values earlier.",
+    "group_partitions": {
+      "cubico:Kelmarsh:1": "train",
+      "cubico:Penmanshiel:8": "train",
+      "cubico:Penmanshiel:11": "train",
+      "cubico:Kelmarsh:5": "train",
+      "cubico:Penmanshiel:15": "train",
+      "cubico:Penmanshiel:7": "train",
+      "cubico:Kelmarsh:3": "train",
+      "cubico:Penmanshiel:1": "train",
+      "cubico:Penmanshiel:5": "train",
+      "cubico:Kelmarsh:6": "train",
+      "cubico:Kelmarsh:2": "validation",
+      "cubico:Penmanshiel:13": "validation",
+      "cubico:Penmanshiel:12": "validation",
+      "cubico:Penmanshiel:2": "calibration",
+      "cubico:Kelmarsh:4": "calibration",
+      "cubico:Penmanshiel:10": "test",
+      "cubico:Penmanshiel:14": "test",
+      "cubico:Penmanshiel:4": "test",
+      "cubico:Penmanshiel:6": "test",
+      "cubico:Penmanshiel:9": "test"
+    },
+    "partitions": {
+      "train": {
+        "start": "2018-01-01T00:00:00+00:00",
+        "stop": "2019-01-01T00:00:00+00:00"
+      },
+      "validation": {
+        "start": "2019-01-01T00:00:00+00:00",
+        "stop": "2019-07-01T00:00:00+00:00"
+      },
+      "calibration": {
+        "start": "2019-07-01T00:00:00+00:00",
+        "stop": "2020-01-01T00:00:00+00:00"
+      },
+      "test": {
+        "start": "2020-01-01T00:00:00+00:00",
+        "stop": "2021-01-01T00:00:00+00:00"
+      }
+    },
+    "component": "gearbox",
+    "scope": "Describe observed gearbox signals on a small held-out turbine cohort. No failure or fleet-wide reliability claim.",
+    "channels": {
+      "gear_oil_temperature": {
+        "source_column": "Gear oil temperature (\u00b0C)",
+        "unit": "degC",
+        "minimum_band": 1.0,
+        "description": "gearbox oil temperature in Celsius"
+      },
+      "gear_oil_inlet_temperature": {
+        "source_column": "Gear oil inlet temperature (\u00b0C)",
+        "unit": "degC",
+        "minimum_band": 1.0,
+        "description": "gearbox oil inlet temperature in Celsius"
+      }
+    }
+  },
+  "source_manifest_sha256": "9aca01a18232264b397a43867ee4b302d96fb8c3900180e88fd9cd60a14a1bab",
+  "audit": {
+    "windows_validation": 2780,
+    "patterns_validation:falling": 1785,
+    "patterns_validation:rising": 1776,
+    "patterns_validation:fluctuating without a clear net trend": 1999,
+    "windows_calibration": 1870,
+    "patterns_calibration:falling": 1244,
+    "patterns_calibration:fluctuating without a clear net trend": 1244,
+    "patterns_calibration:rising": 1252,
+    "windows_train": 14628,
+    "patterns_train:fluctuating without a clear net trend": 9567,
+    "patterns_train:rising": 9788,
+    "patterns_train:falling": 9901,
+    "windows_test": 8815,
+    "patterns_test:falling": 5718,
+    "patterns_test:fluctuating without a clear net trend": 6500,
+    "patterns_test:rising": 5412
+  },
+  "drives": {
+    "train": [
+      "cubico:Kelmarsh:1:gearbox",
+      "cubico:Kelmarsh:3:gearbox",
+      "cubico:Kelmarsh:5:gearbox",
+      "cubico:Kelmarsh:6:gearbox",
+      "cubico:Penmanshiel:11:gearbox",
+      "cubico:Penmanshiel:15:gearbox",
+      "cubico:Penmanshiel:1:gearbox",
+      "cubico:Penmanshiel:5:gearbox",
+      "cubico:Penmanshiel:7:gearbox",
+      "cubico:Penmanshiel:8:gearbox"
+    ],
+    "validation": [
+      "cubico:Kelmarsh:2:gearbox",
+      "cubico:Penmanshiel:12:gearbox",
+      "cubico:Penmanshiel:13:gearbox"
+    ],
+    "calibration": [
+      "cubico:Kelmarsh:4:gearbox",
+      "cubico:Penmanshiel:2:gearbox"
+    ],
+    "test": [
+      "cubico:Penmanshiel:10:gearbox",
+      "cubico:Penmanshiel:14:gearbox",
+      "cubico:Penmanshiel:4:gearbox",
+      "cubico:Penmanshiel:6:gearbox",
+      "cubico:Penmanshiel:9:gearbox"
+    ]
+  },
+  "groups": {
+    "train": [
+      "cubico:Kelmarsh:1",
+      "cubico:Kelmarsh:3",
+      "cubico:Kelmarsh:5",
+      "cubico:Kelmarsh:6",
+      "cubico:Penmanshiel:1",
+      "cubico:Penmanshiel:11",
+      "cubico:Penmanshiel:15",
+      "cubico:Penmanshiel:5",
+      "cubico:Penmanshiel:7",
+      "cubico:Penmanshiel:8"
+    ],
+    "validation": [
+      "cubico:Kelmarsh:2",
+      "cubico:Penmanshiel:12",
+      "cubico:Penmanshiel:13"
+    ],
+    "calibration": [
+      "cubico:Kelmarsh:4",
+      "cubico:Penmanshiel:2"
+    ],
+    "test": [
+      "cubico:Penmanshiel:10",
+      "cubico:Penmanshiel:14",
+      "cubico:Penmanshiel:4",
+      "cubico:Penmanshiel:6",
+      "cubico:Penmanshiel:9"
+    ]
+  },
+  "shards": {
+    "0000": {
+      "train.parquet": "082470129de71a230142165e2fa5cad4bff500066111c22e690bc1e5f0d330d8",
+      "validation.parquet": "d1f745c49b2f45c468258bcd483b38c80dbf6b8e5f93ba0522b1a29ed3d71502",
+      "calibration.parquet": "ef963e81d723b877bea54cee055ff9590fd714be421ae92704e1541c47d8ba9a",
+      "test.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "native_manifest_sha256": "2d46ba1195ca81e4dd2f83f494cd96f5110dacb71f5066e27316e8fb52e23fbd"
+    },
+    "0001": {
+      "train.parquet": "8b28fadff3b349352c4e61b3f249eaf1dea22930e362d05efa51a41c1aca1d52",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "native_manifest_sha256": "3798e870cee551f7773d02adc8beeb1fa72ed8c78d3c779e7b5f8775d0b19c63"
+    },
+    "0002": {
+      "train.parquet": "afeae882acb17e08d107ff0e45ca369a0bad0eaf7ff756bafef0303895a734b7",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "native_manifest_sha256": "ea0514d8fc17c7686a94f2465f8b3b315c602330cd129fbe71405c68c56ef0c4"
+    },
+    "0003": {
+      "train.parquet": "da3e53f197159d563195363102ce0dfcdc08ab0c376025333dbe269b9582fc49",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "native_manifest_sha256": "b9b22d2414f5d34683b0d660fb9fc58ff7594e7c040e60fc2f0c625f08650cfa"
+    },
+    "0004": {
+      "train.parquet": "f56141ce75d540bb9ce2b060e8f2e85330b5f2f619e3b1b9b267379c8cb44ca3",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "native_manifest_sha256": "ccb72723e7dce698ee3bc53e71d3e7d302a7d36a0761bf1802725aab5be8fd16"
+    },
+    "0005": {
+      "train.parquet": "483631e5d6358311543c04676834fec2ac264f00edd30dd94b71417fb7cafee7",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "native_manifest_sha256": "f26880b8e0450e45c65649933bc6b0ae50ca8a32aee131f987f160d559c6d94d"
+    },
+    "0006": {
+      "train.parquet": "61ae41dee1a2d12a7f1431626e0094fec869977613c6012e58545c938575cc22",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "native_manifest_sha256": "00428f176349dd3d39d902e28704e0131b435e1dcd817bb7dcce386b798ee670"
+    },
+    "0007": {
+      "train.parquet": "809440cc7478bf89db9c9a5735d97c5bdd2caf1b23dbcd1015a9844ab5248ec1",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "native_manifest_sha256": "a70c215972304e5824c539e2fa538c3d2e01d1e665d8f1ca57df22cd4056d93e"
+    },
+    "0008": {
+      "train.parquet": "1add219647fb540f49e1c0eae9277757018926e3ca220097499db931daf1ff4c",
+      "validation.parquet": "255e86487e556f4ef48385ef6a6fa976a6671c2a1cb45cc78cb436cea0de6557",
+      "calibration.parquet": "75c3e71cd65c2c4c6a510e169531f29b475f3cacb285ce0ab512416d544566b5",
+      "test.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "native_manifest_sha256": "482556a5cd8326bc7318f99cb19ea3b94d848018ed624dd4335dcd5ae7e3ec43"
+    },
+    "0009": {
+      "train.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "validation.parquet": "3a4a6150532e0ee7554d02b8cc100f361645d61a35cea92673145ebcc71cf877",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "be7018c1001dc514a47edd38ec4708052f644cc1966846f6938dfd62f6785c4a",
+      "native_manifest_sha256": "083aeb46fdde6b0301dd36131752da2f318911d7eecd3bd9543d6da80a30b9f7"
+    },
+    "0010": {
+      "train.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "7f0ae266a6f3431172ddc85bf9bcf0baa8cb1a2da13833b43840d7a36a4812d0",
+      "native_manifest_sha256": "a12e14cfe1df3bed55b2d172dbfaa3b0251003932c6a22fc509be4410e21f32f"
+    },
+    "0011": {
+      "train.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "3d3c56ea7f5a0897252f4fd9eb5bfff15ab2f50eb40ca792f5b4fe8f966417f8",
+      "native_manifest_sha256": "832dfaa36d235f94d29802541a293e05a23da4bf1114a048e486a7de74afa483"
+    },
+    "0012": {
+      "train.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "5b019a08e18dda74c702a9494d6669de815f867a4c7aba96cb26613548001f59",
+      "native_manifest_sha256": "bf88459e434993a259a22c58357a7566434621ea95527d2a52d73086f7db0a91"
+    },
+    "0013": {
+      "train.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "validation.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "calibration.parquet": "64009f03f07f5dfbb3414ed588c3add5e8da9655d018db27f6b9af823458d482",
+      "test.parquet": "27af507e535aba4b8708a00ffcb6510472af86bbd54ceefd3d7cd6452d89aa77",
+      "native_manifest_sha256": "3d201eb340e3934dadf7385741690370e6fe393a3f1feb349e956d2b49748179"
+    }
+  },
+  "verification": "Every native record, value, timestamp, annotation, task, and scoped input matched.",
+  "source_audit": {
+    "source_rows": 1051920,
+    "excluded_rows": 261011
+  }
+}

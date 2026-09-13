@@ -1,0 +1,35 @@
+{
+  "completed_at": "2026-09-13T08:22:12.553053+00:00",
+  "scope": "Review only. No application or presentation source edits.",
+  "user_confirmed_demo": "driftops3d",
+  "presentation_minutes": 5,
+  "local_links_checked": true,
+  "cases_verified": 3,
+  "metrics_files_hash_verified": 15,
+  "passing_categories": 13,
+  "browser_viewports": [
+    [
+      390,
+      844
+    ],
+    [
+      768,
+      1024
+    ],
+    [
+      1440,
+      900
+    ],
+    [
+      2560,
+      1440
+    ]
+  ],
+  "temporary_server_ports_closed": [
+    18965,
+    18966,
+    18967
+  ],
+  "no_training_or_cloud_compute_started": true,
+  "source_checkout_revision": "6155189b10946db49f532be0f6dcf10df297d808"
+}
