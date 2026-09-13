@@ -6,7 +6,7 @@ The public research release uses the verified Canary source, MIT licensing for o
 
 During release preparation, the repository was private and `v2026.09.13` was a draft release. Public clone and anonymous artifact-download checks remain pending until publication. This page does not claim that the project is already public.
 
-The release branch preserves the verified local evidence demo. The two later remote benchmark-inference commits remain separate. The current [architecture](architecture.md) describes what this release runs. The original `v2026.09.13` source snapshot predates those local evidence-view improvements.
+The release branch preserves the verified local evidence demo. The two later remote benchmark-inference commits remain in history; their code is excluded from this release. The current [architecture](architecture.md) describes what this release runs. The original `v2026.09.13` source snapshot predates those local evidence-view improvements.
 
 See [release notes](../CHANGELOG.md), [release verification](release-audit.md), [contribution instructions](../CONTRIBUTING.md), and [security reporting](../SECURITY.md).
 

@@ -4,7 +4,7 @@
 
 The user identified this machine's working code as the good version after a potentially unwanted teammate push. The local demo and presentation were secured in commit `bd87b0c` on `release/canary-v0.1.0`. That commit preserves the saved HDD evidence view and removes the active Entire integration.
 
-Remote main was inspected at `d5b67fd`. Its two additional commits add benchmark collection and live component-model inference. They were not merged into the verified local demo. Preserve this distinction when reviewing any later integration.
+Remote main was inspected at `d5b67fd`. Its two additional commits add benchmark collection and live component-model inference. Their code is excluded from the verified local demo. The release merge retains both commits in normal Git ancestry while preserving the local release content.
 
 Canary contains a real Backblaze data pipeline, separate component models, and a saved-evidence inspection view. Its separate 3D fleet uses synthetic telemetry and rules. Neither browser application runs fresh trained-model inference. See [the current architecture](architecture.md).
 
@@ -43,7 +43,7 @@ Normal source branches, tags, commit history, and model release archives remain 
 
 ## Public release
 
-The source uses MIT for original code. Upstream code, Gemma-derived weights, and datasets retain their separate terms. The experiment artifact release `v2026.09.13` was still a draft when inspected. The repository was private. See [the release guide](project-release.md) and [release audit](release-audit.md) for the final preparation and verification state.
+The source uses MIT for original code. Upstream code, Gemma-derived weights, and datasets retain their separate terms. The experiment artifact release `v2026.09.13` was still a draft when inspected. The repository was private. The release implementation at `b284e65` passed a fresh-checkout pilot rebuild, 97 core tests, nine demo tests, full browser evidence/navigation checks, and package builds. All 15 original archive hashes and 187 committed evidence hashes passed. See [the release guide](project-release.md) and [release audit](release-audit.md) for details.
 
 Source, model, and evidence publication must refer to their exact revisions. Preserve the selected checkpoint hashes and do not replace the original archives. An anonymous model download cannot pass while its release remains a private draft.
 

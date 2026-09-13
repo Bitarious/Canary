@@ -12,7 +12,7 @@ The hackathon training program is complete within its declared signal-descriptio
 
 ## Release work
 
-Preserve the verified local code on the release branch. Review remote changes independently before integration. The remote benchmark-inference experiment is not part of the saved-evidence demo.
+Preserve the verified local code on the release branch. Review remote changes independently before integration. The remote benchmark-inference experiment is not part of the saved-evidence demo. Its commits remain in the release ancestry so publication can preserve normal history.
 
 Remove Entire integration and its dedicated records as requested after the hackathon. Preserve normal source history and model/evaluation archives. Do not install recording hooks during setup.
 
