@@ -15,7 +15,7 @@ numpy==2.5.3
 pyarrow==25.0.1
 
 # Model weights access (Gemma / OpenTSLM checkpoints on Hugging Face)
-huggingface-hub==1.31.0
+huggingface-hub==0.36.2
 
 # Tests
 pytest==9.1.1

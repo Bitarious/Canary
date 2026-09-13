@@ -1,0 +1,14 @@
+# Running the released OpenTSLM component models on CPU (e.g. behind the 3D app's Analyze button).
+# Python 3.12 or newer. Versions match uv.lock's `training` extra.
+#   python -m venv .venv-tslm
+#   .venv-tslm/bin/pip install torch==2.8.0 --index-url https://download.pytorch.org/whl/cpu   (Windows: .venv-tslm\Scripts\pip)
+#   .venv-tslm/bin/pip install -r requirements-models.txt && .venv-tslm/bin/pip install -e . --no-deps
+#
+# Weights are not pip packages: see docs/project-release.md (checkpoints) and docs/model-setup.md
+# (gated google/gemma-3-270m base, needs a Hugging Face login that accepted the Gemma license).
+-r requirements.txt
+torch==2.8.0
+transformers==4.56.2
+accelerate==1.10.1
+sentencepiece==0.2.1
+peft==0.17.1
