@@ -168,7 +168,7 @@ export class Timeline {
     $('.tl-day').textContent = dayLabel(d);
     const date = new Date(new Date(now).getTime() + d * 86400000);
     $('.tl-date').textContent = date.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' });
-    $('.tl-mode').textContent = d < 0 ? 'Replay · model as of that day' : d === 0 ? 'Live' : 'Projected · current trends';
+    $('.tl-mode').textContent = d < 0 ? 'Replay · rules as of that day' : d === 0 ? 'Synthetic Now' : 'Projected · current trends';
     this.el.classList.toggle('projected', d > 0);
     this.el.classList.toggle('replay', d < 0);
     this.el.querySelectorAll('[data-jump]').forEach(b => b.classList.toggle('active', Number(b.dataset.jump) === d));

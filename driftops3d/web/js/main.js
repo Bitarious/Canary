@@ -3,6 +3,8 @@ import { SiteScene } from './site-scene.js';
 import { renderOverview, renderComponent, esc } from './panel.js';
 import { renderSidebar, renderTwinHead, Copilot, renderFleet, renderIncidents } from './twin.js';
 import { Timeline } from './timeline.js';
+import { renderEvidence } from './evidence.js';
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
 const $ = id => document.getElementById(id);
 const els = {
@@ -10,7 +12,7 @@ const els = {
   overview: $('overview'), panel: $('panel'), toast: $('toast'), drop: $('drop'), loading: $('loading'),
   sidebar: $('sidebar'), twinHead: $('twinHead'), twinFoot: $('twinFoot'), timeline: $('timeline'), tlVeil: $('tlVeil'),
   jobBar: $('jobBar'), jobText: $('jobText'), jobPct: $('jobPct'), jobFill: $('jobFill'),
-  views: { twin: $('twinView'), device: $('deviceView'), fleet: $('fleetView'), incidents: $('incidentsView') },
+  views: { evidence: $('evidenceView'), twin: $('twinView'), device: $('deviceView'), fleet: $('fleetView'), incidents: $('incidentsView') },
 };
 
 const state = {
@@ -30,6 +32,7 @@ async function api(path, body) {
 }
 
 let toastTimer;
+function clearToast() { clearTimeout(toastTimer); els.toast.hidden = true; }
 function toast(msg, error = false, ms = 4500) {
   els.toast.innerHTML = msg;
   els.toast.classList.toggle('error', error);
@@ -63,7 +66,7 @@ function showView(name, { crossfade = false } = {}) {
   if (state.view === name) return;
   const from = state.view;
   state.view = name;
-  const fade = crossfade && from && els.views[from] && !els.views[from].hidden;
+  const fade = !reducedMotion.matches && crossfade && from && els.views[from] && !els.views[from].hidden;
   for (const [k, el] of Object.entries(els.views)) {
     el.hidden = k !== name && !(fade && k === from);
     el.classList.remove('xf-in', 'xf-out');
@@ -85,6 +88,14 @@ function showView(name, { crossfade = false } = {}) {
       if (from === 'device') deviceScene?.setActive(false);
     }, 900);
   }
+  setPanelModal(false);
+  if (from === 'device' && name !== 'device' && !els.panel.hidden) {
+    els.panel.hidden = true; state.selected = null; deviceScene?.select(null);
+  }
+  document.body.classList.remove('component-open');
+  $('originBanner').innerHTML = name === 'evidence'
+    ? '<span>Real Backblaze telemetry · saved trained-model output</span><a href="#/site/site-a">Explore the synthetic twin →</a>'
+    : '<span>Synthetic telemetry · illustrative rules · no trained model</span><a href="#/evidence/hdd-rising">Inspect saved HDD result →</a>';
   const tab = name === 'device' ? 'twin' : name;
   document.querySelectorAll('.tabs a').forEach(a => a.classList.toggle('active', a.dataset.tab === tab));
   els.analyze.hidden = name !== 'device' && name !== 'twin';
@@ -101,11 +112,13 @@ function go(hash, opts = {}) {
 }
 
 async function route() {
+  clearToast();
   const opts = pendingOpts;
   pendingOpts = {};
   const parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
   try {
     if (parts[0] === 'device' && parts[1]) return await openDevice(decodeURIComponent(parts[1]), opts);
+    if (parts[0] === 'evidence') { showView('evidence'); tl?.pause(); return await renderEvidence(els.views.evidence, parts[1] || 'hdd-rising', api); }
     if (parts[0] === 'fleet') return await openFleet();
     if (parts[0] === 'incidents') return await openIncidents();
     if (parts[0] === 'site' && parts[1]) return await openSite(parts[1], parts[2] === 'rack' ? parts[3] : null, opts);
@@ -115,7 +128,7 @@ async function route() {
     toast(esc(err.message), true);
   }
 }
-window.addEventListener('hashchange', route);
+window.addEventListener('hashchange', () => { document.querySelector('.more-menu').open = false; route(); });
 
 // ------------------------------------------------------------------------------------ twin (site / rack)
 
@@ -129,7 +142,7 @@ async function refreshSites() {
 async function openSite(siteId, rackId, opts = {}) {
   showView('twin', { crossfade: state.view === 'device' && !!siteScene?.zoomed });
   const scene = getSiteScene();
-  if (!copilot) copilot = new Copilot($('copilot'), { api, onOpenDevice: id => openDeviceAnimated(id), onFocus: onCopilotFocus });
+  if (!copilot) copilot = new Copilot($('copilot'), { api, onReturnNow: () => tl?.setDay(0), onOpenDevice: id => openDeviceAnimated(id), onFocus: onCopilotFocus });
   let freshSite = false;
   if (!state.site || state.site.id !== siteId) {
     state.site = await api(`/api/sites/${siteId}`);
@@ -148,6 +161,11 @@ async function openSite(siteId, rackId, opts = {}) {
   scene.focusDevice(opts.focusDevice || null);
   if (!freshSite) applyFrame();
   paintTwin();
+  if (opts.focusSidebar) {
+    const destination = state.rackId ? els.sidebar.querySelector('[data-open]') : els.sidebar.querySelector(`[data-site="${CSS.escape(siteId)}"]`);
+    destination?.focus({ preventScroll: true });
+    $('viewStatus').textContent = `${state.site.name}${state.rackId ? `, ${state.site.racks.find(r => r.id === state.rackId)?.name}` : ''} selected. Synthetic telemetry and illustrative rules.`;
+  }
   // A newly opened site is scanned once so its health colours are revealed by the model.
   if (freshSite) analyzeTwin({ scope: null, data: new Promise(r => setTimeout(() => r(state.site), 700)), quiet: true });
   copilot.setSite(state.site);
@@ -159,7 +177,7 @@ async function openSite(siteId, rackId, opts = {}) {
 
 /** From the twin, zoom into the server first (others hide, server slides out), then show the device view. */
 async function openDeviceAnimated(id) {
-  if (state.view === 'twin' && siteScene?.slabs.has(id) && !state.twinScanning && !state.zooming) {
+  if (!reducedMotion.matches && state.view === 'twin' && siteScene?.slabs.has(id) && !state.twinScanning && !state.zooming) {
     state.zooming = true;
     try {
       siteScene.focusDevice(null);
@@ -181,16 +199,21 @@ async function openDeviceAnimated(id) {
 }
 
 function paintTwin() {
+  const active = document.activeElement;
+  const focusAttribute = els.sidebar.contains(active)
+    ? ['data-site', 'data-open', 'data-drift', 'data-rack-pattern', 'data-clear-rack'].find(name => active.hasAttribute(name)) : null;
+  const focusValue = focusAttribute ? active.getAttribute(focusAttribute) : null;
   const s = state.frameSite || state.site;
   const when = tl?.data && !tl.isNow ? { day: tl.day, projected: tl.isProjected } : null;
   renderSidebar(els.sidebar, { sites: state.sites, site: s, rackId: state.rackId, when });
   renderTwinHead(els.twinHead, els.twinFoot, s, state.rackId, when);
+  if (focusAttribute) els.sidebar.querySelector(`[${focusAttribute}="${CSS.escape(focusValue)}"]`)?.focus({ preventScroll: true });
   els.siteHealth.innerHTML = s ? `<span>Site health${when ? ` · ${when.day > 0 ? '+' : '−'}${Math.abs(when.day)}d` : ''}</span><b class="s-${s.health >= 80 ? 'healthy' : s.health >= 65 ? 'watch' : 'elevated'}">${s.health == null ? '—' : Math.round(s.health)}</b><span>/100</span>
     ${s.live ? '<span class="chip">live devices</span>' : '<span class="chip demo-chip">demo data</span>'}` : '';
   if (state.view === 'twin' && !state.twinScanning) {
     const rack = s?.racks.find(r => r.id === state.rackId);
     els.analyze.innerHTML = `<span class="ico">◎</span> Analyze ${rack ? esc(rack.name) : 'site'}`;
-    els.analyze.title = rack ? `Re-run the model on every device in ${rack.name}` : 'Re-run the model on every device at this site';
+    els.analyze.title = rack ? `Re-run illustrative rules on every device in ${rack.name}` : 'Re-run illustrative rules on every device at this site';
   }
 }
 
@@ -300,7 +323,7 @@ function frameSite(site, data, i) {
       id: `${l.rack_id}-${l.group}`, rack_id: l.rack_id, group: l.group, devices: l.devices,
       severity: l.status, title: `${l.rack_name}: ${GROUP_NOUN[l.group] || l.group} drift on ${l.devices.length} devices`,
       text: `${l.devices.length} devices in ${l.rack_name} degrading the same way ${when}. ` +
-        (projected ? 'Extrapolated from current trends if nothing is done.' : 'Replayed from the model\'s results on that day.'),
+        (projected ? 'Extrapolated from current trends if nothing is done.' : 'Replayed from illustrative rules using that day’s available runs.'),
     })),
   };
 }
@@ -315,6 +338,7 @@ function applyFrame() {
   els.tlVeil.hidden = !tl.isProjected;
   els.views.twin.classList.toggle('tm-replay', tl.day < 0);
   els.views.twin.classList.toggle('tm-projected', tl.isProjected);
+  copilot?.setCutoff(live ? 'now' : { day: tl.day, projected: tl.isProjected });
   if (state.twinScanning) return;
   siteScene.refresh(state.frameSite || state.site);
   siteScene.setLinks(data.links[i], { projected: tl.isProjected });
@@ -332,14 +356,14 @@ function onCopilotFocus(focus) {
 els.sidebar.addEventListener('click', e => {
   const t = e.target.closest('button');
   if (!t) return;
-  if (t.dataset.site) return go(`#/site/${t.dataset.site}`);
-  if (t.dataset.clearRack !== undefined) return go(`#/site/${state.site.id}`);
+  if (t.dataset.site) return go(`#/site/${t.dataset.site}`, { focusSidebar: true });
+  if (t.dataset.clearRack !== undefined) return go(`#/site/${state.site.id}`, { focusSidebar: true });
   if (t.dataset.open) return openDeviceAnimated(t.dataset.open);
   if (t.dataset.drift) {
     const d = (state.frameSite || state.site).drifting.find(x => x.id === t.dataset.drift);
-    return go(`#/site/${state.site.id}/rack/${t.dataset.rack}`, { focusDevice: d.id, ask: `Status of ${d.label}?` });
+    return go(`#/site/${state.site.id}/rack/${t.dataset.rack}`, { focusSidebar: true, focusDevice: d.id, ask: `Status of ${d.label}?` });
   }
-  if (t.dataset.rackPattern) return go(`#/site/${state.site.id}/rack/${t.dataset.rackPattern}`, { ask: 'What should I do?' });
+  if (t.dataset.rackPattern) return go(`#/site/${state.site.id}/rack/${t.dataset.rackPattern}`, { focusSidebar: true, ask: 'What should I do?' });
 });
 els.sidebar.addEventListener('mouseover', e => {
   const row = e.target.closest('[data-hover-device]');
@@ -407,16 +431,55 @@ async function analyze() {
   }
 }
 
-function selectComponent(id) {
+const panelMobile = matchMedia('(max-width: 800px)');
+const modalBackground = new Map();
+function setPanelModal(on) {
+  if (on && panelMobile.matches) {
+    const nodes = [document.querySelector('.topbar'), $('originBanner'), $('jobBar'), $('loading'), $('drop'), $('toast'), $('viewStatus'),
+      ...Object.values(els.views).filter(view => view !== els.views.device),
+      ...[...els.views.device.children].filter(node => node !== els.panel)];
+    for (const node of nodes) {
+      if (!modalBackground.has(node)) modalBackground.set(node, node.inert);
+      node.inert = true;
+    }
+  } else {
+    for (const [node, inert] of modalBackground) node.inert = inert;
+    modalBackground.clear();
+  }
+  els.panel.setAttribute('aria-modal', String(on && panelMobile.matches));
+}
+panelMobile.addEventListener('change', () => setPanelModal(!els.panel.hidden));
+
+let panelReturnFocus, panelReturnId;
+function selectComponent(id, trigger) {
+  const wasOpen = !els.panel.hidden;
   const comp = id && state.analysis?.components.find(c => c.id === id);
   state.selected = comp ? id : null;
   deviceScene?.select(comp ? id : null);
-  if (!comp) { els.panel.hidden = true; return; }
+  if (comp && els.panel.hidden) {
+    panelReturnFocus = trigger || (document.activeElement === document.body ? els.analyze : document.activeElement);
+    panelReturnId = comp.id;
+  }
+  document.body.classList.toggle('component-open', !!comp);
+  if (!comp) {
+    els.panel.hidden = true;
+    setPanelModal(false);
+    if (wasOpen) requestAnimationFrame(() => {
+      const currentItem = panelReturnId && els.overview.querySelector(`button[data-id="${CSS.escape(panelReturnId)}"]`);
+      (currentItem || panelReturnFocus || els.analyze).focus({ preventScroll: true });
+    });
+    return;
+  }
+  clearToast();
   const scroll = els.panel.hidden || els.panel.dataset.id !== id ? 0 : els.panel.scrollTop;
   renderComponent(els.panel, comp, state.sim[id]);
   els.panel.dataset.id = id;
   els.panel.hidden = false;
   els.panel.scrollTop = scroll;
+  els.panel.setAttribute('role', 'dialog');
+  els.panel.setAttribute('aria-label', 'Illustrative component analysis');
+  setPanelModal(true);
+  els.panel.querySelector('.close')?.focus();
 }
 
 els.panel.addEventListener('click', e => {
@@ -427,11 +490,12 @@ els.panel.addEventListener('click', e => {
     const scroll = els.panel.scrollTop;
     renderComponent(els.panel, state.analysis.components.find(c => c.id === state.selected), state.sim[state.selected]);
     els.panel.scrollTop = scroll;
+    els.panel.querySelector(`[data-sim="${state.sim[state.selected]}"]`)?.focus({ preventScroll: true });
   }
 });
 els.overview.addEventListener('click', e => {
   const item = e.target.closest('button.item');
-  if (item) selectComponent(item.dataset.id);
+  if (item) selectComponent(item.dataset.id, item);
 });
 els.analyze.addEventListener('click', () => (state.view === 'twin' ? analyzeTwin() : analyze()));
 window.addEventListener('keydown', e => {
@@ -441,16 +505,18 @@ window.addEventListener('keydown', e => {
     else if (state.view === 'device' && !state.scanning && state.current) location.hash = els.crumbs.querySelector('.back').getAttribute('href');
     else if (state.view === 'twin' && state.rackId) go(`#/site/${state.site.id}`);
   }
-  if (state.view === 'twin' && tl?.data && !els.timeline.hidden) {
+  if (state.view === 'twin' && tl?.data && !els.timeline.hidden && els.timeline.contains(e.target)) {
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
       e.preventDefault();
       return tl.step((e.key === 'ArrowRight' ? 1 : -1) * (e.shiftKey ? 7 : 1));
     }
     if (e.key === ' ' && !e.target.closest('button')) { e.preventDefault(); return tl.timer ? tl.pause() : tl.play(); }
   }
-  if (e.key === 'Enter' && !els.analyze.disabled) {
-    if (state.view === 'device') analyze();
-    else if (state.view === 'twin') analyzeTwin();
+  if (e.key === 'Tab' && !els.panel.hidden && matchMedia('(max-width: 800px)').matches) {
+    const items = [...els.panel.querySelectorAll('button, a, input, select, [tabindex="0"]')].filter(el => !el.disabled && el.getClientRects().length);
+    const first = items[0], last = items.at(-1);
+    if (e.shiftKey && (e.target === first || !els.panel.contains(e.target))) { e.preventDefault(); last?.focus(); }
+    else if (!e.shiftKey && (e.target === last || !els.panel.contains(e.target))) { e.preventDefault(); first?.focus(); }
   }
 });
 
@@ -562,7 +628,7 @@ async function boot() {
     let status = await api('/api/status');
     if (!status.ready) {
       els.loading.hidden = false;
-      $('loadingText').textContent = `Running the model over ${status.devices} devices…`;
+      $('loadingText').textContent = `Applying illustrative rules to ${status.devices} devices…`;
       while (!status.ready) {
         await new Promise(r => setTimeout(r, 800));
         status = await api('/api/status');

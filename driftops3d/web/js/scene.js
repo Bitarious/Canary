@@ -37,6 +37,7 @@ export const ease = {
 export class Tweens {
   constructor() { this.list = []; }
   add(duration, fn, { delay = 0, easing = ease.inOut } = {}) {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { fn(1); return Promise.resolve(); }
     return new Promise(resolve => this.list.push({ start: null, duration: Math.max(1, duration), delay, fn, easing, resolve }));
   }
   update(now) {
@@ -181,7 +182,7 @@ function drawScreen(canvas, state, text = '') {
   c.fillStyle = '#e6edf6';
   c.font = '600 54px Inter, sans-serif';
   c.textAlign = 'center';
-  c.fillText('DriftOps agent', cx, h * 0.68);
+  c.fillText('Canary demo', cx, h * 0.68);
   c.fillStyle = state === 'scanning' ? '#38bdf8' : state === 'done' ? '#86efac' : '#8b9bb0';
   c.font = '500 34px Inter, sans-serif';
   c.fillText(text || (state === 'scanning' ? 'Analyzing telemetry…' : 'Telemetry ready'), cx, h * 0.8);
@@ -428,7 +429,7 @@ export class HardwareScene {
     controls.minDistance = 1.2;
     controls.maxDistance = 20;
     controls.maxPolarAngle = Math.PI * 0.49;
-    controls.autoRotate = true;
+    controls.autoRotate = !matchMedia('(prefers-reduced-motion: reduce)').matches;
     controls.autoRotateSpeed = 0.6;
     controls.addEventListener('start', () => { controls.autoRotate = false; });
 
@@ -485,7 +486,8 @@ export class HardwareScene {
 
   /** Only the visible view renders; hidden views stop their animation loop. */
   setActive(on) {
-    this.renderer.setAnimationLoop(on ? t => this._frame(t) : null);
+    this.active = on;
+    this.renderer.setAnimationLoop(on || this.state === 'scanning' ? t => this._frame(t) : null);
     if (on) { this.clock.getDelta(); this.resize(); }
   }
 
@@ -585,7 +587,7 @@ export class HardwareScene {
       this.tweens.add(1600, k => this.camera.position.lerpVectors(start, L.camera.pos, k), { delay: 900, easing: ease.inOut });
     } else {
       this.camera.position.copy(L.camera.pos).multiplyScalar(1.25);
-      this.controls.autoRotate = true;
+      this.controls.autoRotate = !matchMedia('(prefers-reduced-motion: reduce)').matches;
       this.tweens.add(1200, k => this.camera.position.lerpVectors(L.camera.pos.clone().multiplyScalar(1.25), L.camera.pos, k), { easing: ease.out });
     }
     this.controls.update();
@@ -827,6 +829,10 @@ export class HardwareScene {
   _frame(now) {
     const dt = Math.min(0.05, this.clock.getDelta());
     this.tweens.update(now);
+    if (!this.active && this.state !== 'scanning' && !this.tweens.list.length) {
+      this.renderer.setAnimationLoop(null);
+      return;
+    }
     this.controls.update();
 
     if (this._pointerEvent && this.state === 'analyzed') {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>DriftOps 3D</title>
+  <title>Canary | hardware evidence</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
@@ -19,20 +19,24 @@
 <body>
   <header class="topbar">
     <a class="brand" href="#/">
-      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><path d="M3 22c5 0 6-12 11-12s5 8 9 8 4-6 6-6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
-      <span class="brand-name">Drift<span>Ops</span></span>
+      <span class="brand-art"><img src="assets/canary-logo.png" alt=""></span>
+      <span class="brand-name">Canary</span>
     </a>
     <nav class="tabs" aria-label="Views">
       <a data-tab="twin" href="#/">Twin</a>
+      <a data-tab="evidence" href="#/evidence/hdd-rising">Evidence</a>
       <a data-tab="fleet" href="#/fleet">Fleet</a>
       <a data-tab="incidents" href="#/incidents">Incidents <span class="tab-count" id="incCount"></span></a>
     </nav>
     <div class="crumbs" id="crumbs"></div>
     <div class="controls">
       <div class="site-health" id="siteHealth"></div>
+      <details class="more-menu"><summary>More</summary>
+      <div class="more-items"><a href="#/site/site-a">Site A</a><a href="#/site/site-b">Site B</a><a href="#/site/hq">HQ laptops</a>
       <button id="benchBtn" class="btn ghost" title="Measure the computer that is running the DriftOps server (~30 s stress test + sensors). The result is stored under Local devices; it does not benchmark the server or rack you are viewing.">
         <span class="ico">⏱</span> <span class="lbl">Benchmark this computer</span>
       </button>
+      </div></details>
       <button id="analyzeBtn" class="btn primary" hidden><span class="ico">◎</span> Analyze</button>
     </div>
   </header>
@@ -42,7 +46,10 @@
     <div class="jobbar-track"><div id="jobFill"></div></div>
   </div>
 
+  <div id="originBanner" class="origin-banner"><span>Synthetic telemetry · illustrative rules · no trained model</span><a href="#/evidence/hdd-rising">Inspect saved HDD result →</a></div>
+  <div id="viewStatus" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
   <main>
+    <section id="evidenceView" class="view evidence-view" aria-label="Saved HDD evidence" hidden></section>
     <section id="twinView" class="view twin">
       <aside id="sidebar" class="sidebar"></aside>
       <div class="twin-center">
@@ -50,7 +57,7 @@
         <div id="siteLabels" class="labels"></div>
         <div id="tlVeil" class="tl-veil" hidden></div>
         <div id="twinHead" class="twin-head"></div>
-        <div id="timeline" class="timeline" hidden></div>
+        <div id="timeline" class="timeline" tabindex="0" aria-label="Synthetic timeline. Use arrow keys to change the day." hidden></div>
         <div id="twinFoot" class="twin-foot"></div>
       </div>
       <aside id="copilot" class="copilot"></aside>
@@ -74,7 +81,7 @@
     <section id="incidentsView" class="view page" hidden></section>
   </main>
 
-  <div id="loading" class="loading" hidden><div class="spinner"></div><span id="loadingText">Running the model over the fleet…</span></div>
+  <div id="loading" class="loading" hidden><div class="spinner"></div><span id="loadingText">Applying illustrative rules to the fleet…</span></div>
   <div id="toast" class="toast" hidden></div>
   <div id="drop" class="drop" hidden><div>Drop telemetry JSON to import</div></div>
 

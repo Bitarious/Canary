@@ -54,7 +54,7 @@ export function renderTwinHead(head, foot, site, rackId, when = null) {
   const rack = site.racks.find(r => r.id === rackId);
   const device = site.kind === 'office' ? 'laptop' : 'server';
   head.innerHTML = `<h1>${esc(site.name)} — Digital Twin</h1>
-    <div class="twin-sub">${site.racks.length} ${site.kind === 'office' ? 'groups' : 'racks'} · ${site.nodes} ${site.kind === 'office' ? 'laptops' : 'nodes'} · ${!when ? 'live temporal health'
+    <div class="twin-sub">${site.racks.length} ${site.kind === 'office' ? 'groups' : 'racks'} · ${site.nodes} ${site.kind === 'office' ? 'laptops' : 'nodes'} · ${!when ? 'illustrative rule health'
       : when.projected ? `<span class="tm-tag proj">projected · +${when.day} day${when.day === 1 ? '' : 's'}</span>`
       : `<span class="tm-tag replay">replay · ${-when.day} day${when.day === -1 ? '' : 's'} ago</span>`}</div>`;
   foot.innerHTML = `<span>${rack ? `${esc(rack.name)} selected · click a ${device} to open it in 3D · ask "Why?" or "What if I wait?"`
@@ -66,23 +66,25 @@ export function renderTwinHead(head, foot, site, rackId, when = null) {
 const DEFAULT_CHIPS = ['What should I do?', 'Why?', 'What if I wait 7 days?', 'Show fleet comparison'];
 
 export class Copilot {
-  constructor(el, { api, onOpenDevice, onFocus }) {
+  constructor(el, { api, onOpenDevice, onFocus, onReturnNow }) {
     this.el = el;
     this.api = api;
     this.onOpenDevice = onOpenDevice;
     this.onFocus = onFocus;
+    this.onReturnNow = onReturnNow;
     this.ctx = {};
     this.messages = [];
     this.chips = DEFAULT_CHIPS;
     this.busy = false;
     el.innerHTML = `
-      <div class="cp-head"><span class="eyebrow">DriftOps copilot</span><span class="cp-watch"><i></i><span id="cpWatch"></span></span></div>
-      <div class="cp-log" id="cpLog"></div>
+      <div class="cp-head"><span class="eyebrow">Canary copilot</span><span class="cp-watch"><i></i><span id="cpWatch"></span></span></div>
+      <div class="cp-cutoff" hidden><p>Copilot is unavailable for historical or projected dates.</p><button class="btn ghost" data-return-now>Return to Now</button></div>
+      <div class="cp-log" id="cpLog" role="log" aria-label="Illustrative copilot answers" aria-live="polite"></div>
       <div class="cp-foot">
         <div class="cp-chips" id="cpChips"></div>
-        <form class="cp-form" id="cpForm"><input id="cpInput" placeholder="Ask about any rack, server or component…" autocomplete="off">
+        <form class="cp-form" id="cpForm"><input id="cpInput" aria-label="Ask the illustrative copilot" placeholder="Ask about any rack, server or component…" autocomplete="off">
           <button aria-label="Send">→</button></form>
-        <div class="cp-note">Answers are assembled from model outputs (rule-based, no LLM).</div>
+        <div class="cp-note">Illustrative rule outputs. Risk, windows, and confidence are not trained-model predictions.</div>
       </div>`;
     this.log = el.querySelector('#cpLog');
     el.querySelector('#cpForm').addEventListener('submit', e => {
@@ -92,6 +94,7 @@ export class Copilot {
       input.value = '';
     });
     el.addEventListener('click', e => {
+      if (e.target.closest('[data-return-now]')) return this.onReturnNow?.();
       const chip = e.target.closest('[data-chip]');
       if (chip) return this.ask(chip.dataset.chip);
       const open = e.target.closest('[data-open]');
@@ -116,26 +119,38 @@ export class Copilot {
 
   setContext(ctx) { this.ctx = { ...this.ctx, ...ctx }; }
 
+  setCutoff(cutoff) {
+    this.ctx.cutoff = cutoff;
+    const blocked = cutoff !== 'now';
+    this.el.querySelector('.cp-cutoff').hidden = !blocked;
+    this.log.hidden = blocked;
+    this.el.querySelector('#cpInput').disabled = blocked;
+    this.el.querySelector('#cpForm button').disabled = blocked;
+    this.el.querySelector('#cpChips').hidden = blocked;
+  }
+
   async ask(question) {
-    if (this.busy || (this.lastQ === question && Date.now() - this.lastAt < 1500)) return;
+    if ((this.ctx.cutoff && this.ctx.cutoff !== 'now') || this.busy || (this.lastQ === question && Date.now() - this.lastAt < 1500)) return;
     this.lastQ = question;
     this.lastAt = Date.now();
     this.busy = true;
     if (!this.messages.length) this.log.innerHTML = '';
     this._append(`<div class="msg user">${esc(question)}</div>`);
-    const pending = this._append('<div class="msg bot"><div class="bot-tag">◇ DriftOps</div><div class="typing"><i></i><i></i><i></i></div></div>');
+    const pending = this._append('<div class="msg bot"><div class="bot-tag">◇ Canary</div><div class="typing"><i></i><i></i><i></i></div></div>');
     try {
-      const r = await this.api('/api/copilot', { question, context: this.ctx });
+      const requestContext = { ...this.ctx, cutoff: this.ctx.cutoff || 'now' };
+      const r = await this.api('/api/copilot', { question, context: requestContext });
       this.ctx = { ...this.ctx, ...r.focus };
       pending.outerHTML = this._render(r);
       this.chips = r.suggestions?.length ? r.suggestions : DEFAULT_CHIPS;
-      this.onFocus?.(r.focus);
+      if (!this.ctx.cutoff || this.ctx.cutoff === 'now') this.onFocus?.(r.focus);
     } catch (err) {
-      pending.outerHTML = `<div class="msg bot"><div class="bot-tag">◇ DriftOps</div><p class="s-critical">Could not answer: ${esc(err.message)}</p></div>`;
+      pending.outerHTML = `<div class="msg bot"><div class="bot-tag">◇ Canary</div><p class="s-critical">Could not answer: ${esc(err.message)}</p></div>`;
     } finally {
       this.busy = false;
       this._chips();
-      this.log.scrollTop = this.log.scrollHeight;
+      const reply = this.log.lastElementChild;
+      if (reply) this.log.scrollTop += reply.getBoundingClientRect().top - this.log.getBoundingClientRect().top - 16;
     }
   }
 
@@ -147,12 +162,14 @@ export class Copilot {
   }
 
   _chips() {
+    const focusedChip = this.el.querySelector('[data-chip]:focus')?.dataset.chip;
     this.el.querySelector('#cpChips').innerHTML = this.chips.map(c => `<button class="chip-btn" data-chip="${esc(c)}">${esc(c)}</button>`).join('');
+    if (focusedChip) this.el.querySelector(`[data-chip="${CSS.escape(focusedChip)}"]`)?.focus({ preventScroll: true });
   }
 
   _render(r) {
     const tone = r.tone || 'healthy';
-    let text = md(r.text);
+    let text = `<span class="answer-date">Illustrative rules · Now · ${esc(r.answered_at || 'current synthetic snapshot')}</span>` + md(r.text);
     text = text.replace('<b>', `<b class="s-${tone}">`);
     const c = r.card;
     const card = c ? `
@@ -163,7 +180,7 @@ export class Copilot {
         </div>
         <div class="cp-card-body">
           <div class="cp-kv"><div><div class="k">Health</div><div class="big">${c.health}<small>/100</small></div></div>
-            <div style="text-align:right"><div class="k">Failure window</div><div class="mid">${esc(c.window)}</div></div></div>
+            <div style="text-align:right"><div class="k">Illustrative window</div><div class="mid">${esc(c.window)}</div></div></div>
           <div class="k">${esc(c.trajectory_label)}</div>
           ${area(c.trajectory, COLORS[c.status])}
           <button class="btn ghost small" data-open="${esc(c.device_id)}">Open ${esc(c.device_label)} in 3D →</button>
@@ -173,7 +190,7 @@ export class Copilot {
       <div class="cp-li"><span class="sdot" style="background:${COLORS[i.status] || '#5d6c80'}"></span>
         <div class="grow"><div class="dname">${esc(i.label)}</div><div class="dmeta">${esc(i.meta)}</div></div>
         ${i.device_id ? `<button class="link" data-open="${esc(i.device_id)}">open →</button>` : ''}</div>`).join('')}</div>` : '';
-    return `<div class="msg bot"><div class="bot-tag">◇ DriftOps</div><p>${text}</p>${list}${card}</div>`;
+    return `<div class="msg bot"><div class="bot-tag">◇ Canary</div><p>${text}</p>${list}${card}</div>`;
   }
 }
 
@@ -202,7 +219,7 @@ export function renderFleet(el, rows, sites, filter) {
           <div class="seg" id="fleetStatus">${['all', 'critical', 'elevated', 'watch', 'healthy'].map(s => `<button data-status="${s}">${s}</button>`).join('')}</div>
         </div></div>
       <div class="table-wrap"><table class="fleet">
-        <thead><tr><th>Device</th><th>Site · rack</th><th>Health</th><th>Status</th><th>Trend</th><th>Top issue</th><th>7-day risk</th><th>Window</th><th>Last run</th></tr></thead>
+        <thead><tr><th>Device</th><th>Site · rack</th><th>Health</th><th>Status</th><th>Trend</th><th>Top issue</th><th>Illustrative 7-day risk</th><th>Rule window</th><th>Last run</th></tr></thead>
         <tbody id="fleetBody"></tbody></table></div></div>`;
     el.dataset.ready = '1';
   }
@@ -251,7 +268,7 @@ export function renderIncidents(el, data) {
         <div class="row-between"><span class="badge s-${c.status}">#${n + 1} · ${c.status}</span><span class="dmeta">${esc(i.site_name)} · ${esc(i.rack_name)}</span></div>
         <div class="inc-title">${esc(i.device_label)} · ${esc(short(c.name))}</div>
         ${i.evidence ? `<p class="dmeta"><b>${esc(i.evidence.signal)}:</b> ${esc(i.evidence.detail)}</p>` : ''}
-        <div class="inc-kpis"><span><small>health</small>${Math.round(c.health)}</span><span><small>7-day risk</small>${pct(c.risk_7d)}</span>
+        <div class="inc-kpis"><span><small>health</small>${Math.round(c.health)}</span><span><small>Illustrative 7-day risk</small>${pct(c.risk_7d)}</span>
           <span><small>window</small>${esc(c.failure_window.label)}</span><span><small>trend</small>${TREND_ICON(c.trend)} ${esc(c.trend)}</span></div>
         <div class="inc-action">${esc(c.action)}</div>
         ${i.associations.length ? `<div class="dmeta">Associated: ${i.associations.map(esc).join(', ')}</div>` : ''}

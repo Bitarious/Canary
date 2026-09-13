@@ -1,613 +1,625 @@
-<title>DriftOps</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
-<style>
-  :root{
-    --paper:#F7F5F1; --ink:#0F0F0E; --ink2:#5B5B58; --ink3:#96948E; --rule:rgba(15,15,14,.10); --rule2:rgba(15,15,14,.08);
-    --night:#0F0F0E; --nink:#F0EEE9; --n2:#C7C3BB; --n3:#8A857D;
-    --sans:"Söhne", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-    --serif:"Instrument Serif", ui-serif, Georgia, serif;
-    --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
-  }
-  *{box-sizing:border-box;margin:0}
-  [hidden]{display:none!important}
-  html,body{height:100%}
-  body{background:#0A0A0A;overflow:hidden;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
-  #stage{position:absolute;top:0;left:0;width:1920px;height:1080px;transform-origin:0 0}
-  .slide{position:absolute;inset:0;padding:100px 128px;opacity:0;visibility:hidden;transform:translateY(10px);
-    transition:opacity .45s ease,transform .45s ease,visibility 0s .45s;display:flex;flex-direction:column;
-    background:var(--paper);color:var(--ink)}
-  .slide.dark{background:var(--night);color:var(--nink)}
-  .slide.active{opacity:1;visibility:visible;transform:none;transition:opacity .5s ease,transform .5s ease}
-  #bar{position:absolute;top:0;left:0;height:2px;background:var(--ink);width:0;z-index:60;transition:width .45s ease}
-  .dark ~ #bar,body:has(.slide.dark.active) #bar{background:var(--nink)}
-  .eyebrow{font:500 12px/1 var(--mono);letter-spacing:.22em;color:var(--ink3);text-transform:uppercase}
-  .dark .eyebrow{color:var(--n3)}
-  .count{position:absolute;bottom:60px;right:128px;font:400 11.5px/1 var(--mono);color:var(--ink3)}
-  .dark .count{color:var(--n3)}
-  .src{position:absolute;bottom:60px;left:128px;right:220px;font:400 11.5px/1.5 var(--mono);color:var(--ink3);max-width:90ch}
-  .dark .src{color:var(--n3)}
-  .hl{font-family:var(--serif);font-weight:400;letter-spacing:-.02em;line-height:1;margin:0}
-  em{font-style:italic}
-  .frag{opacity:0;transform:translateY(6px);transition:opacity .5s ease,transform .5s ease}
-  .frag.on{opacity:1;transform:none}
-  @media (prefers-reduced-motion:reduce){.frag{opacity:1;transform:none}*{animation:none!important;transition:none!important}}
-  svg text{font-family:var(--mono)}
-
-  /* 01 hook + 09 product + 15 close */
-  .hero{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
-  .brandmark{font:500 12px/1 var(--mono);letter-spacing:.22em;color:var(--n3);text-transform:uppercase}
-  .foot{display:flex;justify-content:space-between;align-items:baseline;font:400 12px/1 var(--mono);letter-spacing:.16em;color:var(--n3);text-transform:uppercase}
-  .foot .count-inline{color:var(--n3)}
-
-  /* 02 cost */
-  .costhead{margin-top:44px;max-width:1400px}
-  .costgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:64px;margin-top:80px;padding-top:40px;border-top:1px solid var(--rule)}
-  .costk{font:500 11px/1 var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase}
-  .costn{font-family:var(--serif);font-weight:400;font-size:76px;line-height:1;letter-spacing:-.02em;margin-top:20px;font-variant-numeric:tabular-nums}
-  .costn .u{font-size:26px;color:var(--ink3)}
-  .costd{margin-top:16px;font-size:15.5px;line-height:1.5;color:var(--ink2);max-width:36ch}
-  .formula{margin-top:72px;padding-top:32px;border-top:1px solid var(--rule);font-family:var(--serif);font-style:italic;font-size:20px;line-height:1.5;max-width:90ch}
-
-  /* 03 BA */
-  .bagrid{display:grid;grid-template-columns:1.1fr 1fr;gap:120px;align-items:center;flex:1;margin-top:20px}
-  .balist{border-top:1px solid var(--rule)}
-  .balist .row{display:grid;grid-template-columns:auto 1fr;gap:32px 40px;align-items:baseline;padding:32px 0;border-bottom:1px solid var(--rule)}
-  .balist .row:last-child{border-bottom:none}
-  .balist .n{font-family:var(--serif);font-weight:400;font-size:56px;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-  .balist .l{font-size:18px;color:var(--ink2);line-height:1.4}
-
-  /* 04 AWS */
-  .flow{display:grid;grid-template-columns:repeat(4,1fr);gap:48px;margin-top:64px;padding-top:32px;border-top:1px solid var(--rule)}
-  .fst .k{font:500 11px/1 var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase}
-  .fst .h{margin-top:18px;font-family:var(--serif);font-weight:400;font-size:26px;line-height:1.2;letter-spacing:-.01em}
-  .fst .d{margin-top:14px;font-size:14.5px;line-height:1.5;color:var(--ink2)}
-  .chipsrow{margin-top:48px;display:flex;flex-wrap:wrap;gap:10px 22px;align-items:baseline;font-size:16px;color:var(--ink2)}
-  .chipsrow .lbl{font:500 11px var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase;margin-right:8px}
-  .chipsrow .n{color:var(--ink);font-weight:500}
-  .chipsrow .sep{color:#C7C3BB}
-  .bridge{margin-top:56px;padding-top:40px;border-top:1px solid var(--rule);display:grid;grid-template-columns:1fr 1fr;gap:80px}
-  .bridge .t{font-family:var(--serif);font-weight:400;font-size:30px;line-height:1.25;letter-spacing:-.01em}
-  .bridge .b{margin-top:12px;font-size:15.5px;line-height:1.55;color:var(--ink2);max-width:48ch}
-
-  /* 05 thesis */
-  .thesis{display:grid;grid-template-columns:1fr 1fr;gap:96px;margin-top:60px;padding-top:36px;border-top:1px solid var(--rule)}
-  .thesis .col .k{font:500 11px/1 var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase}
-  .thesis .col .items{margin-top:26px}
-  .thesis .item{padding:22px 0;border-bottom:1px solid var(--rule)}
-  .thesis .item:last-child{border-bottom:none}
-  .thesis .item .h{font-family:var(--serif);font-weight:400;font-size:26px;line-height:1.15;letter-spacing:-.01em}
-  .thesis .item .d{margin-top:8px;font-size:15.5px;color:var(--ink2);line-height:1.5}
-  .pipe{margin-top:56px;display:flex;align-items:baseline;gap:24px;font-family:var(--serif);font-style:italic;font-size:24px;letter-spacing:-.01em}
-  .pipe .sep{color:var(--ink3)}
-  .pipek{margin-top:56px;font:500 12px/1 var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase}
-
-  /* 06 concession */
-  .conhead{margin:44px 0 0 0}
-  .conhead h2{font-family:var(--serif);font-weight:400;font-size:108px;line-height:1;letter-spacing:-.02em;max-width:20ch}
-  .concols{margin-top:80px;padding-top:36px;border-top:1px solid var(--rule);display:grid;grid-template-columns:1fr 1fr;gap:96px}
-  .concols .k{font:500 11px/1 var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase}
-  .concols ul{list-style:none;padding:0;margin:24px 0 0;font-size:20px;line-height:1.7}
-  .concols li{padding:4px 0}
-  .conclose{margin-top:72px;font-family:var(--serif);font-weight:400;font-size:32px;line-height:1.35;letter-spacing:-.01em;max-width:42ch}
-
-  /* 07 components */
-  .compgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:48px;margin-top:72px;padding-top:36px;border-top:1px solid var(--rule)}
-  .compgrid .k{font:500 11px/1 var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase}
-  .compgrid .n{font-family:var(--serif);font-weight:400;font-size:72px;line-height:1;letter-spacing:-.02em;margin-top:22px;font-variant-numeric:tabular-nums}
-  .compgrid .d{margin-top:16px;font-size:15.5px;line-height:1.5;color:var(--ink2)}
-  .compclose{margin-top:72px;padding-top:32px;border-top:1px solid var(--rule);font-family:var(--serif);font-weight:400;font-size:26px;line-height:1.4;letter-spacing:-.01em;max-width:58ch}
-
-  /* 08 chart */
-  .chartclose{margin-top:60px;padding-top:36px;border-top:1px solid var(--rule);font-family:var(--serif);font-weight:400;font-size:32px;line-height:1.3;letter-spacing:-.01em}
-
-  /* 10 stack */
-  .stackhead{margin-top:44px}
-  .stackhead h2{font-family:var(--serif);font-weight:400;font-size:88px;line-height:1;letter-spacing:-.02em;max-width:22ch}
-  .stackhead p{margin-top:20px;font-size:22px;line-height:1.45;color:var(--ink2)}
-  .stackgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:72px;margin-top:72px;padding-top:36px;border-top:1px solid var(--rule)}
-  .sbox .k{font:500 11px/1 var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase}
-  .sbox .h{margin-top:18px;font-family:var(--serif);font-weight:400;font-size:32px;line-height:1.15;letter-spacing:-.01em}
-  .sbox .sub2{margin-top:10px;font:400 13px var(--mono);color:var(--ink3)}
-  .sbox ul{list-style:none;padding:0;margin:24px 0 0;font-size:15.5px;line-height:1.65;color:var(--ink2)}
-  .sbox li{padding:5px 0;border-bottom:1px solid var(--rule2)}
-  .sbox li:last-child{border-bottom:none}
-  .sbox li b{color:var(--ink);font-weight:500}
-  .sbox code{color:var(--ink);font:400 13px var(--mono)}
-
-  /* 11 demo */
-  .demogrid{display:grid;grid-template-columns:1fr 1fr;gap:96px;align-items:center;flex:1;margin-top:20px}
-  .demogrid h2{font-family:var(--serif);font-weight:400;font-size:96px;line-height:1;letter-spacing:-.02em}
-  .demogrid p{margin-top:32px;font-size:22px;line-height:1.5;color:var(--ink2);max-width:40ch}
-  .quote{margin-top:40px;padding:24px 0 24px 26px;border-left:2px solid var(--ink);font-family:var(--serif);font-style:italic;font-size:22px;line-height:1.4;max-width:640px}
-  .democue{margin-top:32px;font:500 11.5px var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase}
-  .panel{border:1px solid rgba(15,15,14,.14);background:#FFFFFF}
-  .panel .ph{display:flex;justify-content:space-between;align-items:center;padding:22px 28px;border-bottom:1px solid var(--rule);font:500 12px var(--mono);letter-spacing:.12em;color:var(--ink);text-transform:uppercase}
-  .panel .ph .st{display:inline-flex;align-items:center;gap:8px;font-size:11px;color:var(--ink2);text-transform:none;letter-spacing:.08em}
-  .panel .ph .st .dot{width:6px;height:6px;border-radius:50%;background:var(--ink)}
-  .panel .body{padding:32px 30px}
-  .panel .stats{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px}
-  .panel .stats .k{font:500 10.5px var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase}
-  .panel .stats .h{font-family:var(--serif);font-weight:400;font-size:72px;line-height:1;letter-spacing:-.02em;margin-top:12px;font-variant-numeric:tabular-nums}
-  .panel .stats .h .u{font-size:22px;color:var(--ink3)}
-  .panel .stats .r{text-align:right}
-  .panel .stats .r .v{margin-top:12px;font-family:var(--serif);font-weight:400;font-size:22px;letter-spacing:-.01em}
-
-  /* 12 prioritization */
-  .priog{display:grid;grid-template-columns:1fr 1.1fr;gap:96px;margin-top:60px;padding-top:36px;border-top:1px solid var(--rule);align-items:start}
-  .drivers{display:grid;grid-template-columns:1fr 1fr;gap:48px}
-  .drv .k{font:500 11px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase}
-  .drv.a .k{color:var(--ink3)}
-  .drv.b .k{color:var(--ink)}
-  .drv .n{font-family:var(--serif);font-weight:400;font-size:84px;line-height:1;letter-spacing:-.02em;margin:18px 0 8px;font-variant-numeric:tabular-nums}
-  .drv .d{font-size:14.5px;color:var(--ink2);line-height:1.55}
-  .drv .p{margin-top:16px;font:500 11px var(--mono);letter-spacing:.18em;text-transform:uppercase}
-  .drv.a .p{color:var(--ink3)}
-  .drv.b .p{color:var(--ink)}
-  .prioclose{margin-top:40px;padding-top:24px;border-top:1px solid var(--rule);font-family:var(--serif);font-style:italic;font-size:22px;line-height:1.4}
-  .planner .hd{font:500 11px var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase;padding-bottom:20px;border-bottom:1px solid rgba(15,15,14,.14)}
-  .planner .row{display:grid;grid-template-columns:auto 1fr auto;gap:24px 32px;align-items:baseline;padding:22px 0;border-bottom:1px solid var(--rule2);font-size:17px}
-  .planner .row:last-child{border-bottom:none}
-  .planner .row .num{font-family:var(--serif);font-weight:400;font-size:24px;color:var(--ink);font-variant-numeric:tabular-nums}
-  .planner .row.med .num,.planner .row.dim .num{color:var(--ink3)}
-  .planner .row .lbl{font:500 11px var(--mono);letter-spacing:.16em;text-transform:uppercase}
-  .planner .row .lbl.hi{color:var(--ink)}
-  .planner .row .lbl.med{color:var(--ink3)}
-  .planner .row.dim{color:var(--ink3);font-style:italic}
-  .planner .row b{font-weight:500}
-  .planner .row .sub{color:var(--ink2)}
-
-  /* 13 status */
-  .statushead h2{font-family:var(--serif);font-weight:400;font-size:108px;line-height:1;letter-spacing:-.02em;margin:40px 0 0}
-  .statusgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:64px;margin-top:60px;padding-top:36px;border-top:1px solid var(--rule)}
-  .stc .k{font:500 11px/1 var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase;display:flex;align-items:center;gap:8px}
-  .stc .k .dot{width:6px;height:6px;border-radius:50%}
-  .stc.built .k{color:var(--ink)}.stc.built .dot{background:var(--ink)}
-  .stc.draft .k .dot{background:var(--ink3)}
-  .stc.next .k .dot{background:#C7C3BB}
-  .stc ul{list-style:none;padding:0;margin:24px 0 0}
-  .stc li{padding:14px 0;border-bottom:1px solid var(--rule2)}
-  .stc li:last-child{border-bottom:none}
-  .stc li .t{font-size:16px;color:var(--ink);font-weight:500}
-  .stc li .m{margin-top:4px;font:400 12px var(--mono);color:var(--ink3)}
-
-  /* 14 payoff */
-  .payhead h2{font-family:var(--serif);font-weight:400;font-size:96px;line-height:1;letter-spacing:-.02em;margin:40px 0 0;max-width:22ch}
-  .paygrid{display:grid;grid-template-columns:1fr 1fr;gap:96px;margin-top:80px;padding-top:36px;border-top:1px solid var(--rule)}
-  .paygrid .k{font:500 11px/1 var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase}
-  .paygrid .big{font-family:var(--serif);font-weight:400;font-size:88px;line-height:1;letter-spacing:-.02em;margin:24px 0 0;font-variant-numeric:tabular-nums}
-  .paygrid .big.italic{font-style:italic}
-  .paygrid ul{list-style:none;padding:0;margin:36px 0 0;font-size:19px;line-height:2;color:var(--ink2)}
-
-  /* 16 sources */
-  .sourceshead h2{font-family:var(--serif);font-weight:400;font-size:76px;line-height:1;letter-spacing:-.02em;margin:32px 0 0}
-  .srclist{display:grid;grid-template-columns:1fr 1fr;gap:12px 72px;margin-top:44px}
-  .si{padding:16px 0;border-top:1px solid var(--rule)}
-  .si .claim{font-size:15.5px;font-weight:500;color:var(--ink)}
-  .si .cite{margin-top:6px;font:400 12px/1.5 var(--mono);color:var(--ink3)}
-  .honest{margin-top:32px;padding-top:24px;border-top:1px solid var(--rule);font-family:var(--serif);font-style:italic;font-size:15px;line-height:1.55;color:var(--ink2);max-width:110ch}
-</style>
-
-<div id="stage">
-<div id="bar"></div>
-
-<!-- 01 HOOK -->
-<section class="slide dark active">
-  <div class="brandmark">DriftOps &nbsp;·&nbsp; Team Piloty</div>
-  <div class="hero">
-    <h1 class="hl" style="font-size:220px;line-height:.92">It drifts.</h1>
-    <p class="frag" style="margin-top:40px;font-size:26px;line-height:1.4;color:var(--n2);max-width:30ch">Infrastructure doesn't fail suddenly. It drifts toward failure &mdash; for days.</p>
-  </div>
-  <div class="foot"><div>Trajectory, not thresholds.</div><div>01 &mdash; 16</div></div>
-</section>
-
-<!-- 02 COST -->
-<section class="slide">
-  <div class="eyebrow">02 &nbsp;·&nbsp; The stakes</div>
-  <div class="costhead">
-    <h2 class="hl" style="font-size:88px">The anatomy of impact.</h2>
-    <p style="margin-top:24px;font-size:24px;line-height:1.45;color:var(--ink2);max-width:46ch">Downtime is balance-sheet erosion &mdash; not an IT inconvenience.</p>
-  </div>
-  <div class="costgrid">
-    <div>
-      <div class="costk">Revenue burn</div>
-      <div class="costn">$5.6&ndash;9k<span class="u"> / min</span></div>
-      <div class="costd">Direct sales and transactions lost every minute the service is dark.</div>
-    </div>
-    <div class="frag">
-      <div class="costk">Cascading ops</div>
-      <div class="costn">$500M+</div>
-      <div class="costd">Class-event failures once recovery, refunds and overtime compound (Delta, 2024).</div>
-    </div>
-    <div class="frag">
-      <div class="costk">SLA credits</div>
-      <div class="costn">10&ndash;30%</div>
-      <div class="costd">Contractual service credits owed back to customers per breach tier.</div>
-    </div>
-  </div>
-  <div class="formula frag">Total downtime cost &nbsp;=&nbsp; direct + recovery + contract + reputation.</div>
-  <div class="src">Gartner (2014) &amp; Ponemon (2016) benchmarks &middot; Delta Air Lines, 2024 &middot; standard cloud service-credit tiers. Illustrative ranges.</div>
-  <div class="count">02 &mdash; 16</div>
-</section>
-
-<!-- 03 BA -->
-<section class="slide">
-  <div class="eyebrow">03 &nbsp;·&nbsp; Example case &nbsp;·&nbsp; May 2017</div>
-  <div class="bagrid">
-    <div>
-      <h2 class="hl" style="font-size:96px">One data-centre<br><em>power failure.</em></h2>
-      <p style="margin-top:32px;font-size:22px;line-height:1.5;color:var(--ink2);max-width:34ch">British Airways &mdash; a single site failure grounded the entire airline over a bank-holiday weekend.</p>
-      <p style="margin-top:24px;font-size:17px;line-height:1.6;color:var(--ink2);max-width:44ch">Power &amp; thermal are the #1 cause of major outages &mdash; ~54% (Uptime Institute). The physical layer DriftOps watches.</p>
-    </div>
-    <div class="balist frag">
-      <div class="row"><div class="n">£58M</div><div class="l">in passenger claims</div></div>
-      <div class="row"><div class="n">~75,000</div><div class="l">passengers stranded</div></div>
-      <div class="row"><div class="n">672</div><div class="l">flights cancelled</div></div>
-      <div class="row"><div class="n">3 days</div><div class="l">of disruption</div></div>
-    </div>
-  </div>
-  <div class="src">BA/CBRE settlement, 2019 (Data Center Dynamics) &middot; Uptime Institute Annual Outage Analysis 2025. Cause officially undetermined at settlement; BA attributed it to a power-supply issue.</div>
-  <div class="count">03 &mdash; 16</div>
-</section>
-
-<!-- 04 AWS -->
-<section class="slide">
-  <div class="eyebrow">04 &nbsp;·&nbsp; AWS us-east-1 &nbsp;·&nbsp; October 2025</div>
-  <h2 class="hl" style="font-size:88px;margin-top:40px;max-width:24ch">When racks are up<br>and the world is <em>down.</em></h2>
-  <div class="flow">
-    <div class="fst"><div class="k">T&#8320; &middot; Trigger</div><div class="h">DNS / DynamoDB glitch</div><div class="d">A race condition writes an empty DNS record for the regional endpoint.</div></div>
-    <div class="fst"><div class="k">Cascade</div><div class="h">Control-plane collapse</div><div class="d">New EC2 instances launch but never finish networking; failover backs up.</div></div>
-    <div class="fst"><div class="k">113 services</div><div class="h">EC2 · Lambda · SQS · IAM</div><div class="d">Core services and global control planes hosted in us-east-1 stall together.</div></div>
-    <div class="fst"><div class="k">Blast radius</div><div class="h">Global apps go dark</div><div class="d">~2,500 companies disrupted; 11M+ outage reports worldwide.</div></div>
-  </div>
-  <div class="chipsrow frag">
-    <span class="lbl">Down</span>
-    <span class="n">Snapchat</span><span class="sep">·</span>
-    <span class="n">Coinbase</span><span class="sep">·</span>
-    <span class="n">Netflix</span><span class="sep">·</span>
-    <span class="n">Disney+</span><span class="sep">·</span>
-    <em>and ~2,500 more</em>
-  </div>
-  <div class="bridge frag">
-    <div><div class="t">One region &mdash; the whole internet.</div><div class="b">us-east-1 is AWS's oldest, default region and hosts global control planes &mdash; a single fault propagates worldwide.</div></div>
-    <div><div class="t"><em>Physical power &ne; service health.</em></div><div class="b">Every rack stayed powered. The failure was in coupling and control state &mdash; a class DriftOps does not target.</div></div>
-  </div>
-  <div class="src">AWS post-event summary &amp; InfoQ DynamoDB outage postmortem, 2025 &middot; Downdetector (11M+ reports) &middot; affected apps per NBC / CNN / Technical.ly coverage.</div>
-  <div class="count">04 &mdash; 16</div>
-</section>
-
-<!-- 05 THESIS -->
-<section class="slide">
-  <div class="eyebrow">05 &nbsp;·&nbsp; The thesis</div>
-  <h2 class="hl" style="font-size:88px;margin-top:40px;max-width:22ch">Hard to avoid &mdash;<br><em>but avoidable.</em></h2>
-  <div class="thesis">
-    <div class="col">
-      <div class="k">Why it's hard</div>
-      <div class="items">
-        <div class="item"><div class="h">Hidden couplings</div><div class="d">Dependencies you can't see until one link fails them all.</div></div>
-        <div class="item"><div class="h">Thundering herd</div><div class="d">Recovery retries stampede and re-crash the system.</div></div>
-        <div class="item"><div class="h">Silent physical drift</div><div class="d">Hardware degrades for days with green dashboards.</div></div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="k">Why it's avoidable</div>
-      <div class="items">
-        <div class="item"><div class="h">Static stability</div><div class="d">Systems that keep serving even when the control plane is down.</div></div>
-        <div class="item"><div class="h">Pre-incident drift tracking</div><div class="d">Catch the degradation trajectory before T&#8320;.</div></div>
-        <div class="item"><div class="h">Multi-region active-active</div><div class="d">No single region can take the whole system down.</div></div>
-      </div>
-    </div>
-  </div>
-  <div class="pipek frag">DriftOps &nbsp;·&nbsp; the decision engine</div>
-  <div class="pipe frag">
-    <span>Trajectory</span><span class="sep">&rarr;</span>
-    <span>Risk</span><span class="sep">&rarr;</span>
-    <span>Evidence</span><span class="sep">&rarr;</span>
-    <span>Priority</span><span class="sep">&rarr;</span>
-    <span>Action</span>
-  </div>
-  <div class="count">05 &mdash; 16</div>
-</section>
-
-<!-- 06 CONCESSION -->
-<section class="slide">
-  <div class="eyebrow">06 &nbsp;·&nbsp; Let's be honest</div>
-  <div class="conhead"><h2 class="hl">Detection exists.<br><em>Deciding doesn't.</em></h2></div>
-  <div class="concols">
-    <div>
-      <div class="k">Monitoring &mdash; solved</div>
-      <ul>
-        <li>Dashboards, thresholds, anomaly detection.</li>
-        <li>SMART, ECC &amp; sensor telemetry.</li>
-      </ul>
-    </div>
-    <div class="frag">
-      <div class="k">Prediction &mdash; also solved</div>
-      <ul>
-        <li>Google + Seagate: 98% precision drive-failure ML.</li>
-        <li>Dell iDRAC · NetApp Active IQ · HPE InfoSight.</li>
-      </ul>
-    </div>
-  </div>
-  <p class="conclose frag">Yet operators still ask the one question none of them answer&nbsp;&mdash;&nbsp;<em>what do I fix first?</em></p>
-  <div class="src">Google Cloud + Seagate, 2021 (98% precision / 35% recall) &middot; Dell iDRAC &middot; NetApp &middot; HPE &mdash; each single-vendor.</div>
-  <div class="count">06 &mdash; 16</div>
-</section>
-
-<!-- 07 COMPONENTS -->
-<section class="slide">
-  <div class="eyebrow">07 &nbsp;·&nbsp; It's not just disks</div>
-  <h2 class="hl" style="font-size:88px;margin-top:40px;max-width:20ch">Every layer of the rack<br><em>drifts before it dies.</em></h2>
-  <div class="compgrid">
-    <div><div class="k">Disks</div><div class="n">1 in 4</div><div class="d">fail with zero SMART warning &mdash; real fleet of 67,814 drives.</div></div>
-    <div class="frag"><div class="k">Memory</div><div class="n">65&ndash;80%</div><div class="d">of uncorrectable failures preceded by correctable-error drift.</div></div>
-    <div class="frag"><div class="k">GPUs</div><div class="n">~1 / 3h</div><div class="d">interruption at cluster scale &mdash; 58.7% GPU-related on 16,384 GPUs.</div></div>
-    <div class="frag"><div class="k">CPUs</div><div class="n">~1 / 1k</div><div class="d">devices silently corrupt data &mdash; degradation you can't even see.</div></div>
-  </div>
-  <p class="compclose frag">The warning signs are in the data <em>before</em> the failure &mdash; on every component. Thresholds only trip at the end.</p>
-  <div class="src">Backblaze 2016 &middot; Google "DRAM Errors in the Wild" 2009 &middot; Meta Llama 3 2024 &middot; Meta/Google silent-data-corruption 2021.</div>
-  <div class="count">07 &mdash; 16</div>
-</section>
-
-<!-- 08 CHART -->
-<section class="slide">
-  <div class="eyebrow">08 &nbsp;·&nbsp; What that looks like</div>
-  <h2 class="hl" style="font-size:88px;margin-top:40px;max-width:22ch">Degrading for days.<br><em>Green on every dashboard.</em></h2>
-  <svg viewBox="0 0 1650 360" width="1650" style="margin-top:72px">
-    <line x1="0" y1="300" x2="1650" y2="300" stroke="rgba(15,15,14,.14)" stroke-width="1"></line>
-    <line x1="0" y1="70" x2="1650" y2="70" stroke="rgba(15,15,14,.18)" stroke-dasharray="2 6" stroke-width="1"></line>
-    <text x="4" y="56" font-size="12" fill="#96948E" letter-spacing=".18em">ALERT THRESHOLD</text>
-    <path d="M40,254 C400,250 700,236 950,206 C1150,178 1300,128 1470,70" stroke="#0F0F0E" stroke-width="1.6" fill="none"></path>
-    <line x1="1470" y1="30" x2="1470" y2="322" stroke="#0F0F0E" stroke-width="1"></line>
-    <text x="1470" y="348" text-anchor="middle" font-size="12" fill="#0F0F0E" letter-spacing=".2em">INCIDENT</text>
-    <text x="120" y="240" font-size="12" fill="#5B5B58" letter-spacing=".06em">drift starts &mdash; day 1</text>
-    <text x="770" y="160" font-size="12" fill="#5B5B58" letter-spacing=".06em">still "healthy" to your tools</text>
-    <circle cx="1470" cy="70" r="5" fill="#0F0F0E"></circle>
-  </svg>
-  <p class="chartclose frag"><em>DriftOps reads the slope.</em>&nbsp;&nbsp;Your threshold only sees the wire.</p>
-  <div class="count">08 &mdash; 16</div>
-</section>
-
-<!-- 09 PRODUCT -->
-<section class="slide dark">
-  <div class="eyebrow">09 &nbsp;·&nbsp; The product</div>
-  <div class="hero">
-    <h2 class="hl" style="font-size:220px;line-height:.94">DriftOps.</h2>
-    <p class="frag" style="margin-top:44px;font-size:28px;line-height:1.4;color:var(--n2);max-width:34ch">A temporal health layer that sees where your infrastructure is <em style="color:var(--nink)">going</em> &mdash; and what to do before it's an incident.</p>
-  </div>
-  <div class="foot"><div>Trajectory &nbsp;&rarr;&nbsp; Priority &nbsp;&rarr;&nbsp; Action</div><div>09 &mdash; 16</div></div>
-</section>
-
-<!-- 10 STACK -->
-<section class="slide">
-  <div class="eyebrow">10 &nbsp;·&nbsp; How it's built</div>
-  <div class="stackhead">
-    <h2 class="hl">The temporal AI <em>stack.</em></h2>
-    <p>Real dataset. Small, runnable model. Bounded compute.</p>
-  </div>
-  <div class="stackgrid">
-    <div class="sbox">
-      <div class="k">01 &middot; Data</div>
-      <div class="h">TimeNet + Backblaze</div>
-      <div class="sub2">Public HDD telemetry, verified pipeline</div>
-      <ul>
-        <li><b>3,000 drives</b> &middot; ST8000NM0055</li>
-        <li><b>547,812</b> daily observations, Jul&ndash;Dec 2024</li>
-        <li><b>13,616</b> TimeNet signal-description tasks</li>
-        <li>Disjoint splits by drive-hash; ordered cutoffs</li>
-        <li>Checksums pinned; causal windows tested</li>
-      </ul>
-    </div>
-    <div class="sbox frag">
-      <div class="k">02 &middot; Model</div>
-      <div class="h">OpenTSLM-SP on Gemma 3&nbsp;270M</div>
-      <div class="sub2">Time-series language model, runnable</div>
-      <ul>
-        <li><b>Base LM frozen</b>; encoder + projector adapted</li>
-        <li>Small enough to run on-prem &mdash; no vendor lock-in</li>
-        <li>Weights &amp; revisions pinned in <code>config/model.yaml</code></li>
-        <li>Weak SMART labels &mdash; kept honest, not oversold</li>
-      </ul>
-    </div>
-    <div class="sbox frag">
-      <div class="k">03 &middot; Compute</div>
-      <div class="h">Nebius GPU, $600 cap</div>
-      <div class="sub2">Bounded training, resumable jobs</div>
-      <ul>
-        <li>Every run: pre-declared budget &amp; stop conditions</li>
-        <li>Atomic checkpoints, tested resume</li>
-        <li><b>Held-out test partition</b>, never tuned on</li>
-        <li>Baseline comparison mandatory</li>
-      </ul>
-    </div>
-  </div>
-  <div class="src">Repo: EHL_Zurich_hackathon_team_piloty &middot; annotation method after OpenTSLM (arXiv 2410.02897) &middot; Backblaze Drive Stats, public archive.</div>
-  <div class="count">10 &mdash; 16</div>
-</section>
-
-<!-- 11 DEMO -->
-<section class="slide">
-  <div class="eyebrow">11 &nbsp;·&nbsp; Live demo &nbsp;·&nbsp; 3D digital twin</div>
-  <div class="demogrid">
-    <div>
-      <h2 class="hl">Click a rack.<br>Ask what's <em>drifting.</em></h2>
-      <p>Sites &rarr; racks &rarr; servers &rarr; components. Analyze makes the chassis transparent and colors every part by health.</p>
-      <div class="quote frag">"Inspect Drive 3 tonight &mdash; 2&ndash;6 day window, before it takes the node down."</div>
-      <div class="democue frag">▸&nbsp; Switch to live console</div>
-    </div>
-    <div class="panel frag">
-      <div class="ph"><span>Server 142 &middot; Site A / Rack 06</span><span class="st"><span class="dot"></span>Deteriorating</span></div>
-      <div class="body">
-        <div class="stats">
-          <div><div class="k">Health</div><div class="h">67<span class="u">/100</span></div></div>
-          <div class="r"><div class="k">Risk</div><div class="v">High &middot; 2&ndash;6 days</div></div>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171714">
+  <meta name="description" content="Canary: eight slides on measured hardware signal models, inspectable saved outputs, and the next operator pilot. A five-minute presentation.">
+  <title>Canary | Five-minute presentation</title>
+  <!-- Original user-supplied artwork. The fallback supports opening the repository file directly. -->
+  <meta name="canary-logo" content="./assets/canary-logo.png" data-fallback="./driftops3d/web/assets/canary-logo.png">
+  <style>
+    :root {
+      color-scheme: dark;
+      --paper: #f7f4ec;
+      --ink: #25241e;
+      --muted: #645f51;
+      --night: #171714;
+      --light: #f7f4ec;
+      --quiet: #c6bfaf;
+      --accent: #ecc35e;
+      --rule: #d9d1bf;
+      --sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --serif: Georgia, "Times New Roman", serif;
+      --mono: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html, body { margin: 0; height: 100%; }
+    body { background: #10100e; color: var(--light); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { font: inherit; }
+    button, a, [tabindex] { outline-offset: 5px; }
+    :focus-visible { outline: 3px solid #438fdf; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+    #viewport { position: fixed; inset: 0 0 68px; overflow: hidden; touch-action: pan-y; }
+    #stage { width: 1600px; height: 900px; position: absolute; left: 50%; top: 50%; transform-origin: center; transform: translate(-50%, -50%) scale(.7); }
+    .slide { position: absolute; inset: 0; padding: 58px 84px 48px; display: none; flex-direction: column; background: var(--paper); color: var(--ink); }
+    .slide.active { display: flex; animation: arrive 180ms ease-out; }
+    .slide.dark { background: var(--night); color: var(--light); }
+    .slide.accent { background: var(--accent); }
+    @keyframes arrive { from { opacity: .4; } to { opacity: 1; } }
+    .slide-header, .slide-footer { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .slide-header { min-height: 44px; margin-bottom: 45px; }
+    .brand { display: flex; align-items: center; gap: 14px; font-size: 31px; font-weight: 700; letter-spacing: -.055em; }
+    .brand img { width: 68px; height: 68px; object-fit: contain; background: #000; border-radius: 4px; }
+    .section-label, .slide-footer, .eyebrow { font-family: var(--mono); font-size: 17px; line-height: 1.5; letter-spacing: .045em; }
+    .section-label, .slide-footer { color: var(--muted); }
+    .dark .section-label, .dark .slide-footer { color: var(--quiet); }
+    .slide-footer { margin-top: auto; padding-top: 24px; }
+    h1, h2, p { margin: 0; }
+    h1, h2 { font-family: var(--serif); font-weight: 400; letter-spacing: -.052em; }
+    h1 { font-size: 108px; line-height: 1.03; }
+    h2 { font-size: 80px; line-height: 1.06; max-width: 28ch; }
+    .accent-word { color: var(--accent); }
+    .hero-layout { display: grid; grid-template-columns: .92fr 1fr; gap: 60px; align-items: center; flex: 1; }
+    .hero-copy { padding-bottom: 28px; }
+    .hero-copy p { margin-top: 34px; font-size: 29px; line-height: 1.5; color: var(--quiet); max-width: 28ch; }
+    .impact-stat { border-left: 1px solid #61573f; padding-left: 52px; }
+    .impact-stat strong { display: block; font: 160px/1.1 var(--serif); letter-spacing: -.07em; color: var(--accent); white-space: nowrap; }
+    .impact-stat p { font-size: 30px; line-height: 1.5; color: var(--quiet); margin-top: 24px; }
+    .evidence-card { border: 1px solid #55513f; padding: 30px 30px 26px; background: #22221d; }
+    .chart-top { display: flex; justify-content: space-between; gap: 20px; align-items: baseline; }
+    .chart-top .eyebrow { color: var(--quiet); }
+    .chart-top strong { font-size: 38px; font-weight: 500; letter-spacing: -.055em; font-variant-numeric: tabular-nums; }
+    .trace { width: 100%; height: auto; display: block; margin-top: 28px; overflow: visible; }
+    .trace text { font: 17px var(--mono); fill: var(--quiet); }
+    .trace .grid { stroke: #514d3f; stroke-width: 1; }
+    .trace .signal { fill: none; stroke: var(--accent); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+    .saved-output { border-top: 1px solid #55513f; padding-top: 22px; margin-top: 22px; }
+    .saved-output .eyebrow { color: var(--quiet); font-size: 15px; }
+    .saved-output p { font: 26px/1.4 var(--mono); margin-top: 10px; }
+    .metric-caption { font-size: 25px; line-height: 1.5; color: var(--muted); margin-top: 23px; }
+    .results-layout { display: grid; grid-template-columns: 1fr; gap: 52px; align-items: center; margin-top: 38px; flex: 1; }
+    .bar-chart { display: grid; gap: 26px; }
+    .bar-row { display: grid; gap: 11px; }
+    .bar-label { display: flex; justify-content: space-between; align-items: baseline; font-size: 25px; gap: 20px; }
+    .bar-label strong { font-size: 35px; font-weight: 550; font-variant-numeric: tabular-nums; }
+    .track { height: 37px; background: #e6dfd0; }
+    .fill { height: 100%; background: #a99462; }
+    .bar-row.trained .fill { background: var(--ink); }
+    .bar-row.constant .fill { background: #c7bda5; }
+    .gain { padding-left: 32px; border-left: 1px solid #c7bda5; }
+    .gain strong { display: block; font-size: 60px; font-weight: 450; letter-spacing: -.06em; white-space: nowrap; }
+    .gain p { margin-top: 16px; font-size: 23px; line-height: 1.4; max-width: 11ch; }
+    .limit-line { border-top: 1px solid var(--rule); padding-top: 23px; margin-top: 32px; font-size: 23px; color: var(--muted); }
+    .parameter-line { display: flex; gap: 24px; align-items: baseline; margin: 34px 0 30px; }
+    .parameter-line strong { font-size: 62px; letter-spacing: -.06em; font-weight: 450; }
+    .parameter-line span { font-size: 26px; color: var(--quiet); }
+    .parameter-line .fraction { margin-left: auto; color: var(--accent); }
+    .architecture { display: grid; grid-template-columns: 1.03fr .83fr .76fr 1.34fr .9fr; column-gap: 25px; row-gap: 24px; align-items: stretch; position: relative; padding-top: 85px; }
+    .arch-node { border: 1px solid #827658; padding: 25px 19px; display: flex; flex-direction: column; justify-content: center; min-height: 142px; position: relative; text-align: center; }
+    .arch-node:not(.output)::after { content: "→"; position: absolute; right: -23px; font-size: 25px; color: var(--quiet); }
+    .arch-node h3 { margin: 0; font-size: 24px; line-height: 1.25; font-weight: 500; }
+    .arch-node p { margin-top: 14px; font-size: 18px; color: var(--quiet); }
+    .arch-node.trainable { background: var(--accent); border-color: var(--accent); color: var(--ink); }
+    .arch-node.trainable p { color: #514321; }
+    .arch-node .lora { margin: 16px -8px -10px; padding: 9px 6px; font-size: 19px; background: var(--accent); color: var(--ink); }
+    .text-path { grid-column: 4 / 5; justify-self: center; color: var(--quiet); font-size: 23px; border-bottom: 1px solid #827658; padding: 0 20px 15px; }
+    .text-path span { color: var(--accent); padding-left: 18px; }
+    .architecture .text-path { order: -1; }
+    .arch-spacer { grid-column: 1 / 4; order: -1; }
+    .architecture .input { grid-column: 1; }
+    .architecture .output { border: 0; padding-right: 0; }
+    .train-stat { margin-top: 31px; color: var(--quiet); font-size: 24px; }
+    .workflow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 45px; align-items: center; flex: 1; }
+    .workflow > div { border-top: 1px solid #b18e3d; padding-top: 28px; }
+    .workflow span { font: 20px var(--mono); color: #645024; }
+    .workflow p { font: 44px/1.2 var(--serif); margin-top: 22px; max-width: 12ch; }
+    .workflow-value { font-size: 30px; margin-bottom: 45px; }
+    .model-layout { display: grid; grid-template-columns: 285px 1fr; align-items: center; gap: 80px; flex: 1; padding-top: 24px; }
+    .model-count { font-size: 238px; line-height: 1; font-family: var(--serif); letter-spacing: -.095em; }
+    .model-count-label { font-size: 27px; line-height: 1.4; max-width: 11ch; margin-top: 20px; }
+    .model-groups { display: grid; grid-template-columns: 1fr 1.1fr; gap: 26px 50px; }
+    .model-group { border-top: 1px solid #b18e3d; padding-top: 18px; }
+    .model-group h3 { margin: 0 0 16px; color: #504224; font: 17px/1.3 var(--mono); text-transform: uppercase; letter-spacing: .08em; }
+    .model-group p { font-size: 30px; line-height: 1.55; }
+    .model-group.wide { grid-row: span 2; }
+    .demo-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 34px; margin-top: 40px; }
+    .case-card { padding: 25px 28px; border: 1px solid var(--rule); }
+    .case-card .eyebrow { font-size: 18px; color: var(--muted); }
+    .mini-trace { width: 100%; height: 135px; display: block; margin: 14px 0; }
+    .mini-trace .grid { stroke: #d9d1bf; stroke-width: 1; }
+    .mini-trace .signal { fill: none; stroke: var(--ink); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+    .case-answer { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; font-size: 23px; margin-top: 16px; }
+    .case-answer strong { font-size: 29px; font-weight: 550; }
+    .case-answer.reference { padding-top: 14px; border-top: 1px solid var(--rule); color: var(--muted); }
+    .demo-actions { display: flex; align-items: center; gap: 28px; margin-top: 34px; }
+    .demo-link { background: var(--ink); color: var(--light); text-decoration: none; display: inline-flex; align-items: center; justify-content: center; min-height: 68px; padding: 14px 25px; font-size: 25px; border: 2px solid transparent; gap: 22px; }
+    .demo-link:hover { background: #494331; }
+    .demo-duration { font: 18px var(--mono); color: var(--muted); }
+    .closing { display: flex; flex-direction: column; flex: 1; justify-content: center; padding-bottom: 20px; }
+    .closing h2 { font-size: 86px; max-width: 17ch; }
+    .closing-layout { display: grid; grid-template-columns: 1fr 450px; gap: 28px; align-items: center; }
+    .closing-art { width: 450px; height: 450px; object-fit: contain; background: #000; }
+    .pilot-points { display: flex; gap: 34px; margin-top: 62px; padding-top: 28px; border-top: 1px solid #61573f; }
+    .pilot-points p { font-size: 27px; line-height: 1.35; max-width: 17ch; }
+    .pilot-points span { display: block; color: var(--accent); font: 18px var(--mono); margin-bottom: 16px; }
+    .closing-qualification { margin-top: 32px; font-size: 23px; color: var(--quiet); }
+    .incident-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px 65px; margin-top: 42px; }
+    .incident-grid > div { border-top: 1px solid var(--rule); padding-top: 20px; }
+    .incident-grid strong { display: block; font: 82px/1.1 var(--serif); letter-spacing: -.06em; }
+    .incident-grid p { margin-top: 13px; font-size: 24px; color: var(--muted); }
+    .incident-cause { font-size: 22px; color: var(--muted); margin-top: 30px; }
+    .training-slide h2 { font-size: 70px; max-width: none; }
+    .training-map { margin-top: 30px; }
+    .training-data { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+    .training-node { position: relative; border: 1px solid var(--rule); padding: 22px 20px; text-align: center; }
+    .training-node strong { display: block; font-size: 27px; font-weight: 550; }
+    .training-node span { display: block; font-size: 20px; color: var(--muted); margin-top: 12px; }
+    .training-data .training-node:not(:last-child)::after { content: "→"; position: absolute; right: -28px; top: 40px; font-size: 25px; }
+    .training-branch { margin-top: 22px; font: 18px var(--mono); color: var(--muted); }
+    .training-forward { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-top: 12px; }
+    .training-forward .fitted { background: var(--accent); border-color: var(--accent); }
+    .training-forward .fitted::after { content: "→"; position: absolute; right: -43px; top: 35px; font-size: 32px; }
+    .training-node .target-input { font-size: 17px; border-top: 1px solid var(--rule); padding-top: 10px; margin-top: 12px; }
+    .training-loop { display: flex; align-items: center; justify-content: center; gap: 25px; border-top: 1px solid var(--rule); padding-top: 23px; margin-top: 25px; font-size: 24px; }
+    .training-loop small { display: block; font-size: 18px; color: var(--muted); margin-top: 8px; }
+    .training-loop b { font-size: 32px; font-weight: 400; }
+    #progress { position: fixed; bottom: 66px; left: 0; right: 0; height: 2px; background: #4b4536; }
+    #progress-fill { background: var(--accent); height: 100%; width: 12.5%; }
+    #controls { position: fixed; bottom: 0; left: 0; right: 0; min-height: 66px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 8px 22px; background: #171714; border-top: 1px solid #373429; }
+    .control-group { display: flex; align-items: center; gap: 9px; }
+    #controls button, dialog button { border: 1px solid #75694f; color: var(--light); background: transparent; min-width: 44px; min-height: 44px; border-radius: 5px; padding: 8px 15px; cursor: pointer; }
+    #controls button:hover, dialog button:hover { background: #393426; }
+    #controls button:disabled { color: #988e78; border-color: #443d2d; cursor: default; }
+    #counter { font: 15px var(--mono); min-width: 75px; text-align: center; color: var(--light); }
+    .control-label { font: 13px var(--mono); color: var(--quiet); }
+    #timer-display { font: 16px var(--mono); color: var(--accent); }
+    dialog { color-scheme: dark; width: min(820px, calc(100vw - 30px)); max-height: calc(100dvh - 34px); padding: 28px; color: var(--light); background: #25231b; border: 1px solid #897c60; border-radius: 10px; overflow-y: auto; }
+    dialog::backdrop { background: #090805d9; }
+    .notes-header { display: flex; gap: 20px; justify-content: space-between; align-items: flex-start; }
+    .notes-header h2 { font: 600 27px/1.25 var(--sans); letter-spacing: -.03em; }
+    .notes-timing { color: var(--accent); font: 14px var(--mono); margin: 18px 0; }
+    #notes-content { font-size: 17px; line-height: 1.65; }
+    #notes-content p { margin: 0 0 18px; }
+    #notes-content h3 { font-size: 18px; margin: 26px 0 10px; }
+    #notes-content ul { padding-left: 24px; }
+    #notes-content a { color: var(--accent); overflow-wrap: anywhere; }
+    #notes-content li { margin: 6px 0; }
+    .demo-cue { background: #403721; border-left: 3px solid var(--accent); padding: 15px; }
+    .notes-tools { display: flex; flex-wrap: wrap; gap: 10px; border-top: 1px solid #665b42; padding-top: 18px; margin-top: 20px; }
+    .notes-help { margin-top: 16px; color: var(--quiet); font-size: 14px; line-height: 1.5; }
+    @media (max-width: 700px) {
+      #viewport { bottom: 64px; overflow-y: auto; }
+      #stage { position: relative; width: 100%; height: auto; left: auto; top: auto; transform: none !important; }
+      .slide { position: relative; inset: auto; padding: 25px 24px 30px; min-height: calc(100dvh - 64px); }
+      .slide-header { margin-bottom: 30px; min-height: 30px; align-items: baseline; }
+      .brand { font-size: 26px; gap: 9px; }
+      .brand img { width: 52px; height: 52px; }
+      .section-label { font-size: 11px; }
+      h1, h2, .closing h2 { font-size: clamp(39px, 9vw, 62px); line-height: 1.09; letter-spacing: -.045em; }
+      .hero-layout, .results-layout, .model-layout, .demo-layout { grid-template-columns: 1fr; gap: 26px; }
+      .hero-copy { padding: 0; }
+      .hero-copy p { font-size: 19px; margin-top: 22px; }
+      .impact-stat { border-left: 0; border-top: 1px solid #61573f; padding: 25px 0 0; }
+      .impact-stat strong { font-size: clamp(80px, 23vw, 130px); }
+      .impact-stat p { font-size: 22px; margin-top: 15px; }
+      .evidence-card { margin-top: 5px; padding: 19px; }
+      .chart-top .eyebrow { font-size: 13px; }
+      .chart-top strong { font-size: 27px; }
+      .trace { margin-top: 15px; }
+      .trace text { font-size: 32px; }
+      .saved-output { margin-top: 10px; padding-top: 16px; }
+      .saved-output .eyebrow { font-size: 11px; }
+      .saved-output p { font-size: clamp(13px, 3.8vw, 20px); }
+      .slide-footer { margin-top: 28px; padding-top: 15px; font-size: 10px; gap: 15px; }
+      .metric-caption { font-size: 17px; margin-top: 22px; }
+      .results-layout { margin-top: 32px; }
+      .bar-chart { gap: 22px; }
+      .bar-label { font-size: 17px; }
+      .bar-label strong { font-size: 24px; }
+      .track { height: 24px; }
+      .gain { display: flex; gap: 20px; align-items: center; border-left: 0; padding: 0; }
+      .gain strong { font-size: 40px; }
+      .gain p { margin: 0; font-size: 17px; max-width: 15ch; }
+      .limit-line { font-size: 17px; margin-top: 25px; padding-top: 20px; line-height: 1.5; }
+      .parameter-line { flex-wrap: wrap; gap: 7px 12px; margin: 24px 0 18px; }
+      .parameter-line strong { font-size: 43px; }
+      .parameter-line span { font-size: 17px; }
+      .parameter-line .fraction { margin-left: 0; }
+      .architecture { grid-template-columns: 1fr; gap: 22px; padding: 0; }
+      .architecture .input, .text-path { grid-column: 1; }
+      .arch-spacer { display: none; }
+      .architecture .text-path { order: initial; font-size: 17px; margin-top: 5px; padding: 8px 4px; border: 0; }
+      .arch-node { min-height: 80px; padding: 18px; }
+      .arch-node h3 { font-size: 22px; }
+      .arch-node p { margin-top: 7px; font-size: 16px; }
+      .arch-node:not(.output)::after { content: "↓"; right: calc(50% - 10px); bottom: -25px; font-size: 22px; }
+      .arch-node .lora { font-size: 17px; margin: 13px 0 0; }
+      .architecture .output { padding: 8px 0; min-height: 48px; }
+      .train-stat { margin-top: 20px; font-size: 17px; line-height: 1.5; }
+      .workflow { grid-template-columns: 1fr; gap: 28px; padding: 35px 0; }
+      .workflow > div { padding-top: 15px; }
+      .workflow p { font-size: 32px; max-width: none; margin-top: 12px; }
+      .workflow-value { font-size: 21px; margin-bottom: 12px; }
+      .model-layout { padding-top: 30px; }
+      .model-number { display: flex; gap: 26px; align-items: center; }
+      .model-count { font-size: 108px; }
+      .model-count-label { font-size: 23px; margin-top: 0; max-width: 14ch; }
+      .model-groups { gap: 22px; grid-template-columns: 1fr; }
+      .model-group h3 { font-size: 12px; margin-bottom: 8px; }
+      .model-group p { font-size: 22px; }
+      .demo-layout { margin-top: 28px; }
+      .case-card { padding: 18px; }
+      .case-card .eyebrow { font-size: 13px; }
+      .mini-trace { height: 100px; }
+      .case-answer { font-size: 16px; }
+      .case-answer strong { font-size: 21px; }
+      .demo-actions { flex-wrap: wrap; margin-top: 26px; gap: 18px; }
+      .demo-link { width: 100%; min-height: 58px; font-size: 19px; padding: 13px; gap: 14px; }
+      .demo-duration { font-size: 13px; }
+      .closing { padding-top: 20px; }
+      .closing-layout { grid-template-columns: 1fr; gap: 22px; }
+      .closing-art { width: min(100%, 300px); height: auto; aspect-ratio: 1; justify-self: center; }
+      .pilot-points { flex-direction: column; gap: 26px; margin-top: 35px; padding-top: 25px; }
+      .pilot-points p { font-size: 26px; max-width: none; }
+      .pilot-points span { font-size: 13px; margin-bottom: 8px; }
+      .closing-qualification { margin-top: 30px; font-size: 17px; line-height: 1.5; }
+      .incident-grid { grid-template-columns: 1fr; gap: 25px; margin-top: 30px; }
+      .incident-grid strong { font-size: 62px; }
+      .incident-grid p { font-size: 20px; }
+      .incident-cause { font-size: 17px; line-height: 1.5; }
+      .training-slide h2 { font-size: clamp(39px, 9vw, 62px); }
+      .training-map { margin-top: 26px; }
+      .training-data, .training-forward { grid-template-columns: 1fr; gap: 24px; }
+      .training-node { padding: 18px 12px; }
+      .training-node strong { font-size: 22px; }
+      .training-node span { font-size: 16px; }
+      .training-data .training-node:not(:last-child)::after, .training-forward .fitted::after { content: "↓"; top: auto; bottom: -26px; right: calc(50% - 10px); font-size: 23px; }
+      .training-forward { margin-top: 24px; }
+      .training-loop { flex-wrap: wrap; gap: 18px; font-size: 20px; justify-content: flex-start; }
+      .training-loop small { font-size: 15px; }
+      #controls { min-height: 62px; padding: 8px; gap: 5px; }
+      .control-group { gap: 5px; }
+      #controls button { padding: 8px 10px; font-size: 13px; }
+      #counter { min-width: 49px; font-size: 13px; }
+      .control-label, .button-label { display: none; }
+      #progress { bottom: 62px; }
+      #timer-display { position: fixed; right: 12px; bottom: 74px; padding: 6px; background: var(--night); border: 1px solid #665b42; font-size: 12px; }
+      dialog { padding: 21px; }
+      .notes-header h2 { font-size: 23px; }
+      #notes-content { font-size: 16px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+    @page { size: 16.6667in 9.375in; margin: 0; }
+    @media print {
+      html, body { height: auto; background: white; }
+      #viewport { position: static; overflow: visible; }
+      #stage { position: static; transform: none !important; width: 1600px; height: auto; }
+      .slide, .slide.active { display: flex !important; position: relative; width: 1600px; height: 900px; padding: 58px 84px 48px; break-after: page; print-color-adjust: exact; -webkit-print-color-adjust: exact; animation: none; }
+      .slide:last-child { break-after: auto; }
+      #controls, #progress, dialog, .sr-only { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main id="viewport" aria-label="Canary presentation">
+    <div id="stage">
+      <section class="slide dark active" id="slide-1" aria-labelledby="title-1" data-duration="35">
+        <header class="slide-header"><div class="brand"><img class="brand-logo" alt="" hidden><span>Canary</span></div></header>
+        <div class="hero-layout" data-body>
+          <div class="hero-copy">
+            <h1 id="title-1" tabindex="-1">An outage can cost <span class="accent-word">over $1 million.</span></h1>
+            <p>Canary helps operators inspect<br>changes in hardware signals.</p>
+          </div>
+          <div class="impact-stat" data-body>
+            <strong>1 in 5</strong>
+            <p>reported significant outages<br>cost over $1M</p>
+          </div>
         </div>
-        <svg viewBox="0 0 640 150" width="100%">
-          <line x1="10" y1="130" x2="630" y2="130" stroke="rgba(15,15,14,.10)"></line>
-          <path d="M10,26 C150,30 260,44 360,70 C460,96 540,116 630,124" stroke="#0F0F0E" stroke-width="1.5" fill="none"></path>
-          <circle cx="630" cy="124" r="4" fill="#0F0F0E"></circle>
-          <text x="12" y="20" font-size="10" fill="#96948E" letter-spacing=".18em">HEALTH · 14 DAYS · 92 → 67</text>
-        </svg>
-      </div>
-    </div>
-  </div>
-  <div class="src">Demo fleet: 147 devices across Site A (7×12), Site B (6×10), HQ laptops. Rule-based baseline v0; OpenTSLM replaces the scoring, keeps the same output contract.</div>
-  <div class="count">11 &mdash; 16</div>
-</section>
+        <footer class="slide-footer"><span>Uptime Institute · 2025 survey · n=94</span><span>Self-reported incident costs</span></footer>
+      </section>
 
-<!-- 12 PRIORITIZATION -->
-<section class="slide">
-  <div class="eyebrow">12 &nbsp;·&nbsp; The wedge &nbsp;·&nbsp; decision, not prediction</div>
-  <h2 class="hl" style="font-size:88px;margin-top:40px;max-width:22ch">The riskiest isn't<br><em>the most urgent.</em></h2>
-  <div class="priog">
-    <div>
-      <div class="drivers">
-        <div class="drv a">
-          <div class="k">Drive A</div>
-          <div class="n">91%</div>
-          <div class="d">redundant &middot; low workload &middot; hot spare</div>
-          <div class="p">Priority &middot; medium</div>
+      <section class="slide" id="slide-2" aria-labelledby="title-2" data-duration="30" aria-hidden="true" inert>
+        <header class="slide-header"><div class="brand"><img class="brand-logo" alt="" hidden><span>Canary</span></div><span class="section-label">British Airways · 27–29 May 2017</span></header>
+        <h2 id="title-2" tabindex="-1">A data-center outage disrupted British Airways.</h2>
+        <div class="incident-grid" data-body>
+          <div><strong>£58M</strong><p>estimated passenger claims</p></div>
+          <div><strong>~75,000</strong><p>passengers affected</p></div>
+          <div><strong>672</strong><p>flights canceled, 27–28 May</p></div>
+          <div><strong>3 days</strong><p>disruption, 27–29 May</p></div>
         </div>
-        <div class="drv b">
-          <div class="k">Drive B</div>
-          <div class="n">76%</div>
-          <div class="d">critical workload &middot; low redundancy</div>
-          <div class="p">▪ Priority &middot; critical</div>
+        <p class="incident-cause">BA cited power. The exact cause remained disputed.</p>
+        <footer class="slide-footer"><span>DCD · February 2019 / IAG · June 2017</span><span>Industry example · No Canary prevention claim</span></footer>
+      </section>
+
+      <section class="slide accent" id="slide-3" aria-labelledby="title-3" data-duration="30" aria-hidden="true" inert>
+        <header class="slide-header"><div class="brand"><img class="brand-logo" alt="" hidden><span>Canary</span></div></header>
+        <h2 id="title-3" tabindex="-1">Give operators a checkable starting point.</h2>
+        <div class="workflow" data-body aria-label="Proposed operator workflow">
+          <div><span>01</span><p>Select a device</p></div><div><span>02</span><p>Check the explanation</p></div><div><span>03</span><p>Decide what to inspect</p></div>
         </div>
-      </div>
-      <p class="prioclose">Risk = failure probability &times; operational context.</p>
-    </div>
-    <div class="planner frag">
-      <div class="hd">"I have a 4-hour window tonight &mdash; what do I fix?"</div>
-      <div class="row"><span class="num">01</span><div><b>Server 142 / Drive 3</b> &mdash; <span class="sub">deteriorating fast, low redundancy</span></div><span class="lbl hi">High</span></div>
-      <div class="row"><span class="num">02</span><div><b>Rack 18 / thermal cluster</b> &mdash; <span class="sub">7 systems drifting together</span></div><span class="lbl hi">High</span></div>
-      <div class="row med"><span class="num">03</span><div><b>Server 311 / Drive 7</b> &mdash; <span class="sub">stable deterioration</span></div><span class="lbl med">Med</span></div>
-      <div class="row dim"><span class="num">&mdash;</span><div>Defer: 12 low-risk anomalies</div><span></span></div>
-    </div>
-  </div>
-  <div class="src">Demo data. Coordinated drift + operational context &mdash; what turns 37 alerts into a ranked plan.</div>
-  <div class="count">12 &mdash; 16</div>
-</section>
+        <p class="workflow-value">Proposed value: less time interpreting charts.</p>
+        <footer class="slide-footer"><span>Operator benefit remains to be measured</span><span>Human decision</span></footer>
+      </section>
 
-<!-- 13 STATUS -->
-<section class="slide">
-  <div class="eyebrow">13 &nbsp;·&nbsp; Honest status &nbsp;·&nbsp; hackathon draft</div>
-  <div class="statushead"><h2 class="hl">Built. Draft. <em>Next.</em></h2></div>
-  <div class="statusgrid">
-    <div class="stc built">
-      <div class="k"><span class="dot"></span>Built &amp; demoable</div>
-      <ul>
-        <li><div class="t">Real Backblaze data pipeline</div><div class="m">3,000 drives &middot; 547,812 obs &middot; SHA-pinned</div></li>
-        <li><div class="t">Disjoint drive-hash splits</div><div class="m">Train 1,802 &middot; Val 467 &middot; Cal 290 &middot; Test 441</div></li>
-        <li><div class="t">3D digital twin, 147 devices</div><div class="m">driftops3d/ &middot; rule-based baseline v0</div></li>
-        <li><div class="t">Rule-based copilot</div><div class="m">Status / why / wait / action / fleet</div></li>
-        <li><div class="t">Causal-window tests passing</div><div class="m">Gaps, event exclusion, censoring</div></li>
-      </ul>
-    </div>
-    <div class="stc draft frag">
-      <div class="k"><span class="dot"></span>Draft / illustrative</div>
-      <ul>
-        <li><div class="t">Weak SMART annotations</div><div class="m">Rules, not expert labels</div></li>
-        <li><div class="t">33 recorded events in pilot</div><div class="m">Insufficient for calibrated risk</div></li>
-        <li><div class="t">3D twin fleet percentiles</div><div class="m">Illustrative baselines</div></li>
-        <li><div class="t">Cost figures on slide 2</div><div class="m">Modeled, not measured</div></li>
-        <li><div class="t">Copilot is rule-based, not LLM</div><div class="m">Contract preserved for TSLM swap</div></li>
-      </ul>
-    </div>
-    <div class="stc next frag">
-      <div class="k"><span class="dot"></span>What's next</div>
-      <ul>
-        <li><div class="t">Train Gemma 3 270M + OpenTSLM-SP</div><div class="m">Weights pinned &middot; runtime check pending</div></li>
-        <li><div class="t">First Nebius diagnostic run</div><div class="m">$600 voucher &middot; bounded, resumable</div></li>
-        <li><div class="t">Held-out test on partition 4</div><div class="m">Compare against baseline + starting ckpt</div></li>
-        <li><div class="t">Wire TSLM into 3D twin copilot</div><div class="m">Same output contract as baseline v0</div></li>
-        <li><div class="t">Widen cohort for event support</div><div class="m">More drives, more failures, real risk</div></li>
-      </ul>
-    </div>
-  </div>
-  <div class="src">Aionic Temporal AI Challenge &middot; TimeNet for data prep &middot; OpenTSLM for signal-language modeling &middot; Nebius for training compute. Cited numbers are real; the trained model is prototype-stage.</div>
-  <div class="count">13 &mdash; 16</div>
-</section>
+      <section class="slide" id="slide-4" aria-labelledby="title-4" data-duration="35" aria-hidden="true" inert>
+        <header class="slide-header"><div class="brand"><img class="brand-logo" alt="" hidden><span>Canary</span></div></header>
+        <h2 id="title-4" tabindex="-1">The HDD model reads signal patterns.</h2>
+        <div data-body>
+          <p class="metric-caption">Weak-label agreement · 2,048 unseen drives · 6,755 / 6,777 answers</p>
+          <div class="results-layout">
+            <div class="bar-chart" aria-label="Channel accuracy comparison, percentage scale from zero to one hundred">
+              <div class="bar-row trained"><div class="bar-label"><span>Trained HDD</span><strong>99.68%</strong></div><div class="track" aria-hidden="true"><div class="fill" style="width:99.67537258373912%"></div></div></div>
+              <div class="bar-row"><div class="bar-label"><span>Zero numerical input</span><strong>86.01%</strong></div><div class="track" aria-hidden="true"><div class="fill" style="width:86.01150951748562%"></div></div></div>
+              <div class="bar-row constant"><div class="bar-label"><span>Always constant</span><strong>69.43%</strong></div><div class="track" aria-hidden="true"><div class="fill" style="width:69.42599970488417%"></div></div></div>
+            </div>
 
-<!-- 14 PAYOFF -->
-<section class="slide">
-  <div class="eyebrow">14 &nbsp;·&nbsp; The trade you're making</div>
-  <div class="payhead"><h2 class="hl">Catch the drift early.<br><em>Pay a little, not a lot.</em></h2></div>
-  <div class="paygrid">
-    <div>
-      <div class="k">Planned &middot; caught early</div>
-      <div class="big">€180 &middot; 45 min</div>
-      <ul><li>Scheduled maintenance window</li><li>Hot spare ready</li><li>No customer impact</li></ul>
+          </div>
+          <p class="limit-line">Failure prediction remains unvalidated.</p>
+        </div>
+        <footer class="slide-footer"><span>Frozen HDD evaluation · 13 September 2026</span><span>Sources and limits in Notes</span></footer>
+      </section>
+
+      <section class="slide dark" id="slide-5" aria-labelledby="title-5" data-duration="35" aria-hidden="true" inert>
+        <header class="slide-header"><div class="brand"><img class="brand-logo" alt="" hidden><span>Canary</span></div></header>
+        <h2 id="title-5" tabindex="-1">Small trained modules turn measurements into words.</h2>
+        <div data-body>
+
+          <div class="architecture" aria-label="Numerical samples are normalized, encoded, projected, and combined with channel text in frozen Gemma with trained attention LoRA to produce a description.">
+            <div class="arch-node input"><h3>28 samples</h3><p>Normalize</p></div>
+            <div class="arch-node trainable"><h3>Temporal<br>encoder</h3><p>Trained</p></div>
+            <div class="arch-node trainable"><h3>Projector</h3><p>Trained</p></div>
+            <div class="arch-node gemma"><h3>Gemma 3<br>270M</h3><p>Frozen base</p><div class="lora">Trained LoRA</div></div>
+            <div class="arch-node output"><h3>Description</h3></div>
+          </div>
+          <p class="train-stat">13 independent component models · 1.08% of parameters trained</p>
+        </div>
+        <footer class="slide-footer"><span>TimeNet data · OpenTSLM SoftPrompt · Nebius training</span><span>Gold = trained parameters</span></footer>
+      </section>
+
+      <section class="slide training-slide" id="slide-6" aria-labelledby="title-6" data-duration="40" aria-hidden="true" inert>
+        <header class="slide-header"><div class="brand"><img class="brand-logo" alt="" hidden><span>Canary</span></div></header>
+        <h2 id="title-6" tabindex="-1">Training updates only selected model weights.</h2>
+        <div class="training-map" data-body aria-label="Disjoint device and ordered time partitions create causal windows from raw SMART histories. TimeNet writes and verifies TimeF data. The training branch normalizes observed windows before the model. Separate weak labels and model outputs enter the loss. Backpropagation computes gradients. AdamW updates trainable weights.">
+          <div class="training-data">
+            <div class="training-node"><strong>Raw SMART histories</strong><span>Measurements · dates · provenance</span></div>
+            <div class="training-node"><strong>Disjoint 28-day windows</strong><span>Train / validation / test</span></div>
+            <div class="training-node"><strong>TimeNet → TimeF</strong><span>Metadata · time · data</span></div>
+          </div>
+          <p class="training-branch">Training windows ↓</p>
+          <div class="training-forward">
+            <div class="training-node fitted"><strong>Normalize → OpenTSLM</strong><span>TimeEncoder → projector → Gemma</span></div>
+            <div class="training-node loss"><strong>Weighted cross-entropy</strong><span>Answer tokens</span><span class="target-input">↑ Separate weak targets</span></div>
+          </div>
+          <div class="training-loop"><span>Backpropagation <small>computes gradients</small></span><b aria-hidden="true">→</b><span>AdamW <small>updates selected weights</small></span><b aria-hidden="true">↺</b><span>Encoder · projector · LoRA</span></div>
+        </div>
+        <footer class="slide-footer"><span>HDD training · Disjoint devices · Ordered time partitions</span><span>Targets stay outside the inference prompt</span></footer>
+      </section>
+
+      <section class="slide" id="slide-7" aria-labelledby="title-7" data-duration="60" aria-hidden="true" inert>
+        <header class="slide-header"><div class="brand"><img class="brand-logo" alt="" hidden><span>Canary</span></div></header>
+        <h2 id="title-7" tabindex="-1">Check the answer. Keep the mistakes visible.</h2>
+        <div data-body>
+          <div class="demo-layout">
+            <div class="case-card">
+              <p class="eyebrow">Rising case · SMART 197</p>
+              <svg class="mini-trace" viewBox="0 0 540 135" role="img" aria-label="Twenty-eight raw SMART 197 values: eight at zero, then twenty at eight."><line class="grid" x1="8" x2="532" y1="116" y2="116"/><line class="grid" x1="8" x2="532" y1="20" y2="20"/><polyline class="signal" data-trace="rising-mini" points="8,116 27.41,116 46.81,116 66.22,116 85.63,116 105.04,116 124.44,116 143.85,116 163.26,20 182.67,20 202.07,20 221.48,20 240.89,20 260.3,20 279.7,20 299.11,20 318.52,20 337.93,20 357.33,20 376.74,20 396.15,20 415.56,20 434.96,20 454.37,20 473.78,20 493.19,20 512.59,20 532,20"/></svg>
+              <div class="case-answer"><span>Saved answer</span><strong>rising</strong></div>
+              <div class="case-answer reference"><span>Raw values</span><strong>0 → 8</strong></div>
+            </div>
+            <div class="case-card">
+              <p class="eyebrow">Mismatch case · SMART 194</p>
+              <svg class="mini-trace" viewBox="0 0 540 135" role="img" aria-label="SMART 194 varies between 36 and 47 raw units. The model says falling. The weak reference says fluctuating."><line class="grid" x1="8" x2="532" y1="116" y2="116"/><line class="grid" x1="8" x2="532" y1="20" y2="20"/><polyline class="signal" data-trace="mismatch-mini" points="8,89.82 27.41,98.55 46.81,116 66.22,98.55 85.63,98.55 105.04,89.82 124.44,89.82 143.85,98.55 163.26,98.55 182.67,98.55 202.07,81.09 221.48,98.55 240.89,98.55 260.3,98.55 279.7,98.55 299.11,98.55 318.52,98.55 337.93,98.55 357.33,107.27 376.74,89.82 396.15,98.55 415.56,107.27 434.96,107.27 454.37,20 473.78,107.27 493.19,107.27 512.59,107.27 532,107.27"/></svg>
+              <div class="case-answer"><span>Saved answer</span><strong>falling</strong></div>
+              <div class="case-answer reference"><span>Weak reference</span><strong>fluctuating</strong></div>
+            </div>
+          </div>
+          <div class="demo-actions"><a class="demo-link" id="demo-link" href="./#/evidence/hdd-rising" target="canary-evidence" rel="noopener">Open saved-output demo <span aria-hidden="true">↗</span></a><span class="demo-duration">35-second walkthrough</span></div>
+        </div>
+        <footer class="slide-footer"><span>Backblaze data · Actual saved model outputs</span><span>Illustrative fleet context</span></footer>
+      </section>
+
+      <section class="slide dark" id="slide-8" aria-labelledby="title-8" data-duration="35" aria-hidden="true" inert>
+        <header class="slide-header"><div class="brand"><img class="brand-logo" alt="" hidden><span>Canary</span></div></header>
+        <div class="closing-layout"><div class="closing">
+          <h2 id="title-8" tabindex="-1">Help us find our first <span class="accent-word">pilot partner.</span></h2>
+          <div data-body>
+            <div class="pilot-points"><p>Storage operations team</p><p>Paid pilot → fleet subscription</p></div>
+            <p class="closing-qualification">Proposed: measure inspection time and correctness.</p>
+          </div>
+        </div><img class="closing-art brand-logo" alt="Golden Canary bird with wings raised, the supplied brand artwork" hidden></div>
+        <footer class="slide-footer"><span>Team Piloty · Canary</span><span>Commercial proposal · No customer revenue claimed</span></footer>
+      </section>
     </div>
-    <div class="frag">
-      <div class="k">Unplanned &middot; too late</div>
-      <div class="big italic">Hours &middot; SLA hit</div>
-      <ul><li>Emergency 3 a.m. recovery</li><li>Degraded service, angry clients</li><li>Reputation on the line</li></ul>
-    </div>
-  </div>
-  <div class="src">Illustrative cost model &mdash; planned-vs-unplanned maintenance economics, not a measured DriftOps result.</div>
-  <div class="count">14 &mdash; 16</div>
-</section>
+  </main>
 
-<!-- 15 CLOSE -->
-<section class="slide dark">
-  <div class="eyebrow">15 &nbsp;·&nbsp; Close</div>
-  <div class="hero">
-    <h2 class="hl" style="font-size:130px;max-width:20ch">Turn telemetry into decisions <em>before</em> downtime.</h2>
-    <p class="frag" style="margin-top:44px;font-size:24px;line-height:1.5;color:var(--n2);max-width:54ch">We don't stop the next config outage. We catch the hardware drift your thresholds miss &mdash; before it costs you the hour.</p>
-  </div>
-  <div class="foot"><div>DriftOps &middot; Team Piloty &middot; EHL Zurich Temporal AI Challenge</div><div>15 &mdash; 16</div></div>
-</section>
+  <div id="progress" role="progressbar" aria-label="Slide progress" aria-valuemin="1" aria-valuemax="8" aria-valuenow="1"><div id="progress-fill"></div></div>
+  <nav id="controls" aria-label="Presentation controls">
+    <div class="control-group"><button id="previous" type="button" aria-label="Previous slide" disabled>←<span class="button-label"> Previous</span></button><output id="counter" aria-label="Current slide">1 / 8</output><button id="next" type="button" aria-label="Next slide"><span class="button-label">Next </span>→</button></div>
+    <div class="control-group"><span class="control-label">Five-minute pitch</span><output id="timer-display" aria-label="Time remaining" hidden>5:00</output><button id="notes-button" type="button" aria-haspopup="dialog" aria-controls="notes-dialog">Notes</button><button id="fullscreen" type="button" aria-label="Enter fullscreen">Fullscreen</button></div>
+  </nav>
+  <p id="announcement" class="sr-only" aria-live="polite" aria-atomic="true"></p>
+  <dialog id="notes-dialog" aria-labelledby="notes-title">
+    <div class="notes-header"><h2 id="notes-title">Speaker notes</h2><button id="close-notes" type="button" aria-label="Close speaker notes">Close</button></div>
+    <p class="notes-timing" id="notes-timing"></p>
+    <div id="notes-content"></div>
+    <div class="notes-tools"><button id="timer-toggle" type="button">Start 5:00 timer</button><button id="timer-reset" type="button">Reset timer</button><button id="notes-previous" type="button">← Previous notes</button><button id="notes-next" type="button">Next notes →</button></div>
+    <p class="notes-help">Planned timing totals 5:00, including 35 seconds for the demo. Rehearse to check delivery. Arrow keys change slides. N opens notes. F requests fullscreen. Home and End jump to the first and last slides.</p>
+  </dialog>
 
-<!-- 16 SOURCES -->
-<section class="slide">
-  <div class="eyebrow">16 &nbsp;·&nbsp; Sources &amp; verification</div>
-  <div class="sourceshead"><h2 class="hl">Every number, <em>checked.</em></h2></div>
-  <div class="srclist">
-    <div class="si"><div class="claim">Disks &mdash; 1 in 4 fail with no SMART warning (23.3%)</div><div class="cite">Backblaze, "What SMART Stats Tell Us," 2016 (67,814 drives) &middot; Pinheiro et&nbsp;al., Google, USENIX FAST 2007.</div></div>
-    <div class="si"><div class="claim">Memory &mdash; 65&ndash;80% preceded by correctable-error drift</div><div class="cite">Schroeder, Pinheiro &amp; Weber, "DRAM Errors in the Wild," Google, SIGMETRICS 2009.</div></div>
-    <div class="si"><div class="claim">GPUs &mdash; ~1 interruption / 3 hrs at cluster scale</div><div class="cite">Meta, "The Llama 3 Herd of Models," 2024 &mdash; 16,384-GPU cluster. arXiv:2407.21783.</div></div>
-    <div class="si"><div class="claim">CPUs &mdash; silent data corruption ~1 per 1,000 devices</div><div class="cite">Meta, "Silent Data Corruptions at Scale," 2021 &middot; Google, "Cores That Don't Count," 2021.</div></div>
-    <div class="si"><div class="claim">Downtime &mdash; 90%+ &gt;$300K/hr; 41% $1M&ndash;$5M+/hr</div><div class="cite">ITIC, 2024 Hourly Cost of Downtime survey. itic-corp.com</div></div>
-    <div class="si"><div class="claim">Outages &mdash; 20% cost &gt;$1M; power is #1 cause (~54%)</div><div class="cite">Uptime Institute, Annual Outage Analysis 2025 (2024 data).</div></div>
-    <div class="si"><div class="claim">British Airways &mdash; £58M, ~75,000, 672 flights (May 2017)</div><div class="cite">BA/CBRE settlement, 2019 (Data Center Dynamics). Cause officially undetermined at settlement.</div></div>
-    <div class="si"><div class="claim">AWS us-east-1 &mdash; 113 services, ~2,500 companies (Oct 2025)</div><div class="cite">AWS post-event summary &amp; InfoQ DynamoDB postmortem, 2025 &middot; Downdetector.</div></div>
-    <div class="si"><div class="claim">Backblaze pilot &mdash; 3,000 drives, 547,812 obs, 13,616 tasks</div><div class="cite">Repo: EHL_Zurich_hackathon_team_piloty &middot; SHA-256 6de7fc9e… &middot; public archive.</div></div>
-    <div class="si"><div class="claim">Model &mdash; Gemma 3 270M base + OpenTSLM-SP checkpoint</div><div class="cite">google/gemma-3-270m &middot; OpenTSLM/gemma-3-270m-tsqa-sp &middot; arXiv 2410.02897.</div></div>
-  </div>
-  <p class="honest">Honest scope: ITIC &amp; Uptime figures size the cost of downtime in general; the British Airways event sizes what one data-centre failure can cost &mdash; not a claimed DriftOps save. Most headline mega-outages (AWS, CrowdStrike) were software/config, which DriftOps does not target. Component figures speak directly to DriftOps' domain: hardware degradation that threshold-based tools miss.</p>
-  <div class="count">16 &mdash; 16</div>
-</section>
+  <script id="speaker-data" type="application/json">[{"title": "An outage can cost over $1 million.", "time": "0:00 to 0:35", "duration": 35, "words": 72, "html": "<p>Hardware problems can become expensive incidents. In Uptime Institute&#x27;s 2025 survey, one in five respondents reporting a significant outage said it cost more than one million dollars.<\/p><p>That is industry context, not savings Canary claims to deliver. Our proposed first customer is a storage operations team.<\/p><p>An alert starts their investigation. Someone must still inspect the history. Canary puts short descriptions beside the measurements so that person has a checkable starting point.<\/p><h3>Evidence and limits<\/h3><p>Uptime Institute Global Data Center Survey 2025, July 2025, Figure 11, page 19. Cost question n=94. One in five respondents reported that their significant outage cost more than $1 million. These are self-reported total incident costs through recovery, including direct, opportunity, and reputation costs. This is survey context, not a population estimate, a hardware-specific attribution, or a Canary savings estimate. The proposed storage buyer and inspection benefit remain unvalidated.<\/p><h3>Sources<\/h3><ul><li><a href=\"https://datacenter.uptimeinstitute.com/rs/711-RIA-145/images/2025.Annual.Survey.Report.pdf?version=0#page=19\" target=\"_blank\" rel=\"noopener\">Uptime Institute 2025 survey, Figure 11<\/a><\/li><li><a href=\"https://intelligence.uptimeinstitute.com/index.php/resource/annual-outage-analysis-2026\" target=\"_blank\" rel=\"noopener\">Annual outage analysis 2026, May 11, 2026<\/a><\/li><\/ul>"}, {"title": "A data-center outage disrupted British Airways.", "time": "0:35 to 1:05", "duration": 30, "words": 57, "html": "<p>British Airways shows how widely an outage can spread. In May 2017, disruption continued across three days. The airline canceled 672 flights in the first two days.<\/p><p>DCD reported about 75,000 passenger cancellations and estimated claims of 58 million pounds. That was an estimate, not a settlement amount. BA cited power, but the exact cause remained disputed.<\/p><h3>Evidence and limits<\/h3><p>DCD, February 11, 2019, reports an estimated \u00a358 million in passenger compensation claims and about 75,000 passenger cancellations. The estimate is not a final bill or settlement amount. BA and CBRE settled with no admission of liability; payment and exact cause were not established in that report. BA attributed the outage to a power supply issue. DCD reports problems from Saturday to Monday morning, May 27 to 29, 2017. This is three calendar days, not 72 hours of complete shutdown.<\/p><p>IAG reported 479 canceled flights on May 27 and 193 on May 28, totaling 672 over two days. BA had resumed most flights by May 29. BA interim accounts separately record a \u00a356 million provision for compensation fees and baggage claims. That accounting provision differs from the \u00a358 million press estimate displayed on this slide. None of these figures establishes Canary preventability, savings, or a customer relationship.<\/p><h3>Sources<\/h3><ul><li><a href=\"https://www.datacenterdynamics.com/en/news/ba-and-cbre-settle-dispute-over-2017-data-center-outage/\">DCD settlement report, February 11, 2019<\/a><\/li><li><a href=\"https://www.cnmv.es/webservices/verdocumento/ver?e=SXm4iA7ape7KuPe%2Ftg89%2BqfqoTZheLsWaW8eg8EG1exQSRh0dt1K2vXNhAR3mLSV\">IAG traffic statement, June 6, 2017<\/a><\/li><li><a href=\"https://www.iairgroup.com/media/344neah0/interim-management-report-for-six-months-to-june-30-2017.pdf\">BA interim accounts 2017, page 15<\/a><\/li><\/ul>"}, {"title": "Give operators a checkable starting point.", "time": "1:05 to 1:35", "duration": 30, "words": 56, "html": "<p>Our proposed workflow is simple. Select a device, check its explanation, then decide what to inspect.<\/p><p>Today, the evidence view places real measurements beside saved model answers. The surrounding fleet uses synthetic data and rules.<\/p><p>The buyer hypothesis is less time interpreting charts without more mistakes. A pilot must test that benefit. Operators keep the decision.<\/p><h3>Evidence and limits<\/h3><p>The storage operations customer, inspection benefit, and workflow value are hypotheses. The evidence view is implemented. The surrounding fleet uses separately labeled synthetic telemetry and rules. No customer time saving has been measured.<\/p>"}, {"title": "The HDD model reads signal patterns.", "time": "1:35 to 2:10", "duration": 35, "words": 64, "html": "<p>The HDD model matched 99.68 percent of weak signal labels across 6,777 answers from 2,048 unseen drives.<\/p><p>An always-constant answer scored 69.43 percent. With numerical inputs zeroed, the model scored 86.01 percent. The numbers affect its answers.<\/p><p>Fixed rules generated these labels. Those rules score one hundred percent by construction. This measures signal descriptions, not superiority over the rules, failure prediction, or customer savings.<\/p><h3>Evidence and limits<\/h3><p>Accuracy counts 6,755 correct channel labels out of 6,777. The raw channel-accuracy gain is 13.6638631 percentage points. Weak rules generated these labels and score 100% by construction. Zero-input evaluation retains the same text and scale metadata. The selected test does not establish natural counter-reset performance.<\/p><h3>Sources<\/h3><ul><li><a href=\"https://github.com/M-10001/EHL_Zurich_hackathon_team_piloty/blob/main/results/2026-09-13/measured-metrics.json\" target=\"_blank\" rel=\"noopener\">Measured metrics<\/a><\/li><li><a href=\"https://github.com/M-10001/EHL_Zurich_hackathon_team_piloty/blob/main/results/2026-09-13/runs/full-history-rtx6000-v2/evaluation/metrics.json\" target=\"_blank\" rel=\"noopener\">Frozen HDD metrics<\/a><\/li><li><a href=\"https://github.com/M-10001/EHL_Zurich_hackathon_team_piloty/blob/main/docs/full-history-training.md\" target=\"_blank\" rel=\"noopener\">HDD training and split report<\/a><\/li><\/ul>"}, {"title": "Small trained modules turn measurements into words.", "time": "2:10 to 2:45", "duration": 35, "words": 70, "html": "<p>We normalize twenty-eight samples, encode their pattern, and project it into Gemma 3 270M to generate a description.<\/p><p>We trained the encoder, projector, and attention adapters. The original Gemma base stayed frozen. Only 1.08 percent of parameters were trained.<\/p><p>We fitted thirteen independent component models, each with its own data and checks. HDD training covered 11.32 million windows. These results do not form one universal model or combined accuracy score.<\/p><h3>Evidence and limits<\/h3><p>Trainable parameters: encoder 2,110,976, projector 82,816, attention LoRA 737,280. Frozen parameters: 268,098,816. Total: 271,029,888. Encoder: patches of four samples, six transformer layers, width 128. Projector: 128 to 640 dimensions. LoRA: rank 8, alpha 16, q/k/v/o attention projections. Each component starts independently from the same pinned upstream checkpoint. Current checkpoint exports are about 683 MB each and need a shared 536 MB base. Trainable parameter count is not deployment size.<\/p><h3>Sources<\/h3><ul><li><a href=\"https://github.com/M-10001/EHL_Zurich_hackathon_team_piloty/blob/main/results/2026-09-13/measured-metrics.json\" target=\"_blank\" rel=\"noopener\">Parameter audit<\/a><\/li><li><a href=\"https://github.com/M-10001/EHL_Zurich_hackathon_team_piloty/blob/main/docs/reviews/2026-09-13/presentation-plan.md\" target=\"_blank\" rel=\"noopener\">Architecture evidence review<\/a><\/li><li><a href=\"https://github.com/M-10001/EHL_Zurich_hackathon_team_piloty/blob/main/docs/full-history-training.md\" target=\"_blank\" rel=\"noopener\">HDD training report<\/a><\/li><li><a href=\"https://huggingface.co/OpenTSLM/gemma-3-270m-tsqa-sp\" target=\"_blank\" rel=\"noopener\">Official OpenTSLM Gemma 3 270M model card<\/a><\/li><li><a href=\"https://arxiv.org/abs/2510.02410\" target=\"_blank\" rel=\"noopener\">OpenTSLM paper, 2510.02410<\/a><\/li><li><a href=\"https://github.com/OpenTSLM/TimeNet\" target=\"_blank\" rel=\"noopener\">TimeNet data preparation<\/a><\/li><\/ul><h3>Evidence and limits<\/h3><p>Each category has separate fitted weights. Five groups per industrial test limit the population claim. Slide rail and industrial valve sound have unknown acquisition chronology. The dated radiator-valve model failed both its original gate and an unchanged-weight follow-up. Its separate valve-sound replacement does not repair those failures. Do not pool these component scores into product accuracy.<\/p><h3>Sources<\/h3><ul><li><a href=\"https://github.com/M-10001/EHL_Zurich_hackathon_team_piloty/blob/main/docs/component-model-results.md\" target=\"_blank\" rel=\"noopener\">Component results and failed valve studies<\/a><\/li><li><a href=\"https://github.com/M-10001/EHL_Zurich_hackathon_team_piloty/blob/main/results/2026-09-13/measured-metrics.json\" target=\"_blank\" rel=\"noopener\">All measured model metrics<\/a><\/li><\/ul>"}, {"title": "Training updates only selected model weights.", "time": "2:45 to 3:25", "duration": 40, "words": 75, "html": "<p>We turn dated hardware histories into TimeF records, with separate devices and periods for training, validation, and testing. Each input contains twenty-eight observations, normalized within that window.<\/p><p>During training, weighted cross-entropy compares answer tokens with separate rule-generated targets. Those targets never enter the inference prompt.<\/p><p>Backpropagation calculates gradients. AdamW updates the encoder, projector, and attention adapters, with weight decay. The original Gemma weights stay frozen. Validation selects the checkpoint before we open the test set.<\/p><h3>Evidence and limits<\/h3><p>The attachment supplies the desired architecture topics. The implementation controls the technical claims. Raw SMART histories are assigned to disjoint drives and ordered periods before gap-free 28-day windows. TimeNet writes TimeF values, times, metadata, and separate AnswerTask targets, verifies native read-back, then exports compact windows. Per-channel normalization uses only the observed window, with sample standard deviation and divisor one for a constant channel.<\/p><p>Base model: google/gemma-3-270m. Pretrained time-series model: OpenTSLM/gemma-3-270m-tsqa-sp. The loader initializes the original Gemma base plus upstream encoder and projector states, then adds attention LoRA. Gemma's original parameters remain frozen.<\/p><p>The diagram shows the training branch. Validation and test windows receive the same preprocessing but cannot update weights. Prompts include neutral channel names, cadence, and scale metadata. Weak targets remain separate. Dates, drive serials, and outcomes are not prompt inputs.<\/p><p>Weighted cross-entropy uses next-token answer positions. Prompt and padding labels are masked. Pattern weights derive from training-label frequencies, clipped to 0.1 through 30, and apply to answer-entry tokens. Separator and EOS tokens have weight one. The loss divides summed weighted token losses by the sum of token weights. These are token weights, not example or sampling weights.<\/p><p>Backward autograd computes gradients. After norm clipping at 1.0, AdamW updates only encoder, projector, and LoRA parameters with decoupled weight decay 0.01. Encoder/projector learning rate is 0.0001; LoRA is 0.00005. AdamW does not perform backpropagation. The frozen model receives no weight update.<\/p><p>HDD training uses 2013 through 2024. Validation uses January through September 2025. A separate unused calibration drive reserve uses the same dates. Test uses October 2025 through March 2026. Unweighted validation answer loss selects the best completed epoch before frozen test release. These dated HDD boundaries do not imply verified chronology for the separate sound datasets.<\/p><h3>Sources<\/h3><ul><li><a href=\"https://github.com/M-10001/EHL_Zurich_hackathon_team_piloty/blob/main/src/driftops/full_dataset.py\">TimeF preparation and split implementation<\/a><\/li><li><a href=\"https://github.com/M-10001/EHL_Zurich_hackathon_team_piloty/blob/main/src/driftops/tslm_dataset.py\">Observed-window normalization<\/a><\/li><li><a href=\"https://github.com/M-10001/EHL_Zurich_hackathon_team_piloty/blob/main/src/driftops/full_training.py\">Separate prompts, targets, and weighted token loss<\/a><\/li><li><a href=\"https://github.com/M-10001/EHL_Zurich_hackathon_team_piloty/blob/main/src/driftops/train_full.py\">Training loop and checkpoint selection<\/a><\/li><li><a href=\"https://github.com/M-10001/EHL_Zurich_hackathon_team_piloty/blob/main/config/model.yaml\">Pinned base and pretrained model<\/a><\/li><li><a href=\"https://github.com/M-10001/EHL_Zurich_hackathon_team_piloty/blob/main/config/full_history.yaml\">HDD drive and time partitions<\/a><\/li><li><a href=\"https://github.com/M-10001/EHL_Zurich_hackathon_team_piloty/blob/main/results/2026-09-13/runs/full-history-rtx6000-v2/config.json\">Recorded optimizer configuration<\/a><\/li><\/ul>"}, {"title": "Check the answer. Keep the mistakes visible.", "time": "3:25 to 4:25", "duration": 60, "words": 55, "html": "<p>Let us check a real saved answer. I will open the rising case, show its measurements and cutoff, then show a mismatch.<\/p><p class=\"demo-cue\">Demo actions, 3:40 to 4:15. Open the saved-output demo. Show the rising case and December 23, 2025 cutoff. Select the model-mismatch case. Show SMART 194, saved answer falling, and weak reference fluctuating. Return to slide 7. Do not read this cue aloud.<\/p><p>The model says falling while the weak reference says fluctuating. Both remain visible. This is saved inference, with no new model call in the browser. Operators must be able to challenge the answer.<\/p><h3>Evidence and limits<\/h3><p>The rising case is backblaze:ZL2NG09C, November 26 to December 23, 2025. Its SMART 197 raw values change from 0 to 8. The mismatch is backblaze:ZLW0C6PD, October 1 to October 28, 2025. Its SMART 194 answer is falling. Its weak target is fluctuating without a clear net trend. All displayed outputs are saved model inference. Failure probability, confidence, and failure window remain unavailable. The surrounding fleet is illustrative.<\/p><h3>Sources<\/h3><ul><li><a href=\"https://github.com/M-10001/EHL_Zurich_hackathon_team_piloty/blob/main/results/2026-09-13/hdd-demo-cases.json\" target=\"_blank\" rel=\"noopener\">Saved HDD cases and raw values<\/a><\/li><\/ul>"}, {"title": "Help us find our first pilot partner.", "time": "4:25 to 5:00", "duration": 35, "words": 69, "html": "<p>We are looking for our first storage operations pilot partner.<\/p><p>Our proposed commercial path is a paid pilot, then a fleet subscription if results justify it. Pricing and buyer demand still need testing.<\/p><p>Measure inspection time and correct findings against raw charts. Ask experts to review explanations independently of our labels.<\/p><p>The next proof is customer value. Introduce us to a storage operations lead who can help test it.<\/p><h3>Evidence and limits<\/h3><p>The paid pilot, fleet subscription, target buyer, and introduction request are proposals. No customer, signed pilot, revenue, price, cost saving, or buyer demand is claimed. Define pilot scope, price, success criteria, and a buyer before any commercial commitment.<\/p>"}]</script>
+  <script>
+    (() => {
+      'use strict';
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const viewport = document.getElementById('viewport');
+      const stage = document.getElementById('stage');
+      const previous = document.getElementById('previous');
+      const next = document.getElementById('next');
+      const counter = document.getElementById('counter');
+      const progress = document.getElementById('progress');
+      const notesButton = document.getElementById('notes-button');
+      const dialog = document.getElementById('notes-dialog');
+      const notes = JSON.parse(document.getElementById('speaker-data').textContent);
+      const fullscreen = document.getElementById('fullscreen');
+      let current = 0;
+      let touchStart = null;
+      let secondsLeft = 300;
+      let timerDeadline = null;
+      let timerInterval = null;
 
-</div>
+      function resize() {
+        const scale = Math.min(viewport.clientWidth / 1600, viewport.clientHeight / 900);
+        stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+      }
+      function showNotes() {
+        const note = notes[current];
+        document.getElementById('notes-title').textContent = `${current + 1}. ${note.title}`;
+        document.getElementById('notes-timing').textContent = `${note.time} · ${note.duration} seconds · ${note.words} spoken words`;
+        document.getElementById('notes-content').innerHTML = note.html;
+        document.getElementById('notes-previous').disabled = current === 0;
+        document.getElementById('notes-next').disabled = current === slides.length - 1;
+      }
+      function show(index, updateHash = true) {
+        current = Math.max(0, Math.min(slides.length - 1, index));
+        const focusWasInSlide = document.activeElement && document.activeElement.closest('.slide');
+        slides.forEach((slide, i) => {
+          const active = i === current;
+          slide.classList.toggle('active', active);
+          slide.setAttribute('aria-hidden', String(!active));
+          slide.inert = !active;
+        });
+        previous.disabled = current === 0;
+        next.disabled = current === slides.length - 1;
+        counter.textContent = `${current + 1} / ${slides.length}`;
+        progress.setAttribute('aria-valuenow', String(current + 1));
+        document.getElementById('progress-fill').style.width = `${(current + 1) / slides.length * 100}%`;
+        document.title = `Canary | ${current + 1} of ${slides.length} | Five-minute presentation`;
+        const title = slides[current].querySelector('h1, h2');
+        document.getElementById('announcement').textContent = `Slide ${current + 1} of ${slides.length}. ${title.textContent}`;
+        if (updateHash) history.replaceState(null, '', `#slide-${current + 1}`);
+        viewport.scrollTop = 0;
+        if (focusWasInSlide && !dialog.open) title.focus({ preventScroll: true });
+        if (dialog.open) showNotes();
+      }
+      function indexFromHash() {
+        const match = /^#slide-([1-8])$/.exec(location.hash);
+        return match ? Number(match[1]) - 1 : 0;
+      }
+      function toggleNotes() {
+        if (dialog.open) {
+          dialog.close();
+        } else {
+          showNotes();
+          dialog.showModal();
+        }
+      }
+      async function toggleFullscreen() {
+        try {
+          if (document.fullscreenElement) await document.exitFullscreen();
+          else await document.documentElement.requestFullscreen();
+        } catch {
+          document.getElementById('announcement').textContent = 'Fullscreen is unavailable. Use the browser fullscreen control.';
+        }
+      }
+      function updateTimer() {
+        if (timerDeadline !== null) secondsLeft = Math.max(0, Math.ceil((timerDeadline - Date.now()) / 1000));
+        document.getElementById('timer-display').textContent = `${Math.floor(secondsLeft / 60)}:${String(secondsLeft % 60).padStart(2, '0')}`;
+        if (secondsLeft === 0 && timerInterval !== null) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          timerDeadline = null;
+          document.getElementById('timer-toggle').textContent = 'Timer complete';
+          document.getElementById('timer-toggle').disabled = true;
+          document.getElementById('announcement').textContent = 'The planned five minutes are complete.';
+        }
+      }
+      function toggleTimer() {
+        const toggle = document.getElementById('timer-toggle');
+        document.getElementById('timer-display').hidden = false;
+        if (timerInterval !== null) {
+          updateTimer();
+          clearInterval(timerInterval);
+          timerInterval = null;
+          timerDeadline = null;
+          toggle.textContent = 'Resume timer';
+        } else if (secondsLeft > 0) {
+          timerDeadline = Date.now() + secondsLeft * 1000;
+          timerInterval = setInterval(updateTimer, 250);
+          toggle.textContent = 'Pause timer';
+        }
+        updateTimer();
+      }
+      function resetTimer() {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        timerDeadline = null;
+        secondsLeft = 300;
+        const toggle = document.getElementById('timer-toggle');
+        toggle.disabled = false;
+        toggle.textContent = 'Start 5:00 timer';
+        document.getElementById('timer-display').hidden = true;
+        updateTimer();
+      }
 
-<script>
-const stage=document.getElementById('stage');
-function fit(){const s=Math.min(innerWidth/1920,innerHeight/1080);
-  stage.style.transform=`translate(${(innerWidth-1920*s)/2}px,${(innerHeight-1080*s)/2}px) scale(${s})`;
-  document.body.style.background=slides[cur]&&slides[cur].classList.contains('dark')?'#0F0F0E':'#F7F5F1'}
-addEventListener('resize',fit);
-const slides=[...document.querySelectorAll('.slide')],bar=document.getElementById('bar');
-let cur=0;
-function frags(i){return[...slides[i].querySelectorAll('.frag')]}
-function show(i,all){slides[cur].classList.remove('active');cur=Math.max(0,Math.min(slides.length-1,i));
-  const s=slides[cur];frags(cur).forEach(f=>f.classList.toggle('on',!!all));
-  s.classList.remove('active');void s.offsetWidth;s.classList.add('active');
-  bar.style.width=((cur+1)/slides.length*100)+'%';
-  document.body.style.background=s.classList.contains('dark')?'#0F0F0E':'#F7F5F1';
-  bar.style.background=s.classList.contains('dark')?'#F0EEE9':'#0F0F0E';}
-function next(){const f=frags(cur).find(x=>!x.classList.contains('on'));if(f){f.classList.add('on');return}if(cur<slides.length-1)show(cur+1,false)}
-function prev(){if(cur>0)show(cur-1,true)}
-addEventListener('keydown',e=>{
-  if(['ArrowRight',' ','PageDown'].includes(e.key)){e.preventDefault();next()}
-  else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev()}
-  else if(e.key==='Home')show(0,false);else if(e.key==='End')show(slides.length-1,true);
-  else if(e.key==='f'&&document.documentElement.requestFullscreen)document.documentElement.requestFullscreen();
-});
-addEventListener('click',e=>{(e.clientX>innerWidth*0.35)?next():prev()});
-let tx=null;addEventListener('touchstart',e=>tx=e.touches[0].clientX);
-addEventListener('touchend',e=>{if(tx==null)return;const dx=e.changedTouches[0].clientX-tx;if(dx<-40)next();else if(dx>40)prev();tx=null});
-if(matchMedia('(prefers-reduced-motion: reduce)').matches)document.querySelectorAll('.frag').forEach(f=>f.classList.add('on'));
-fit();show(0,false);
-</script>
+      previous.addEventListener('click', () => show(current - 1));
+      next.addEventListener('click', () => show(current + 1));
+      notesButton.addEventListener('click', toggleNotes);
+      document.getElementById('close-notes').addEventListener('click', () => dialog.close());
+      dialog.addEventListener('close', () => notesButton.focus());
+      document.getElementById('notes-previous').addEventListener('click', () => show(current - 1));
+      document.getElementById('notes-next').addEventListener('click', () => show(current + 1));
+      document.getElementById('timer-toggle').addEventListener('click', toggleTimer);
+      document.getElementById('timer-reset').addEventListener('click', resetTimer);
+      fullscreen.addEventListener('click', toggleFullscreen);
+      if (!document.fullscreenEnabled) {
+        fullscreen.hidden = true;
+      }
+      document.addEventListener('fullscreenchange', () => {
+        fullscreen.textContent = document.fullscreenElement ? 'Exit fullscreen' : 'Fullscreen';
+        fullscreen.setAttribute('aria-label', document.fullscreenElement ? 'Exit fullscreen' : 'Enter fullscreen');
+        resize();
+      });
+      document.addEventListener('keydown', event => {
+        if (event.altKey || event.ctrlKey || event.metaKey || event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
+        if (dialog.open) return;
+        if (['ArrowRight', 'PageDown', 'ArrowLeft', 'PageUp', 'Home', 'End'].includes(event.key)) {
+          event.preventDefault();
+          if (event.key === 'Home') show(0);
+          else if (event.key === 'End') show(slides.length - 1);
+          else show(current + (['ArrowRight', 'PageDown'].includes(event.key) ? 1 : -1));
+        } else if (event.key === ' ' && !event.target.closest('button, a')) {
+          event.preventDefault();
+          show(current + (event.shiftKey ? -1 : 1));
+        } else if (event.key.toLowerCase() === 'n') toggleNotes();
+        else if (event.key.toLowerCase() === 'f') toggleFullscreen();
+      });
+      viewport.addEventListener('pointerdown', event => {
+        if (event.pointerType !== 'touch' || event.target.closest('a, button')) return;
+        touchStart = { x: event.clientX, y: event.clientY };
+      });
+      viewport.addEventListener('pointerup', event => {
+        if (!touchStart || event.pointerType !== 'touch') return;
+        const dx = event.clientX - touchStart.x;
+        const dy = event.clientY - touchStart.y;
+        touchStart = null;
+        if (Math.abs(dx) > 75 && Math.abs(dx) > Math.abs(dy) * 2) show(current + (dx < 0 ? 1 : -1));
+      });
+      viewport.addEventListener('pointercancel', () => { touchStart = null; });
+      window.addEventListener('resize', resize);
+      window.addEventListener('hashchange', () => show(indexFromHash(), false));
+      document.addEventListener('visibilitychange', updateTimer);
+
+      const logoMeta = document.querySelector('meta[name="canary-logo"]');
+      const logoPath = logoMeta.content.trim();
+      if (logoPath) {
+        document.querySelectorAll('.brand-logo').forEach(img => {
+          img.addEventListener('load', () => { img.hidden = false; });
+          let triedFallback = false;
+          img.addEventListener('error', () => {
+            if (!triedFallback && logoMeta.dataset.fallback) {
+              triedFallback = true;
+              img.src = logoMeta.dataset.fallback;
+            } else img.hidden = true;
+          });
+          img.src = logoPath;
+        });
+      }
+      resize();
+      show(indexFromHash(), false);
+    })();
+  </script>
+</body>
+</html>

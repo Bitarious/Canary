@@ -58,7 +58,7 @@ export function renderOverview(el, { machine, analysis, scanning, error }) {
     </div>`;
 
   if (scanning) {
-    el.innerHTML = `${head}<div class="scan-state"><div class="spinner"></div>Scanning ${machine.components.length} components through the model…</div>`;
+    el.innerHTML = `${head}<div class="scan-state"><div class="spinner"></div>Scanning ${machine.components.length} components with illustrative rules…</div>`;
     return;
   }
   if (!analysis) {
@@ -67,7 +67,7 @@ export function renderOverview(el, { machine, analysis, scanning, error }) {
         <span class="dot" style="background:#5d6c80"></span>
         <div class="grow"><div class="name">${esc(c.name)}</div><div class="meta">${esc(TYPE_LABEL[c.type] || c.type)}</div></div></div>`).join('')}
       </div>
-      <p class="empty" style="margin-top:14px">Press <b>Analyze</b> to run this telemetry through the DriftOps model.</p>`;
+      <p class="empty" style="margin-top:14px">Press <b>Analyze</b> to apply illustrative rules to this telemetry.</p>`;
     return;
   }
 
@@ -89,7 +89,7 @@ export function renderOverview(el, { machine, analysis, scanning, error }) {
       <button class="item" data-id="${esc(c.id)}">
         <span class="rank">${priority.length ? i + 1 : '•'}</span>
         <div class="grow"><div class="name">${esc(c.name)}</div>
-          <div class="meta">${pct(c.risk_7d)} 7-day risk · ${esc(c.failure_window.label)}</div></div>
+          <div class="meta">${pct(c.risk_7d)} illustrative 7-day risk · ${esc(c.failure_window.label)}</div></div>
         <span class="score s-${c.status}">${Math.round(c.health)}</span>
       </button>`).join('')}
     </div>
@@ -112,6 +112,7 @@ export function renderComponent(el, c, simIndex) {
     <button class="close" aria-label="Close">✕</button>
     <div class="eyebrow">${esc(TYPE_LABEL[c.type] || c.type)} · priority #${c.priority_rank}</div>
     <h2>${esc(c.name)}</h2>
+    <p class="illustrative-note">Illustrative rule outputs. Risk, windows, confidence, and actions are not trained-model predictions.</p>
     ${badge(c.status)}
     <div class="ring-row">${ring(c.health, c.status)}
       <div class="ring-meta">
@@ -120,9 +121,9 @@ export function renderComponent(el, c, simIndex) {
       </div>
     </div>
     <div class="kpis">
-      <div class="kpi"><div class="k">7-day failure risk</div><div class="v s-${riskStatus(c.risk_7d)}">${pct(c.risk_7d)}</div></div>
-      <div class="kpi"><div class="k">Failure window</div><div class="v">${esc(c.failure_window.label)}</div></div>
-      <div class="kpi"><div class="k">Confidence</div><div class="v">${esc(conf)}</div></div>
+      <div class="kpi"><div class="k">Illustrative 7-day risk</div><div class="v s-${riskStatus(c.risk_7d)}">${pct(c.risk_7d)}</div></div>
+      <div class="kpi"><div class="k">Rule window</div><div class="v">${esc(c.failure_window.label)}</div></div>
+      <div class="kpi"><div class="k">Rule confidence</div><div class="v">${esc(conf)}</div></div>
       <div class="kpi"><div class="k">Fleet percentile</div><div class="v">${fleet ? `${fleet.fleet_percentile}<small class="sub">th · ${esc(fleet.signal.toLowerCase())}</small>` : '—'}</div></div>
     </div>
 
@@ -137,14 +138,14 @@ export function renderComponent(el, c, simIndex) {
 
     ${c.signals.length ? `<h3>Benchmark signals (latest run)</h3>${c.signals.map(s => sparkline(s, COLORS[c.status])).join('')}` : ''}
 
-    <h3>Recommended action</h3>
+    <h3>Illustrative action</h3>
     <div class="action"><div class="eyebrow">Next step</div>${esc(c.action)}</div>
 
     <h3>What happens if I wait?</h3>
     <div class="sim-tabs">${sim.map((w, i) => `<button class="sim-tab ${i === si ? 'active' : ''}" data-sim="${i}">
       ${w.recommended ? '<span class="rec">✓</span>' : ''}${esc(w.label.replace('In ', ''))}</button>`).join('')}</div>
     <div class="sim-out">
-      <div class="kpi"><div class="k">Failure before maintenance</div><div class="v s-${riskStatus(sel.risk)}">${pct(sel.risk, 1)}</div></div>
+      <div class="kpi"><div class="k">Illustrative risk before maintenance</div><div class="v s-${riskStatus(sel.risk)}">${pct(sel.risk, 1)}</div></div>
       <div class="kpi"><div class="k">Operational exposure</div><div class="v s-${EXPOSURE_STATUS[sel.exposure]}">${esc(sel.exposure)}</div></div>
     </div>
     <div class="sim-bars">${sim.map((w, i) => `<div class="${i === si ? 'active' : ''}" title="${esc(w.label)}: ${pct(w.risk, 1)}"

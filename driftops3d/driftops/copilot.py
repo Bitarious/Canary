@@ -6,6 +6,7 @@ back to the evidence shown in the 3D views. An LLM can later rephrase these grou
 from __future__ import annotations
 
 import re
+from datetime import datetime, timezone
 
 from . import model
 from .fleet import STATUS_ORDER
@@ -62,6 +63,18 @@ def _card(fleet, device_id, comp=None):
 
 
 def answer(fleet, question, ctx):
+    """Reject non-current requests before accessing any fleet data."""
+    cutoff = ctx.get("cutoff", "now")
+    if cutoff != "now":
+        return {"available": False, "cutoff": cutoff, "origin": "illustrative_rules",
+                "text": "Copilot is unavailable for historical or projected dates. Return to Now.",
+                "suggestions": []}
+    result = _answer_now(fleet, question, ctx)
+    return {**result, "available": True, "cutoff": "now", "origin": "illustrative_rules",
+            "answered_at": datetime.now(timezone.utc).isoformat()}
+
+
+def _answer_now(fleet, question, ctx):
     q = (question or "").strip().lower()
     site_id = ctx.get("site_id") or next(iter(fleet.sites), None)
     rack_id = _find_rack(fleet, q, site_id) or ctx.get("rack_id")
@@ -98,7 +111,7 @@ def answer(fleet, question, ctx):
         weight = comp["priority_score"] / max(1e-6, 100 * (0.6 * comp["risk_7d"] + 0.4 * (100 - comp["health"]) / 100))
         exposure = "LOW" if risk * weight < 0.04 else "MEDIUM" if risk * weight < 0.15 else "HIGH"
         rec = next((w for w in comp["wait_simulation"] if w["recommended"]), None)
-        text = (f"If {comp_short} on {s['label']} is left for {days} days, the model estimates a **{_pct(risk)}** chance it "
+        text = (f"If {comp_short} on {s['label']} is left for {days} days, the illustrative rule assigns a **{_pct(risk)}** chance it "
                 f"fails before maintenance (exposure **{exposure}**). "
                 + (f"Latest low-risk window: **{rec['label'].lower()}**." if rec and rec["days"] < 14 else
                    "No maintenance is needed in the next two weeks."))
@@ -159,7 +172,7 @@ def answer(fleet, question, ctx):
     # Default: status of the rack / device / site in focus — but only for questions that are about status.
     about_status = any(w in q for w in ("status", "how ", "health", "doing", "state", "overview", "summar", "okay", "ok?"))
     if q and not about_status and not _find_rack(fleet, q, site_id) and not _find_device(fleet, q, site_id):
-        return {"text": "I can only answer questions about the health of this infrastructure, grounded in the model's results: "
+        return {"text": "I can only answer questions about the health of this infrastructure, based on illustrative rule outputs: "
                         "the **status** of a site, rack or server, **why** something is flagged, **what happens if you wait** "
                         "N days, **what to fix first**, and **fleet comparisons**. Try one of the suggestions below.",
                 "tone": "watch", "focus": {"site_id": site_id, "rack_id": ctx.get("rack_id"), "device_id": ctx.get("device_id")},

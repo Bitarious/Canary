@@ -15,7 +15,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlparse
 
-from driftops import copilot
+from driftops import copilot, cases
 from driftops.fleet import Fleet
 
 ROOT = Path(__file__).resolve().parent
@@ -102,6 +102,10 @@ class Handler(SimpleHTTPRequestHandler):
         path = urlparse(self.path).path.rstrip("/")
         parts = path.split("/")
         try:
+            if path == "/api/cases":
+                return self._json(cases.case_list())
+            if path.startswith("/api/cases/") and len(parts) == 4:
+                return self._json(cases.case_detail(parts[3]))
             if path == "/api/status":
                 return self._json({"ready": WARM["done"], "devices": len(FLEET.device_ids())})
             if path == "/api/sites":
@@ -119,6 +123,8 @@ class Handler(SimpleHTTPRequestHandler):
             if path.startswith("/api/jobs/"):
                 job = JOBS.get(parts[-1])
                 return self._json(job) if job else self._json({"error": "unknown job"}, 404)
+        except cases.CaseBundleError:
+            return self._json({"error": "Saved HDD evidence is unavailable. Source verification failed."}, 503)
         except KeyError as e:
             return self._json({"error": f"not found: {e}"}, 404)
         if path == "/favicon.ico":

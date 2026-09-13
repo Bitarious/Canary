@@ -1,5 +1,15 @@
 # Linux server handoff
 
+## Post-hackathon README, September 13
+
+The user requested a public-facing README and identified this machine's working code as the good version. They reported a potentially bad teammate push. This session did not inspect or change the remote. Preserve the local application and presentation changes when preparing any later publication.
+
+The root README now explains the motivation, implemented architecture, component results, failed experiments, setup, and reproduction paths. It distinguishes the existing experiment release from the local Canary evidence-view updates. It also records the missing project-wide source license and the setup still required for full cloud retraining.
+
+Verification used an isolated copy of the current local source, including uncommitted files, with a new locked environment from cached packages. The pilot rebuilt with 3,000 records and 13,616 tasks. All 93 core tests and nine demo tests passed. Both server entry points passed page, data, and error-response checks. The README's CPU inference example reproduced all sixteen saved SSD predictions without training. All fourteen result-table rows match the recorded metrics, all 187 evidence hashes pass, and all 43 local links and anchors resolve. Remote downloads and full retraining were not repeated.
+
+## Completed training program
+
 The full-history HDD model passed every frozen success check on 2,048 unseen drives. It completed all 11,315,069 training windows on eight Nebius RTX PRO 6000 GPUs. Channel accuracy is 99.68%, compared with 69.43% for the constant baseline and 86.01% with numerical inputs zeroed. Reversal, shuffle, and sixteen exact reload predictions also pass. All checkpoints and 648 evaluation JSON files are exported with verified hashes. The evaluation VM stopped successfully at 04:20:37 UTC on September 13. Read [full-history training](full-history-training.md) for evidence and limits. This result supports signal descriptions, not failure prediction.
 
 The user also authorized a [separate component TSLM program](component-training-program.md) if the HDD model passes. Research the remaining hardware categories and train separate models within the same total $600 ceiling. Keep source and evidence in this GitHub repository. The user authorized the full project upload on September 13, 2026.
@@ -22,9 +32,17 @@ The requested component training program is complete within the stated benchmark
 
 The user authorized the complete GitHub upload and parallel agents for publication and private demo access. The training work and teammates' main branch were merged without conflicts. The [release guide](project-release.md) describes source, selected models, evaluation records, and dataset reproduction.
 
-The private demo route is `https://projects.home.doodlebeast.com/driftops/#/site/site-a`. It requires the existing WireGuard access and either an administrator grant or a DriftOps resource grant. The user approved a DriftOps-only grant for the registered laptop after its request reached the gateway but returned403. The laptop remains a non-administrator. The gateway route, browser navigation, fleet data, and analysis requests passed local verification. The app still uses synthetic telemetry and rules.
+The private demo route is `https://projects.home.doodlebeast.com/driftops/#/site/site-a`. It requires the existing WireGuard access and either an administrator grant or a DriftOps resource grant. The user approved a DriftOps-only grant for the registered laptop after its request reached the gateway but returned HTTP 403. The laptop remains a non-administrator. The gateway route, browser navigation, fleet data, and analysis requests passed local verification. The 3D fleet uses synthetic telemetry and rules.
 
 The gateway and its access configuration belong to the private hosting project, not this source repository. The demo backend binds to loopback. No public app port was opened. The laptop received only the approved DriftOps grant.
+
+The product is now named Canary. The user supplied the gold-bird logo and requested Astra agents for the remaining implementation and review. The eight-slide presentation is at `https://projects.home.doodlebeast.com/driftops/PresentationDraftDeck.html`. Its submission PDF is at `https://projects.home.doodlebeast.com/driftops/Canary-Presentation.pdf`. Both use the same private access. The script has 518 spoken words and a five-minute schedule that includes a 35-second demo. See [the speaker script and sources](canary-presentation.md). Browser checks cover all eight slides, notes, the timer, mobile scrolling, and projector layout. The exported PDF has eight pages. The deck includes verified Uptime outage costs, the qualified British Airways outage example, a proposed storage-operations buyer, and a paid-pilot commercial proposal. A separate training diagram follows the supplied notes and verified source code. It distinguishes weighted answer-token loss, gradient calculation, and AdamW updates.
+
+The Evidence view at `#/evidence/hdd-rising` connects three released Backblaze cases to their raw 28-day measurements and exact saved model outputs. It preserves the stable case and the model-mismatch case. The server verifies the bundled source and recorded model-input hashes. Checkpoint hashes are provenance records, not a fresh weight verification. No model inference or training runs during a demo request. Real-case probability, failure-window, and confidence fields remain null. The 3D fleet remains an explicitly illustrative workflow.
+
+The hosted release uses `.local/canary-releases/20260913T094003Z`, built from GitHub base `addc9f0` plus the reviewed changes. Nine API tests and the four-viewport browser suite passed in this isolated source snapshot. Independent visual, keyboard, and final 3D navigation checks passed. The live Projects route serves all three verified cases and the original logo. Its granted and denied resource checks passed.
+
+The review service remains transient. This refresh does not establish access from the user's browser or recovery after reboot. Repository paths and the `/driftops/` route retain their existing names to preserve commands and links.
 
 ## What this revision can run
 
