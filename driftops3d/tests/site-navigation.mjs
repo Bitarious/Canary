@@ -52,7 +52,7 @@ const clickDevice = async id => {
     const THREE = await import('three');
     const scene = window.navigationScene, device = scene.slabs.get(${JSON.stringify(id)});
     const p = device.data.form_factor === 'laptop'
-      ? new THREE.Vector3(0, 0.65, -0.65) : new THREE.Vector3(0, 0, 0.48);
+      ? new THREE.Vector3(0, 1.35, -1.67) : new THREE.Vector3(0, 0, 1.8);
     device.mesh.localToWorld(p).project(scene.camera);
     const rect = scene.renderer.domElement.getBoundingClientRect();
     return { x: rect.left + (p.x + 1) * rect.width / 2, y: rect.top + (1 - p.y) * rect.height / 2 };
@@ -61,6 +61,9 @@ const clickDevice = async id => {
   await send('Input.dispatchMouseEvent', { type: 'mouseReleased', ...point, button: 'left', clickCount: 1 });
   await waitFor(`location.hash === ${JSON.stringify(`#/device/${id}`)} && !document.querySelector('#deviceView').hidden && document.querySelectorAll('#overview .item').length > 0`);
   await check(`navigationScene.zoomed?.id === ${JSON.stringify(id)} && navigationScene.camera.position.toArray().every(Number.isFinite)`, `${id} opens through a valid zoom transition`);
+  if (id.startsWith('hq-')) {
+    await check(`window.navigationMatch?.id === ${JSON.stringify(id)} && navigationMatch.sameGeometry && navigationMatch.pixelError < 0.5`, 'Laptop exterior and screen projection match across the view switch');
+  }
 };
 
 try {
@@ -76,9 +79,43 @@ try {
   await send('Page.navigate', { url: `${base}/#/site/hq` });
   await waitFor(`document.querySelector('#twinHead')?.innerText.includes('3 laptops') && !document.querySelector('#analyzeBtn').disabled`);
   await evaluate(`(async () => {
+    const THREE = await import('three');
     const prototype = (await import('/js/site-scene.js')).SiteScene.prototype;
     const frame = prototype._frame;
     prototype._frame = function(now) { window.navigationScene = this; return frame.call(this, now); };
+    const hardware = (await import('/js/scene.js')).HardwareScene.prototype;
+    const load = hardware.load;
+    hardware.load = function(machine, ...args) {
+      const result = load.call(this, machine, ...args);
+      const twin = window.navigationScene;
+      if (machine.form_factor !== 'laptop' || twin?.zoomed?.id !== machine.id) return result;
+      const outside = [];
+      twin.slabs.get(machine.id).mesh.traverse(o => { if (o.isMesh) outside.push(o); });
+      twin.root.updateMatrixWorld(true);
+      this.layout.root.updateMatrixWorld(true);
+      twin.camera.updateMatrixWorld(true);
+      this.camera.updateMatrixWorld(true);
+      const project = (point, mesh, scene) => {
+        const p = point.clone().applyMatrix4(mesh.matrixWorld).project(scene.camera);
+        const r = scene.renderer.domElement.getBoundingClientRect();
+        return new THREE.Vector2(r.left + (p.x + 1) * r.width / 2, r.top + (1 - p.y) * r.height / 2);
+      };
+      let pixelError = 0, sameGeometry = outside.length === this.layout.shell.length;
+      this.layout.shell.forEach((inside, i) => {
+        const other = outside[i];
+        if (!other) return;
+        const a = inside.geometry.attributes.position, b = other.geometry.attributes.position;
+        sameGeometry &&= a.count === b.count && a.array.every((v, j) => v === b.array[j]);
+        inside.geometry.computeBoundingBox();
+        const { min, max } = inside.geometry.boundingBox;
+        for (const x of [min.x, max.x]) for (const y of [min.y, max.y]) for (const z of [min.z, max.z]) {
+          const p = new THREE.Vector3(x, y, z);
+          pixelError = Math.max(pixelError, project(p, inside, this).distanceTo(project(p, other, twin)));
+        }
+      });
+      window.navigationMatch = { id: machine.id, pixelError, sameGeometry };
+      return result;
+    };
   })()`);
   await waitFor('window.navigationScene && !navigationScene.scanState && navigationScene.tweens.list.length === 0');
   const ids = await evaluate('[...navigationScene.slabs.keys()]');
@@ -101,14 +138,16 @@ try {
     await evaluate('document.querySelector("#crumbs .back").click()');
     await waitFor('!document.querySelector("#twinView").hidden && !navigationScene.zoomed && navigationScene.tweens.list.length === 0');
     await check('[...navigationScene.slabs.values()].every(s => Math.abs(s.mesh.position.z) < 0.001) && [...navigationScene.racks.values()].every(r => r.labelEl.style.opacity !== "0")', 'Returning restores laptops and group labels');
+    await check('!navigationScene.camera.view?.enabled && navigationScene.camera.fov === 35', 'Returning restores the site camera projection');
   }
   await evaluate('location.hash = "#/site/site-a/rack/r06"');
   await waitFor('navigationScene.siteId === "site-a" && navigationScene.selectedRack === "r06" && !document.querySelector("#analyzeBtn").disabled && navigationScene.tweens.list.length === 0');
   await check('navigationScene.slabs.size === 84 && navigationScene.racks.size === 7', 'Site A retains its server racks');
+  const serverZ = await evaluate('navigationScene.slabs.get("site-a-609").mesh.position.z');
   await clickDevice('site-a-609');
   await evaluate('document.querySelector("#crumbs .back").click()');
   await waitFor('!document.querySelector("#twinView").hidden && !navigationScene.zoomed && navigationScene.tweens.list.length === 0');
-  await check('Math.abs(navigationScene.slabs.get("site-a-609").mesh.position.z + 0.02) < 0.001', 'Returning restores the server to its rack');
+  await check(`Math.abs(navigationScene.slabs.get("site-a-609").mesh.position.z - ${serverZ}) < 0.001`, 'Returning restores the server to its rack');
   assert.deepEqual(errors, [], 'No browser exceptions');
   console.log('PASS: all laptop and server navigation checks');
 } finally {
