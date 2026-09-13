@@ -9,7 +9,9 @@ const md = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
 
 // ------------------------------------------------------------------------------------ sidebar
 
-export function renderSidebar(el, { sites, site, rackId }) {
+const whenLabel = w => (w ? (w.projected ? ` · projected +${w.day}d` : ` · ${-w.day}d ago`) : '');
+
+export function renderSidebar(el, { sites, site, rackId, when = null }) {
   const rack = site?.racks.find(r => r.id === rackId);
   const counts = site?.counts || {};
   el.innerHTML = `
@@ -22,7 +24,7 @@ export function renderSidebar(el, { sites, site, rackId }) {
     </div>
     ${site ? `
     <div class="side-sec">
-      <div class="eyebrow">${esc(site.name)} · status</div>
+      <div class="eyebrow">${esc(site.name)} · status${whenLabel(when)}</div>
       ${['critical', 'elevated', 'watch', 'healthy'].map(s => `<div class="count-row"><span class="sq" style="background:${COLORS[s]}"></span>
         <span>${s[0].toUpperCase() + s.slice(1)}</span><b>${counts[s] || 0}</b></div>`).join('')}
     </div>
@@ -31,13 +33,13 @@ export function renderSidebar(el, { sites, site, rackId }) {
       <div class="eyebrow row-between"><span>${esc(rack.name)} · ${rack.devices.length} devices</span><button class="link" data-clear-rack>✕ close</button></div>
       ${rack.devices.map(d => `<button class="dev-row" data-open="${esc(d.id)}" data-hover-device="${esc(d.id)}">
         <span class="slot">${d.slot ? `${d.form_factor === 'laptop' ? '' : 'U'}${String(d.slot).padStart(2, '0')}` : '—'}</span>
-        <span class="grow"><span class="dname">${esc(d.label)}</span><span class="dmeta">${esc(d.status === 'healthy' ? 'healthy' : short(d.worst.name) + ' · ' + (d.worst.signal || d.status))}</span></span>
-        <span class="dtrend">${TREND_ICON(d.trend)}</span>
-        <span class="dhealth s-${d.status}">${Math.round(d.health)}</span></button>`).join('')}
+        <span class="grow"><span class="dname">${esc(d.label)}</span><span class="dmeta">${esc(d.status === 'nodata' ? 'no telemetry yet' : d.status === 'healthy' ? 'healthy' : short(d.worst.name) + ' · ' + (d.worst.signal || d.status))}</span></span>
+        <span class="dtrend">${when ? '' : TREND_ICON(d.trend)}</span>
+        <span class="dhealth s-${d.status}">${d.health == null ? '—' : Math.round(d.health)}</span></button>`).join('')}
       <p class="side-hint">Click a ${site.kind === 'office' ? 'laptop' : 'server'} to open it in 3D and analyze it.</p>
     </div>` : ''}
     <div class="side-sec">
-      <div class="eyebrow">Drifting now</div>
+      <div class="eyebrow">${when ? (when.projected ? `Drifting at +${when.day}d (projected)` : `Drifting ${-when.day}d ago`) : 'Drifting now'}</div>
       ${site.drifting.length ? site.drifting.map(d => `<button class="drift-row" data-drift="${esc(d.id)}" data-rack="${esc(d.rack_id)}">
         <span class="grow"><span class="dname">${esc(d.rack_name)}</span><span class="dmeta">${esc(d.label)} · ${Math.round(d.health)}/100 · ${esc(short(d.worst.name))}</span></span>
         <span class="sdot" style="background:${COLORS[d.status]}"></span></button>`).join('') : '<p class="side-hint">Nothing is drifting at this site.</p>'}
@@ -47,14 +49,16 @@ export function renderSidebar(el, { sites, site, rackId }) {
     ` : ''}`;
 }
 
-export function renderTwinHead(head, foot, site, rackId) {
+export function renderTwinHead(head, foot, site, rackId, when = null) {
   if (!site) { head.innerHTML = ''; foot.innerHTML = ''; return; }
   const rack = site.racks.find(r => r.id === rackId);
   const device = site.kind === 'office' ? 'laptop' : 'server';
   head.innerHTML = `<h1>${esc(site.name)} — Digital Twin</h1>
-    <div class="twin-sub">${site.racks.length} ${site.kind === 'office' ? 'groups' : 'racks'} · ${site.nodes} ${site.kind === 'office' ? 'laptops' : 'nodes'} · live temporal health</div>`;
+    <div class="twin-sub">${site.racks.length} ${site.kind === 'office' ? 'groups' : 'racks'} · ${site.nodes} ${site.kind === 'office' ? 'laptops' : 'nodes'} · ${!when ? 'live temporal health'
+      : when.projected ? `<span class="tm-tag proj">projected · +${when.day} day${when.day === 1 ? '' : 's'}</span>`
+      : `<span class="tm-tag replay">replay · ${-when.day} day${when.day === -1 ? '' : 's'} ago</span>`}</div>`;
   foot.innerHTML = `<span>${rack ? `${esc(rack.name)} selected · click a ${device} to open it in 3D · ask "Why?" or "What if I wait?"`
-    : site.kind === 'office' ? 'Click a laptop to open it in 3D · hover for details' : 'Click a rack to inspect it · hover a server for details'}</span><span>colour = health · glow = drifting</span>`;
+    : site.kind === 'office' ? 'Click a laptop to open it in 3D · hover for details' : 'Click a rack to inspect it · hover a server for details'}</span><span>colour = health · glow = drifting · ←/→ scrub time · space play</span>`;
 }
 
 // ------------------------------------------------------------------------------------ copilot

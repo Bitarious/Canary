@@ -24,21 +24,25 @@ SITES = [
 ]
 
 # (site, rack, slot) -> degradation profile. Everything else is healthy.
+# "onset" is the history day (0 = oldest of DAYS) on which the drift begins; before it the device is healthy.
 PROFILES = {
-    # Site A, Rack 06: shared cooling problem across the rack, one drive about to fail on top of it.
-    **{("site-a", "r06", s): {"thermal": v} for s, v in ((2, 0.55), (3, 0.75), (5, 0.9), (6, 0.6), (8, 0.45), (11, 0.5))},
-    ("site-a", "r06", 9): {"thermal": 0.8, "disk": 1.0},
-    ("site-a", "r04", 5): {"memory": 1.0},
-    ("site-a", "r03", 4): {"disk": 0.06},
-    ("site-a", "r02", 7): {"psu": 0.8},
-    ("site-a", "r01", 10): {"memory": 0.3},
-    ("site-b", "r02", 8): {"thermal": 0.85},
-    ("site-b", "r05", 3): {"disk": 0.3},
-    ("hq", "f1", 1): {"thermal": 1.0},
+    # Site A, Rack 06: a cooling fault that starts at U05 and spreads to its neighbours, with one drive
+    # failing on top of it late in the window.
+    **{("site-a", "r06", s): {"thermal": v, "onset": o}
+       for s, v, o in ((5, 0.9, 3), (6, 0.6, 7), (3, 0.75, 9), (2, 0.55, 13), (11, 0.5, 16), (8, 0.45, 19))},
+    ("site-a", "r06", 9): {"thermal": 0.8, "disk": 1.0, "onset": 10, "disk_onset": 17},
+    ("site-a", "r04", 5): {"memory": 1.0, "onset": 8},
+    ("site-a", "r03", 4): {"disk": 0.06, "onset": 12},
+    ("site-a", "r02", 7): {"psu": 0.8, "onset": 15},
+    ("site-a", "r01", 10): {"memory": 0.3, "onset": 18},
+    ("site-b", "r02", 8): {"thermal": 0.85, "onset": 6},
+    ("site-b", "r05", 3): {"disk": 0.3, "onset": 14},
+    ("hq", "f1", 1): {"thermal": 1.0, "onset": 5},
     ("hq", "f2", 1): {"battery": 1.0},
-    ("hq", "it", 1): {"ssd": 1.0},
+    ("hq", "it", 1): {"ssd": 1.0, "onset": 10},
 }
 
+DAYS = 30  # daily runs of history per demo device
 SERVERS_PER_RACK = {"site-a": 12, "site-b": 10}
 LAPTOPS_PER_GROUP = 1
 
@@ -55,12 +59,17 @@ def _lerp(a, b, k):
     return a + (b - a) * k
 
 
+def _ramp(day, days, onset=0):
+    """0 before ``onset``, rising to 1 on the last day."""
+    return max(0.0, (day - onset) / max(1, days - 1 - onset))
+
+
 def _server_run(ident, p, day, days, t):
     base = random.Random(_seed(ident["id"]))          # stable per-device characteristics
     rng = random.Random(_seed(ident["id"], day))        # per-run noise
-    k = day / (days - 1)
-    thermal = p.get("thermal", 0) * k ** 1.4
-    disk = p.get("disk", 0) * k ** 2.2
+    k = _ramp(day, days, p.get("onset", 0))
+    thermal = p.get("thermal", 0) * k ** 0.8
+    disk = p.get("disk", 0) * _ramp(day, days, p.get("disk_onset", p.get("onset", 0))) ** 2.2
     mem = p.get("memory", 0) * k ** 1.8
     psu = p.get("psu", 0) * k ** 1.6
     fan_rpm = base.uniform(9300, 10200) * (1 - 0.38 * thermal)
@@ -106,8 +115,8 @@ def _server_run(ident, p, day, days, t):
 def _laptop_run(ident, p, day, days, t):
     base = random.Random(_seed(ident["id"]))
     rng = random.Random(_seed(ident["id"], day))
-    k = day / max(1, days - 1)
-    thermal = p.get("thermal", 0) * k ** 1.3
+    k = _ramp(day, days, p.get("onset", 0))
+    thermal = p.get("thermal", 0) * k ** 0.8
     wear = base.uniform(0.03, 0.14) + p.get("battery", 0) * _lerp(0.25, 0.33, k)
     peak = base.uniform(70, 80) + 20 * thermal
     drop = 0.02 + 0.24 * thermal
@@ -156,7 +165,7 @@ def demo_fleet():
                              "role": "database" if slot <= 4 else "compute", "criticality": "high" if slot <= 4 else "medium",
                              "site": site["id"], "rack": rack["id"], "slot": slot}
                     profile = PROFILES.get((site["id"], rack["id"], slot), {})
-                    yield mid, list(_runs(ident, profile, _server_run, 14, 1, now))
+                    yield mid, list(_runs(ident, profile, _server_run, DAYS, 1, now))
             else:
                 for slot in range(1, LAPTOPS_PER_GROUP + 1):
                     mid = f"hq-{rack['id']}-{slot:02d}"
@@ -165,4 +174,4 @@ def demo_fleet():
                              "role": "employee laptop", "criticality": "medium",
                              "site": site["id"], "rack": rack["id"], "slot": slot}
                     profile = PROFILES.get((site["id"], rack["id"], slot), {})
-                    yield mid, list(_runs(ident, profile, _laptop_run, 7, 4, now))
+                    yield mid, list(_runs(ident, profile, _laptop_run, DAYS, 1, now))

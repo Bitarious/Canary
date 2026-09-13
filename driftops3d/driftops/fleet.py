@@ -1,10 +1,12 @@
 """Fleet registry: devices grouped into sites and racks, with cached model results."""
 from __future__ import annotations
 
+import bisect
 import json
 import re
 import threading
 import uuid
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from . import demo_data, model
@@ -24,6 +26,41 @@ def safe_id(s):
 
 def worst_status(statuses):
     return max(statuses, key=lambda s: STATUS_ORDER.get(s, 0), default="healthy")
+
+
+# ----------------------------------------------------------------------------- time machine
+
+REPLAY_DAYS = 30     # days shown before now (day 0 = now)
+HORIZON_DAYS = 7     # projected days after now
+DRIFTING = ("deteriorating", "slowly deteriorating")
+FAINT_HEALTH = 97.5  # component health below this carries a (possibly faint) degradation signal
+
+
+def _top_signal(component):
+    return next((e["signal"] for e in component["evidence"] if e["impact"] > 0), None)
+
+
+def _frame(analysis):
+    """Compact device state for one run, as the model saw it at that time (causal: no later runs)."""
+    comps = analysis["components"]
+    worst = min(comps, key=lambda c: (-STATUS_ORDER[c["status"]], c["health"]))
+    return {"t": analysis["collected_at"], "h": analysis["overall"]["health"], "s": worst["status"],
+            "w": worst["name"], "sig": _top_signal(worst),
+            # faint signals count too: any penalty at all is the first trace of a shared cause
+            "g": sorted({PATTERN_GROUP.get(c["type"], c["type"]) for c in comps
+                         if c["health"] < FAINT_HEALTH or c["status"] != "healthy" or c["trend"] in DRIFTING})}
+
+
+def _projected_frame(analysis, days):
+    """Extend each component's current health slope ``days`` ahead (declines only, like the risk model)."""
+    comps = [(c, max(1.0, c["health"] + min(0.0, c["slope_per_day"]) * days)) for c in analysis["components"]]
+    healths = [h for _, h in comps]
+    worst, worst_h = min(comps, key=lambda x: x[1])
+    return {"h": round(0.6 * min(healths) + 0.4 * sum(healths) / len(healths), 1), "s": model.status_for(worst_h),
+            "w": worst["name"], "sig": _top_signal(worst), "p": True,
+            "risk": round(model.cumulative_risk(worst["health"], worst["slope_per_day"], days), 4),
+            "g": sorted({PATTERN_GROUP.get(c["type"], c["type"]) for c, h in comps
+                         if model.status_for(h) != "healthy" or c["slope_per_day"] <= -0.5})}
 
 
 class Fleet:
@@ -75,19 +112,24 @@ class Fleet:
             cached = self._cache.get(mid)
             if cached and cached[0] == key:
                 return cached[1]
-        history, overall, analysis = [], [], None
+        history, overall, frames, analysis = [], [], [], None
         for run in runs:
             analysis = model.analyze(run, history)
             history.append(model.history_entry(run, analysis))
             overall.append({"t": analysis["collected_at"], "health": analysis["overall"]["health"]})
+            frames.append(_frame(analysis))   # what the model concluded with only the runs up to this one
         slope, accel, span = model._trajectory(overall)
         analysis["source"] = runs[-1].get("source", "agent")
         analysis["history_overall"] = overall
         analysis["overall"]["trend"] = model._trend_label(slope, span, len(overall))
         analysis["overall"]["slope_per_day"] = round(slope, 2)
         with self._lock:
-            self._cache[mid] = (key, analysis)
+            self._cache[mid] = (key, analysis, frames)
         return analysis
+
+    def frames(self, mid):
+        self.analyze(mid)
+        return self._cache[mid][2]
 
     def warm(self):
         for mid in self.device_ids():
@@ -205,6 +247,87 @@ class Fleet:
         drifting = sorted((d for d in rows if d["drifting"]), key=lambda d: -d["priority"])
         return {**self._site_header(site, rows), "racks": racks, "drifting": drifting[:8],
                 "patterns": self.rack_patterns(site_id)}
+
+    def timeline(self, site_id):
+        """Day-by-day replay of the past REPLAY_DAYS and a trend projection HORIZON_DAYS ahead for one site.
+
+        Past frames are the model's own results using only the runs available by that day. Future frames
+        extrapolate today's per-component slopes; they are projections, not model forecasts.
+        """
+        rows = [r for r in self.summaries() if r["site_id"] == site_id]
+        if site_id not in self.sites or not rows:
+            raise KeyError(site_id)
+        now = datetime.now(timezone.utc)
+        days = list(range(-(REPLAY_DAYS - 1), HORIZON_DAYS + 1))
+        devices, events = {}, []
+        for row in rows:
+            mid = row["id"]
+            analysis, frames = self.analyze(mid), self.frames(mid)
+            stamps = [model._parse_t(f["t"]) for f in frames]
+            seq = []
+            for d in days:
+                if d > 0:
+                    seq.append(_projected_frame(analysis, d))
+                    continue
+                i = bisect.bisect_right(stamps, now + timedelta(days=d)) - 1
+                seq.append(None if i < 0 else {k: frames[i][k] for k in ("h", "s", "w", "sig", "g")})
+            known = [f["h"] for d, f in zip(days, seq) if f and d <= 0][:5]
+            devices[mid] = {"label": row["label"], "rack_id": row["rack_id"], "slot": row["slot"], "frames": seq,
+                            "baseline": sorted(known)[len(known) // 2] if known else None}
+            events.extend(self._events(mid, row, days, seq))
+        racks = {r["id"]: r["name"] for r in self.sites[site_id]["racks"]}
+        links = [self._links(devices, racks, i) for i in range(len(days))]
+        return {"site_id": site_id, "now": now.isoformat(), "days": days, "now_index": days.index(0),
+                "devices": devices, "events": sorted(events, key=lambda e: (e["day"], -STATUS_ORDER.get(e["status"], 0))),
+                "links": links,
+                "projection": "Linear extension of each component's current health slope; declines only."}
+
+    @staticmethod
+    def _events(mid, row, days, seq):
+        """When a device first left its own baseline, and when it first reached each worse status."""
+        out = []
+        past = [(d, f) for d, f in zip(days, seq) if f and d <= 0]
+        if len(past) < 4:
+            return out
+        base = sorted(f["h"] for _, f in past[:5])[len(past[:5]) // 2]
+        first = STATUS_ORDER[past[0][1]["s"]]
+        onset = next(((d, f) for d, f in past
+                      if f["sig"] and (f["h"] <= base - 4 or STATUS_ORDER[f["s"]] > first)), None)
+        if onset:
+            out.append({"day": onset[0], "device_id": mid, "label": row["label"], "rack_id": row["rack_id"],
+                        "kind": "onset", "status": onset[1]["s"], "signal": onset[1]["sig"], "component": onset[1]["w"],
+                        "text": f"{row['label']} drifts from its baseline ({base:.0f} → {onset[1]['h']:.0f})"})
+        reached = STATUS_ORDER[past[0][1]["s"]]
+        for d, f in ((d, f) for d, f in zip(days, seq) if f):
+            level = STATUS_ORDER[f["s"]]
+            if level > reached:
+                reached = level
+                out.append({"day": d, "device_id": mid, "label": row["label"], "rack_id": row["rack_id"],
+                            "kind": "projected" if f.get("p") else "status", "status": f["s"], "signal": f["sig"],
+                            "component": f["w"],
+                            "text": f"{row['label']} {'would reach' if f.get('p') else 'reaches'} {f['s']}"})
+        return out
+
+    @staticmethod
+    def _links(devices, racks, i):
+        """Devices in one rack degrading in the same way on this day: the chains the twin draws."""
+        groups: dict[tuple, list] = {}
+        for mid, dev in devices.items():
+            f = dev["frames"][i]
+            # a constant quirk (e.g. two remapped sectors since day one) is not drift: require a move off baseline
+            if not f or (f["s"] == "healthy" and not f.get("p") and f["h"] > (dev["baseline"] or 100) - 2):
+                continue
+            for g in f["g"]:
+                groups.setdefault((dev["rack_id"], g), []).append(mid)
+        out = []
+        for (rid, g), ids in groups.items():
+            if len(ids) < 2:
+                continue
+            ids.sort(key=lambda m: devices[m]["slot"] or 99)
+            status = worst_status(devices[m]["frames"][i]["s"] for m in ids)
+            out.append({"rack_id": rid, "rack_name": racks.get(rid, rid), "group": g, "devices": ids,
+                        "status": status if status != "healthy" else "watch"})
+        return out
 
     def incidents(self):
         items = []

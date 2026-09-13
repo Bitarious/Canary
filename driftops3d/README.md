@@ -32,6 +32,7 @@ navigation, and checks a server's zoom and return transition.
 | View | What you get |
 |---|---|
 | **Twin** (`#/site/<id>[/rack/<id>]`) | Left: site list, status counts, "drifting now", rack-level patterns (e.g. *Rack 06: thermal drift on 6 devices*). Center: the 3D racks. Right: the **copilot**. Selecting a rack asks "Status of Rack 06?" automatically. Quick chips: *Why? · What if I wait 7 days? · What should I do? · Show fleet comparison*. The copilot is rule-based over the model outputs; it does not use an LLM. |
+| **Time machine** (bar under the twin) | Scrub or play (▶, space, ←/→, Shift = a week) through the **last 30 days** and a **7-day projected horizon**. Past days show the model's results using only the runs available on that day. Chains along a rack link servers degrading the same way on the shown day. Markers flag when a device first left its own baseline (◆) and each status change (●). Past NOW, the hall switches to a purple *projected* look: each component's current health slope is extended, counting declines only. That is a trend extrapolation, not a model forecast. The copilot always answers about the live state. |
 | **Device** (`#/device/<id>`) | The per-device 3D analysis, with breadcrumbs back to the site and rack (Esc also goes back). |
 | **Fleet** (`#/fleet`) | Searchable table of every device, filterable by site and status and sorted by priority. |
 | **Incidents** (`#/incidents`) | Rack-level patterns plus every at-risk component, ranked by risk × criticality × redundancy. |
@@ -46,7 +47,7 @@ navigation, and checks a server's zoom and return transition.
 
 The demo fleet has 147 devices across Site A (7 racks × 12), Site B (6 × 10) and the HQ laptop fleet (3 laptops, one each in Floor 1, Floor 2 and IT bench). It is generated in memory by `driftops/demo_data.py` and labelled `demo`. Its planted scenarios:
 
-- a failing disk combined with a rack-wide cooling problem in Site A Rack 06
+- a cooling fault in Site A Rack 06 that starts at U05 about 26 days ago and spreads to six neighbours, plus a failing disk in U09 during the last two weeks (each profile has an onset day in `PROFILES`)
 - ECC error growth and PSU voltage drift in other Site A racks
 - throttling laptops, worn batteries and a worn-out SSD in the HQ fleet
 
@@ -61,7 +62,8 @@ Run the agent several times over several days to build a health trajectory. The 
 | `driftops/demo_data.py` | Sites, racks and synthetic device histories with degradation profiles. |
 | `driftops/fleet.py` | Device registry, cached model results, site/rack aggregation, rack-level pattern detection, incidents. |
 | `driftops/copilot.py` | Answers status / why / wait / action / fleet-comparison questions from model outputs. |
-| `server.py` | REST API (`/api/sites`, `/api/sites/<id>`, `/api/fleet`, `/api/incidents`, `/api/machines/<id>`, `/api/analyze`, `/api/copilot`, `/api/telemetry`, `/api/benchmark`) + serves `web/`. |
+| `web/js/timeline.js` | Time machine scrubber; `/api/sites/<id>/timeline` returns per-day device frames, projections, events and rack chains (`Fleet.timeline`). |
+| `server.py` | REST API (`/api/sites`, `/api/sites/<id>`, `/api/sites/<id>/timeline`, `/api/fleet`, `/api/incidents`, `/api/machines/<id>`, `/api/analyze`, `/api/copilot`, `/api/telemetry`, `/api/benchmark`) + serves `web/`. |
 | `web/` | `js/site-scene.js` (3D data hall), `js/scene.js` (3D device), `js/twin.js` (sidebar, copilot, fleet, incidents), `js/panel.js` (device panels), `js/main.js` (router). |
 
 ## Telemetry schema (`driftops.telemetry/v1`)

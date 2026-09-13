@@ -2,12 +2,13 @@ import { HardwareScene, deviceFraming } from './scene.js';
 import { SiteScene } from './site-scene.js';
 import { renderOverview, renderComponent, esc } from './panel.js';
 import { renderSidebar, renderTwinHead, Copilot, renderFleet, renderIncidents } from './twin.js';
+import { Timeline } from './timeline.js';
 
 const $ = id => document.getElementById(id);
 const els = {
   analyze: $('analyzeBtn'), bench: $('benchBtn'), crumbs: $('crumbs'), siteHealth: $('siteHealth'), incCount: $('incCount'),
   overview: $('overview'), panel: $('panel'), toast: $('toast'), drop: $('drop'), loading: $('loading'),
-  sidebar: $('sidebar'), twinHead: $('twinHead'), twinFoot: $('twinFoot'),
+  sidebar: $('sidebar'), twinHead: $('twinHead'), twinFoot: $('twinFoot'), timeline: $('timeline'), tlVeil: $('tlVeil'),
   jobBar: $('jobBar'), jobText: $('jobText'), jobPct: $('jobPct'), jobFill: $('jobFill'),
   views: { twin: $('twinView'), device: $('deviceView'), fleet: $('fleetView'), incidents: $('incidentsView') },
 };
@@ -16,6 +17,7 @@ const state = {
   view: null, sites: [], site: null, rackId: null, lastTwin: null,
   current: null, analysis: null, selected: null, sim: {}, scanning: false, benchmarking: false,
   fleetRows: [], fleetFilter: {}, deviceCount: 0,
+  timeline: null, frameSite: null,   // time machine: timeline data for state.site and the site as of the shown day
 };
 
 async function api(path, body) {
@@ -131,8 +133,11 @@ async function openSite(siteId, rackId, opts = {}) {
   let freshSite = false;
   if (!state.site || state.site.id !== siteId) {
     state.site = await api(`/api/sites/${siteId}`);
+    state.frameSite = null;
+    state.timeline = null;
     scene.load(state.site);
     freshSite = true;
+    loadTimeline(siteId);
   }
   const rackChanged = state.rackId !== (rackId || null);
   state.rackId = rackId || null;
@@ -141,6 +146,7 @@ async function openSite(siteId, rackId, opts = {}) {
   if (wasZoomed) scene.restoreZoom();   // coming back from a device: put the server back into its rack
   scene.selectRack(state.rackId, { fly: rackChanged || opts.fly || wasZoomed });
   scene.focusDevice(opts.focusDevice || null);
+  if (!freshSite) applyFrame();
   paintTwin();
   // A newly opened site is scanned once so its health colours are revealed by the model.
   if (freshSite) analyzeTwin({ scope: null, data: new Promise(r => setTimeout(() => r(state.site), 700)), quiet: true });
@@ -171,10 +177,11 @@ async function openDeviceAnimated(id) {
 }
 
 function paintTwin() {
-  renderSidebar(els.sidebar, { sites: state.sites, site: state.site, rackId: state.rackId });
-  renderTwinHead(els.twinHead, els.twinFoot, state.site, state.rackId);
-  const s = state.site;
-  els.siteHealth.innerHTML = s ? `<span>Site health</span><b class="s-${s.health >= 80 ? 'healthy' : s.health >= 65 ? 'watch' : 'elevated'}">${Math.round(s.health)}</b><span>/100</span>
+  const s = state.frameSite || state.site;
+  const when = tl?.data && !tl.isNow ? { day: tl.day, projected: tl.isProjected } : null;
+  renderSidebar(els.sidebar, { sites: state.sites, site: s, rackId: state.rackId, when });
+  renderTwinHead(els.twinHead, els.twinFoot, s, state.rackId, when);
+  els.siteHealth.innerHTML = s ? `<span>Site health${when ? ` · ${when.day > 0 ? '+' : '−'}${Math.abs(when.day)}d` : ''}</span><b class="s-${s.health >= 80 ? 'healthy' : s.health >= 65 ? 'watch' : 'elevated'}">${s.health == null ? '—' : Math.round(s.health)}</b><span>/100</span>
     ${s.live ? '<span class="chip">live devices</span>' : '<span class="chip demo-chip">demo data</span>'}` : '';
   if (state.view === 'twin' && !state.twinScanning) {
     const rack = s?.racks.find(r => r.id === state.rackId);
@@ -189,13 +196,17 @@ async function analyzeTwin({ scope = state.rackId, data, quiet = false } = {}) {
   const siteId = state.site.id;
   const rack = state.site.racks.find(r => r.id === scope);
   state.twinScanning = true;
+  tl?.setEnabled(false);
   els.analyze.disabled = true;
   els.analyze.classList.add('busy');
   els.analyze.innerHTML = `<span class="spinner"></span> Scanning ${rack ? esc(rack.name) : 'site'}…`;
   try {
+    // A scan shows the live state: jump the time machine back to now first.
+    if (tl?.data && !tl.isNow) { tl.setEnabled(true); tl.setDay(0); tl.setEnabled(false); }
     const site = await siteScene.scan(scope || null, data || api(`/api/sites/${siteId}`));
     if (!site || state.site?.id !== siteId) return;
     state.site = site;
+    if (!quiet) loadTimeline(siteId, { keepDay: true });
     if (quiet) return;
     if (rack) {
       copilot.ask(`Status of ${rack.name}?`);
@@ -209,10 +220,100 @@ async function analyzeTwin({ scope = state.rackId, data, quiet = false } = {}) {
     toast(`Analysis failed: ${esc(err.message)}`, true);
   } finally {
     state.twinScanning = false;
+    tl?.setEnabled(true);
     els.analyze.disabled = false;
     els.analyze.classList.remove('busy');
+    applyFrame();
     if (state.view === 'twin') paintTwin();
   }
+}
+
+// ------------------------------------------------------------------------------------ time machine
+
+let tl;
+function getTimeline() {
+  if (!tl) {
+    tl = new Timeline(els.timeline, {
+      onChange: () => { applyFrame(); paintTwin(); },
+      onEvent: ev => {
+        if (!state.site) return;
+        const rackChanged = ev.rack_id !== state.rackId;
+        if (rackChanged && state.site.kind !== 'office') go(`#/site/${state.site.id}/rack/${ev.rack_id}`, { focusDevice: ev.device_id });
+        else siteScene.focusDevice(ev.device_id);
+      },
+    });
+  }
+  return tl;
+}
+
+async function loadTimeline(siteId, { keepDay = false } = {}) {
+  try {
+    const data = await api(`/api/sites/${siteId}/timeline`);
+    if (state.site?.id !== siteId) return;
+    state.timeline = data;
+    const t = getTimeline();
+    t.load(data, { keepDay });
+    t.setEnabled(!state.twinScanning);
+    els.timeline.hidden = false;
+    applyFrame();
+    paintTwin();
+  } catch (err) {
+    els.timeline.hidden = true;
+    toast(`Timeline unavailable: ${esc(err.message)}`, true);
+  }
+}
+
+const WORST = { nodata: -1, healthy: 0, watch: 1, elevated: 2, critical: 3 };
+const worstOf = list => list.reduce((w, s) => (WORST[s] > WORST[w] ? s : w), 'healthy');
+const mean = xs => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
+const GROUP_NOUN = { thermal: 'thermal', storage: 'storage', memory: 'memory', power: 'power', battery: 'battery' };
+
+/** The site as the model saw it on the timeline's day (or as projected), in the shape of /api/sites/<id>. */
+function frameSite(site, data, i) {
+  const day = data.days[i], projected = day > 0;
+  const racks = site.racks.map(r => {
+    const devices = r.devices.map(d => {
+      const dev = data.devices[d.id];
+      const f = dev?.frames[i];
+      if (!f) return { ...d, status: 'nodata', health: null, drifting: false, projected: false };
+      const faint = f.g.length > 0 && f.h <= (dev.baseline ?? 100) - 2;
+      return { ...d, health: f.h, status: f.s, drifting: f.s !== 'healthy' || faint, projected: !!f.p,
+        worst: { ...d.worst, name: f.w, signal: f.sig, status: f.s, health: f.h } };
+    });
+    const known = devices.filter(d => d.status !== 'nodata');
+    return { ...r, devices, health: mean(known.map(d => d.health)), status: known.length ? worstOf(known.map(d => d.status)) : 'nodata',
+      drifting: known.filter(d => d.drifting).length };
+  });
+  const all = racks.flatMap(r => r.devices.map(d => ({ ...d, rack_id: r.id, rack_name: r.name })));
+  const known = all.filter(d => d.status !== 'nodata');
+  const counts = { healthy: 0, watch: 0, elevated: 0, critical: 0 };
+  for (const d of known) counts[d.status] += 1;
+  const when = projected ? `projected for +${day}d` : `as of ${Math.abs(day)} days ago`;
+  return {
+    ...site, racks, counts, health: mean(known.map(d => d.health)), status: worstOf(known.map(d => d.status)),
+    drifting: known.filter(d => d.drifting).sort((a, b) => a.health - b.health).slice(0, 8),
+    patterns: data.links[i].filter(l => l.devices.length >= 2).map(l => ({
+      id: `${l.rack_id}-${l.group}`, rack_id: l.rack_id, group: l.group, devices: l.devices,
+      severity: l.status, title: `${l.rack_name}: ${GROUP_NOUN[l.group] || l.group} drift on ${l.devices.length} devices`,
+      text: `${l.devices.length} devices in ${l.rack_name} degrading the same way ${when}. ` +
+        (projected ? 'Extrapolated from current trends if nothing is done.' : 'Replayed from the model\'s results on that day.'),
+    })),
+  };
+}
+
+/** Re-colour the twin for the timeline's day and draw that day's degradation chains. */
+function applyFrame() {
+  const data = state.timeline;
+  if (!data || !state.site || data.site_id !== state.site.id || !siteScene) return;
+  const i = tl.index;
+  const live = i === data.now_index;
+  state.frameSite = live ? null : frameSite(state.site, data, i);
+  els.tlVeil.hidden = !tl.isProjected;
+  els.views.twin.classList.toggle('tm-replay', tl.day < 0);
+  els.views.twin.classList.toggle('tm-projected', tl.isProjected);
+  if (state.twinScanning) return;
+  siteScene.refresh(state.frameSite || state.site);
+  siteScene.setLinks(data.links[i], { projected: tl.isProjected });
 }
 
 function onCopilotFocus(focus) {
@@ -231,7 +332,7 @@ els.sidebar.addEventListener('click', e => {
   if (t.dataset.clearRack !== undefined) return go(`#/site/${state.site.id}`);
   if (t.dataset.open) return openDeviceAnimated(t.dataset.open);
   if (t.dataset.drift) {
-    const d = state.site.drifting.find(x => x.id === t.dataset.drift);
+    const d = (state.frameSite || state.site).drifting.find(x => x.id === t.dataset.drift);
     return go(`#/site/${state.site.id}/rack/${t.dataset.rack}`, { focusDevice: d.id, ask: `Status of ${d.label}?` });
   }
   if (t.dataset.rackPattern) return go(`#/site/${state.site.id}/rack/${t.dataset.rackPattern}`, { ask: 'What should I do?' });
@@ -335,6 +436,13 @@ window.addEventListener('keydown', e => {
     if (state.view === 'device' && state.selected) selectComponent(null);
     else if (state.view === 'device' && !state.scanning && state.current) location.hash = els.crumbs.querySelector('.back').getAttribute('href');
     else if (state.view === 'twin' && state.rackId) go(`#/site/${state.site.id}`);
+  }
+  if (state.view === 'twin' && tl?.data && !els.timeline.hidden) {
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      e.preventDefault();
+      return tl.step((e.key === 'ArrowRight' ? 1 : -1) * (e.shiftKey ? 7 : 1));
+    }
+    if (e.key === ' ' && !e.target.closest('button')) { e.preventDefault(); return tl.timer ? tl.pause() : tl.play(); }
   }
   if (e.key === 'Enter' && !els.analyze.disabled) {
     if (state.view === 'device') analyze();
@@ -481,6 +589,7 @@ async function boot() {
         state.site = await api(`/api/sites/${state.site.id}`);
         siteScene.load(state.site, { animate: false });
         siteScene.selectRack(state.rackId, { fly: false });
+        loadTimeline(state.site.id, { keepDay: true });
         paintTwin();
         if ([...siteScene.slabs.values()].some(s => !s.revealed)) {
           analyzeTwin({ scope: null, data: Promise.resolve(state.site), quiet: true });
@@ -491,6 +600,7 @@ async function boot() {
 }
 
 // Debug handle for the browser console.
-window.driftops = { state, openDevice: openDeviceAnimated, get siteScene() { return siteScene; }, get deviceScene() { return deviceScene; } };
+window.driftops = { state, openDevice: openDeviceAnimated, get siteScene() { return siteScene; }, get deviceScene() { return deviceScene; },
+  get timeline() { return tl; } };
 
 boot();

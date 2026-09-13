@@ -108,6 +108,8 @@ class Handler(SimpleHTTPRequestHandler):
                 return self._json(FLEET.site_list())
             if path.startswith("/api/sites/") and len(parts) == 4:
                 return self._json(FLEET.site_detail(parts[3]))
+            if path.startswith("/api/sites/") and len(parts) == 5 and parts[4] == "timeline":
+                return self._json(FLEET.timeline(parts[3]))
             if path == "/api/fleet":
                 return self._json(FLEET.summaries())
             if path == "/api/incidents":

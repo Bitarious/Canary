@@ -6,8 +6,8 @@ import { Tweens, ease, STATUS_HEX, SERVER_SIZE, SERVER_LOOK, DEVICE_LIGHTS, buil
 
 const RW = 0.9, RH = 2.1, RD = 1.1;       // rack cabinet size
 const PITCH_X = 1.75, PITCH_Z = 4.2;      // rack spacing (aisles between rows)
-const SLAB_EMISSIVE = { healthy: 0.14, watch: 0.4, elevated: 0.55, critical: 0.75 };
-const HALO = { healthy: 0, watch: 0.3, elevated: 0.5, critical: 0.75 };
+const SLAB_EMISSIVE = { healthy: 0.14, watch: 0.4, elevated: 0.55, critical: 0.75, nodata: 0 };
+const HALO = { healthy: 0, watch: 0.3, elevated: 0.5, critical: 0.75, nodata: 0 };
 const BG = new THREE.Color(0x0b1320);
 const NEUTRAL = new THREE.Color(0x3a4452);
 const SCAN = new THREE.Color(0x38bdf8);
@@ -21,8 +21,12 @@ function box(w, h, d, m, x = 0, y = 0, z = 0) {
   return mesh;
 }
 
+// 'nodata' = the time machine is before this device's first run.
+const hexOf = status => STATUS_HEX[status] ?? 0x3a4452;
+
 function slabColor(status) {
-  const c = new THREE.Color(STATUS_HEX[status] || STATUS_HEX.healthy);
+  if (!STATUS_HEX[status]) return NEUTRAL.clone();
+  const c = new THREE.Color(STATUS_HEX[status]);
   return status === 'healthy' ? c.lerp(BG, 0.4) : c;
 }
 
@@ -95,6 +99,10 @@ export class SiteScene {
 
     this.root = new THREE.Group();
     scene.add(this.root);
+    this.linkRoot = new THREE.Group();   // time machine: chains between servers degrading the same way
+    scene.add(this.linkRoot);
+    this.links = [];
+    this.projected = false;
 
     // Floating tooltip for hovered servers.
     this.tipEl = document.createElement('div');
@@ -340,8 +348,9 @@ export class SiteScene {
     const r = this.racks.get(id);
     const d = r.data;
     const scanning = this.scanState && (!this.scanState.rackId || this.scanState.rackId === id);
-    r.labelEl.style.color = r.revealed ? `#${new THREE.Color(STATUS_HEX[d.status]).getHexString()}` : scanning ? '#38bdf8' : '#8b9bb0';
-    r.labelEl.innerHTML = `<span class="ld"></span><span class="ln">${d.name}</span><b>${r.revealed ? Math.round(d.health) : scanning ? 'scan' : '—'}</b>`;
+    r.labelEl.style.color = r.revealed ? `#${new THREE.Color(hexOf(d.status)).getHexString()}` : scanning ? '#38bdf8' : '#8b9bb0';
+    const value = r.revealed ? (d.health == null ? '—' : Math.round(d.health)) : scanning ? 'scan' : '—';
+    r.labelEl.innerHTML = `<span class="ld"></span><span class="ln">${d.name}</span><b>${value}</b>`;
     r.labelEl.classList.toggle('selected', this.selectedRack === id);
   }
 
@@ -351,18 +360,17 @@ export class SiteScene {
       const r = this.racks.get(rack.id);
       if (!r) continue;
       r.data = rack;
-      if (r.revealed) r.stripMat.color.setHex(STATUS_HEX[rack.status]);
-      r.haloMat.color.setHex(STATUS_HEX[rack.status]);
+      if (r.revealed) r.stripMat.color.setHex(hexOf(rack.status));
+      r.haloMat.color.setHex(hexOf(rack.status));
       this._paintRackLabel(rack.id);
       for (const d of rack.devices) {
         const s = this.slabs.get(d.id);
         if (!s) continue;
         s.data = d;
-        if (s.revealed && this.zoomed?.id !== d.id) {
-          s.mat.color.copy(slabColor(d.status));
-          s.mat.emissive.setHex(STATUS_HEX[d.status]);
-          s.ledMat.color.setHex(STATUS_HEX[d.status]);
-        }
+        // Colours glide towards their targets in the frame loop, so scrubbing the timeline animates.
+        s.target = slabColor(d.status);
+        s.ledTarget = d.status === 'nodata' ? NEUTRAL.clone() : new THREE.Color(hexOf(d.status));
+        if (s.revealed && this.zoomed?.id !== d.id) s.mat.emissive.setHex(hexOf(d.status));
       }
     }
   }
@@ -441,7 +449,7 @@ export class SiteScene {
 
   async _revealAll(order, rackId, stagger) {
     await Promise.all(order.map((s, i) => sleep(i * stagger).then(() => {
-      const target = slabColor(s.data.status), st = new THREE.Color(STATUS_HEX[s.data.status]);
+      const target = slabColor(s.data.status), st = new THREE.Color(hexOf(s.data.status));
       s.revealing = true;
       return this.tweens.add(550, k => {
         s.mat.color.copy(NEUTRAL).lerp(target, k);
@@ -453,7 +461,7 @@ export class SiteScene {
     for (const [id, r] of this.racks) {
       if (rackId && id !== rackId) continue;
       r.revealed = true;
-      r.stripMat.color.setHex(STATUS_HEX[r.data.status]);
+      r.stripMat.color.setHex(hexOf(r.data.status));
       this._paintRackLabel(id);
     }
   }
@@ -473,6 +481,7 @@ export class SiteScene {
       if (o.isCSS2DObject) o.element.remove();
     });
     this.root.clear();
+    this.setLinks([]);
     this.racks.clear();
     this.slabs.clear();
     this._clearSelBox();
@@ -669,6 +678,76 @@ export class SiteScene {
     });
   }
 
+  // ------------------------------------------------------------------------------ time machine links
+
+  /**
+   * Draw a glowing chain along the side of a rack through servers degrading the same way on the shown day,
+   * with pulses travelling along it. Rebuilt only when membership or severity changes.
+   */
+  setLinks(links, { projected = false } = {}) {
+    this.projected = projected;
+    const key = links.map(l => `${l.rack_id}:${l.group}:${l.status}:${l.devices.join(',')}`).join('|');
+    if (key === this._linkKey) return;
+    this._linkKey = key;
+    for (const l of this.links) l.group.traverse(o => { o.geometry?.dispose(); o.material?.dispose(); });
+    this.linkRoot.clear();
+    const previous = new Map(this.links.map(l => [`${l.rackId}:${l.groupName}`, l.born]));
+    this.links = [];
+    if (this.isOffice) return;
+    const now = performance.now() / 1000;
+    for (const link of links) {
+      const rack = this.racks.get(link.rack_id);
+      const slabs = link.devices.map(id => this.slabs.get(id)).filter(Boolean);
+      if (!rack || slabs.length < 2) continue;
+      const rp = rack.group.position;
+      const x = rp.x + RW / 2 + 0.07, z = rp.z + RD / 2 - 0.08;
+      const nodes = slabs.map(s => new THREE.Vector3(x, s.y, z));
+      const path = new THREE.CurvePath();
+      for (let i = 0; i < nodes.length - 1; i++) {
+        const a = nodes[i], b = nodes[i + 1];
+        const mid = a.clone().add(b).multiplyScalar(0.5);
+        mid.x += 0.1 + 0.18 * Math.abs(b.y - a.y);
+        path.add(new THREE.QuadraticBezierCurve3(a, mid, b));
+      }
+      const color = new THREE.Color(hexOf(link.status));
+      const additive = { transparent: true, blending: THREE.AdditiveBlending, depthWrite: false };
+      const group = new THREE.Group();
+      const tubeMat = new THREE.MeshBasicMaterial({ color, opacity: 0.7, ...additive });
+      group.add(new THREE.Mesh(new THREE.TubeGeometry(path, nodes.length * 18, 0.012, 6, false), tubeMat));
+      const nodeMat = new THREE.MeshBasicMaterial({ color, opacity: 0.95, ...additive });
+      for (const n of nodes) {
+        const dot = new THREE.Mesh(new THREE.SphereGeometry(0.03, 12, 8), nodeMat);
+        dot.position.copy(n);
+        group.add(dot);
+      }
+      const packetMat = new THREE.MeshBasicMaterial({ color: color.clone().lerp(new THREE.Color(0xffffff), 0.5), opacity: 1, ...additive });
+      const packets = Array.from({ length: Math.min(4, nodes.length) }, () => {
+        const p = new THREE.Mesh(new THREE.SphereGeometry(0.02, 10, 6), packetMat);
+        group.add(p);
+        return p;
+      });
+      this.linkRoot.add(group);
+      const id = `${link.rack_id}:${link.group}`;
+      // A chain that already existed keeps its age (no re-grow flicker when it only gains a member).
+      this.links.push({ group, path, packets, mats: [tubeMat, nodeMat, packetMat], rackId: link.rack_id, groupName: link.group,
+        critical: link.status === 'critical', born: previous.has(id) ? previous.get(id) : now });
+    }
+  }
+
+  _animateLinks(t) {
+    for (const l of this.links) {
+      l.group.visible = !this.zoomed;
+      const dim = this.selectedRack && this.selectedRack !== l.rackId ? 0.15 : 1;
+      const grow = Math.min(1, Math.max(0, (performance.now() / 1000 - l.born) / 0.7));
+      const pulse = 0.55 + 0.45 * Math.sin(t * (this.projected ? 6 : l.critical ? 4 : 2.2));
+      l.mats[0].opacity = 0.7 * dim * grow * (this.projected ? pulse : 0.8 + 0.2 * pulse);
+      l.mats[1].opacity = 0.95 * dim * grow;
+      l.mats[2].opacity = dim * grow;
+      const speed = this.projected ? 0.55 : 0.28;
+      l.packets.forEach((p, j) => l.path.getPointAt(((t * speed + j / l.packets.length) % 1) * grow, p.position));
+    }
+  }
+
   // ------------------------------------------------------------------------------ pointer
 
   _bindPointer() {
@@ -708,9 +787,10 @@ export class SiteScene {
       if (s) {
         const d = s.data;
         const inSel = d.form_factor === 'laptop' || this.selectedRack === s.rackId;
-        this.tipEl.innerHTML = s.revealed ? `<b>${d.label}</b> <span class="s-${d.status}">${Math.round(d.health)}</span>
-          <div>${d.status === 'healthy' ? 'healthy' : `${d.worst.name.split('·')[0].trim()} · ${d.worst.signal || d.status}`}</div>`
-          : `<b>${d.label}</b><div>not analyzed yet — press Analyze</div>`;
+        this.tipEl.innerHTML = !s.revealed ? `<b>${d.label}</b><div>not analyzed yet — press Analyze</div>`
+          : d.status === 'nodata' ? `<b>${d.label}</b><div>no telemetry yet on this day</div>`
+          : `<b>${d.label}</b> <span class="s-${d.status}">${Math.round(d.health)}</span>${d.projected ? ' <span class="tip-proj">projected</span>' : ''}
+          <div>${d.status === 'healthy' ? (d.drifting ? `healthy · faint ${d.worst.signal ? d.worst.signal.toLowerCase() : 'signal'}` : 'healthy') : `${d.worst.name.split('·')[0].trim()} · ${d.worst.signal || d.status}`}</div>`;
         this.tipEl.innerHTML += `
           <div class="tip-hint">${inSel ? 'click to open in 3D' : 'click to inspect rack'}</div>`;
         this.tip.position.set(0, 0, 0);
@@ -741,8 +821,13 @@ export class SiteScene {
       r.haloMat.opacity = base * (drifting ? 0.7 + 0.3 * Math.sin(t * 2.5) : 1) + (this.hover?.rackId === id ? 0.12 : 0);
     }
     const sc = this.scanState;
+    const glide = 1 - Math.exp(-dt * 9);
     for (const [id, s] of this.slabs) {
       const d = s.data;
+      if (s.target && s.revealed && !s.revealing && this.zoomed?.id !== id && !s.zoomBlend) {
+        s.mat.color.lerp(s.target, glide);
+        s.ledMat.color.lerp(s.ledTarget, glide);
+      }
       let e;
       if (s.glow !== null) {
         e = s.glow;                                             // revealing
@@ -756,6 +841,8 @@ export class SiteScene {
       } else {
         e = SLAB_EMISSIVE[d.status];
         if (d.drifting && d.status !== 'healthy') e += (d.status === 'critical' ? 0.45 : 0.2) * (0.5 + 0.5 * Math.sin(t * (d.status === 'critical' ? 5 : 3)));
+        else if (d.drifting) e += 0.12 * (0.5 + 0.5 * Math.sin(t * 2 + s.y * 3));   // faint signal, still healthy
+        if (d.projected && d.status !== 'healthy') e *= 0.75 + 0.35 * Math.abs(Math.sin(t * 7 + s.y * 9));
       }
       if (this.hover?.deviceId === id) e += 0.5;
       if (this.selectedRack && this.selectedRack !== s.rackId) e *= 0.2;
@@ -764,7 +851,7 @@ export class SiteScene {
       s.mat.emissiveIntensity = e;
     }
     if (this.selBox) this.selBox.material.opacity = 0.6 + 0.4 * Math.sin(t * 5);
-    void dt;
+    this._animateLinks(t);
     this.renderer.render(this.scene, this.camera);
     this.labelRenderer.render(this.scene, this.camera);
   }
