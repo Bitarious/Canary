@@ -19,6 +19,16 @@ bash scripts/bootstrap.sh
 uv run --no-sync driftops demo
 ```
 
+Without uv, use pip with Python 3.12 or newer:
+
+```bash
+python -m venv .venv && source .venv/bin/activate    # Windows: .venv\Scripts\activate
+pip install -r requirements.txt && pip install -e . --no-deps
+driftops prepare && driftops demo
+```
+
+The 3D digital twin only needs `pip install -r driftops3d/requirements.txt`, then `python driftops3d/server.py`.
+
 Open `http://127.0.0.1:8000`. Setup uses the bundled 1.2 MB public sample and needs no GPU or cloud login for the data preview. The [Linux handoff](docs/handoff.md) covers SSH browser access, Entire hook verification, account setup, and the overnight development launcher. **Entire logging and session pushes must stay enabled for submission.** The preview is not yet a trained-model demo.
 
 - [Technical architecture](docs/architecture.md): TimeNet data boundaries, OpenTSLM training/inference, contracts, replay, maintenance reasoning, and evaluation.

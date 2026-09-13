@@ -43,6 +43,17 @@ The development/controller machine is the user's Linux server with a Ryzen AI
 Max+ 395 and 128 GB unified RAM. Nebius supplies the intended NVIDIA GPU training
 compute. No local CUDA setup is required for the data preview.
 
+The separate `driftops3d/` illustrative UI uses synthetic telemetry and rule-based
+health analysis. Its HQ scene contains exactly three open laptop models, one per
+office group, with direct navigation to device analysis. The zoom transition
+uses the same laptop exterior as the device view and matches its camera projection
+at the switch; the navigation regression checks model geometry and screen alignment
+as well as clicks and return navigation. The check is documented in the 3D README.
+Site A and Site B retain
+their server racks. Run it with `python3 driftops3d/server.py` and open port 8765;
+see [its README](../driftops3d/README.md). This is separate from the real Backblaze
+preview described above.
+
 ## First setup on the server
 
 Install Git, `uv`, Entire, and `tmux` using the server's usual package/setup
