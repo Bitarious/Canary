@@ -75,9 +75,20 @@ Run the agent several times over several days to build a health trajectory. The 
     {"id": "cpu0", "type": "cpu|gpu|memory|storage|battery|cooling|power", "name": "CPU · ...",
      "static": {"hardware_errors_30d": 0},
      "smart":  {"reallocated_sectors": 0, "percentage_used": 12},
-     "series": {"bench_ops": [ ... ], "temp_c": [ ... ]}}
+     "series": {"bench_ops": [ ... ], "temp_c": [ ... ]},
+     "drive_stats": {"model": "ST1000LM035-1RK172", "capacity_bytes": 1000204886016, "serial_hash": "…",
+                     "smart_5_raw": 0, "smart_5_normalized": 100, "smart_197_raw": 0, "...": "..."}}
   ]
 }
 ```
+
+`drive_stats` is present only on hard drives that expose ATA SMART. It uses the same columns as the
+[Backblaze Drive Stats](https://www.backblaze.com/cloud-storage/resources/hard-drive-test-data)
+dataset: `smart_<id>_raw` / `_normalized` for ids 1, 3, 4, 5, 7, 9, 10, 12, 187, 188, 189, 193, 194,
+197, 198, 199, 240, 241 and 242. A model trained on Backblaze can therefore score a local drive
+without remapping. The agent reads these from `smartctl` when it is installed; on Windows it falls
+back to the built-in `MSStorageDriver_ATAPISmartData` WMI class. Both need an admin (or root) shell.
+Drives behind Intel RST may only be visible to `smartctl` (as `/dev/csmi*`). The analysis passes
+the row through as `components[].drive_stats`.
 
 Fleet percentiles are measured against illustrative reference baselines, not a real fleet. Cross-component findings describe associations, not proven causes.

@@ -62,6 +62,7 @@ GROWTH_KEYS = {
     "reallocated_sectors": ("Reallocated sectors", 1.0),
     "pending_sectors": ("Pending sectors", 1.0),
     "media_errors": ("Media errors", 1.0),
+    "uncorrectable_errors": ("Uncorrectable errors", 1.0),
     "ecc_corrected": ("Corrected ECC errors", 0.6),
     "hardware_errors": ("Hardware error events", 0.8),
     "wear_pct": ("Capacity wear", 0.5),
@@ -187,9 +188,24 @@ def _cpu(c, ctx):
     return f
 
 
+def smart_from_drive_stats(row):
+    """Readable counters from a Backblaze-schema row (``smart_<id>_raw``); vendor bit-packing is masked off."""
+    row = row or {}
+
+    def raw(aid, mask=None):
+        v = row.get(f"smart_{aid}_raw")
+        return None if not isinstance(v, (int, float)) else (int(v) & mask if mask else v)
+    uncorrectable = [v for v in (raw(187), raw(198)) if v is not None]
+    derived = {"reallocated_sectors": raw(5), "pending_sectors": raw(197), "crc_errors": raw(199),
+               "uncorrectable_errors": max(uncorrectable) if uncorrectable else None,
+               "spin_retries": raw(10), "power_on_hours": raw(9, 0xFFFFFFFF),
+               "temperature_c": raw(194, 0xFF) or None}  # low byte = current °C; 0 means not reported
+    return {k: v for k, v in derived.items() if v is not None}
+
+
 def _storage(c, ctx):
     f, s, st = _Findings(), c.get("series", {}), c.get("static", {})
-    smart = c.get("smart") or {}
+    smart = {**smart_from_drive_stats(c.get("drive_stats")), **(c.get("smart") or {})}
 
     def counter(key, label, base, scale, cap, detail, fleet=(0.5, 2)):
         v = smart.get(key)
@@ -211,6 +227,10 @@ def _storage(c, ctx):
             "{v} read errors could not be corrected by ECC.")
     counter("media_errors", "Media errors", 12, 4, 30,
             "{v} NVMe media/data-integrity errors reported by the controller.")
+    spin = smart.get("spin_retries")
+    if spin:
+        f.add(min(25, 10 + 4 * _log2p(spin)), "Spin retries", "up",
+              f"The spindle needed {spin} retries to reach speed — the motor or bearings are weakening.")
     crc = smart.get("crc_errors")
     if crc:
         f.add(min(10, 3 + 2 * _log2p(crc)), "Interface CRC errors", "up",
@@ -700,6 +720,8 @@ def analyze(run, history=None):
             "confidence": None, "evidence": evidence, "signals": signals[:4],
             "priority_score": round(100 * (0.6 * risk7 + 0.4 * (100 - health) / 100) * weight, 1),
             "wait_simulation": wait, "static": c.get("static", {}), "metrics": f.metrics,
+            # model-ready feature row in the Backblaze Drive Stats schema (HDDs with ATA SMART only)
+            **({"drive_stats": c["drive_stats"]} if c.get("drive_stats") else {}),
             "_signals_n": f.signals, "_span": span, "_accel": accel,
         })
 

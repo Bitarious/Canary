@@ -146,6 +146,59 @@ def event_counts():
     return {"hardware_errors_30d": int(rows[0].get("whea") or 0), "disk_errors_30d": int(rows[0].get("disk") or 0)} if rows else {}
 
 
+# SMART attributes kept in the Backblaze Drive Stats schema (smart_<id>_raw / smart_<id>_normalized),
+# so a model trained on https://www.backblaze.com/cloud-storage/resources/hard-drive-test-data can
+# score a local drive with the same feature columns. Raw values are the full 48-bit counters, exactly
+# as smartctl reports them (Backblaze collects with smartctl), including vendor bit-packing.
+DRIVE_STATS_ATTRS = (1, 3, 4, 5, 7, 9, 10, 12, 187, 188, 189, 193, 194, 197, 198, 199, 240, 241, 242)
+
+
+def drive_stats_row(model, serial, capacity_bytes, attrs):
+    """One Backblaze-schema feature row from ``{attribute_id: (normalized, raw)}``."""
+    row = {"model": (model or "").strip(), "capacity_bytes": capacity_bytes,
+           # the serial identifies the drive across runs without sending it off the machine
+           "serial_hash": hashlib.sha256((serial or "").strip().encode()).hexdigest()[:16] if serial else None}
+    for aid in DRIVE_STATS_ATTRS:
+        if aid in attrs:
+            norm, raw = attrs[aid]
+            row[f"smart_{aid}_normalized"], row[f"smart_{aid}_raw"] = norm, raw
+    return row
+
+
+def parse_ata_smart_table(data):
+    """Attributes from the raw 362-byte ATA SMART data block (as exposed by Windows WMI)."""
+    attrs = {}
+    for off in range(2, min(len(data), 362) - 11, 12):  # 30 entries: id, flags(2), value, worst, raw(6), reserved
+        aid = data[off]
+        if aid:
+            attrs[aid] = (data[off + 3], int.from_bytes(data[off + 5:off + 11], "little"))
+    return attrs
+
+
+def _wmi_drive_stats():
+    """Backblaze rows keyed by disk number, from the in-box ATA SMART WMI class (admin, no smartctl)."""
+    rows = ps_json(
+        "$dd=@(Get-CimInstance Win32_DiskDrive); "
+        "Get-CimInstance -Namespace root\\wmi -ClassName MSStorageDriver_ATAPISmartData | ForEach-Object { "
+        "$inst=$_.InstanceName -replace '_\\d+$',''; $d=$dd | Where-Object { $_.PNPDeviceID -eq $inst } | Select-Object -First 1; "
+        "[pscustomobject]@{Index=$d.Index; Model=$d.Model; Serial=$d.SerialNumber; Size=$d.Size; "
+        "Data=[BitConverter]::ToString($_.VendorSpecific)} }", timeout=40)
+    out = {}
+    for r in rows:
+        if r.get("Index") is None or not r.get("Data"):
+            continue
+        try:
+            attrs = parse_ata_smart_table(bytes.fromhex(r["Data"].replace("-", "")))
+        except ValueError:
+            continue
+        out[str(r["Index"])] = (r.get("Serial"), drive_stats_row(r.get("Model"), r.get("Serial"), r.get("Size"), attrs))
+    return out
+
+
+def _same_serial(a, b):
+    return bool(a and b) and a.strip().lower() == b.strip().lower()
+
+
 def disks_static():
     """Physical disks with whatever health counters the OS or smartctl exposes."""
     disks = []
@@ -154,16 +207,20 @@ def disks_static():
             "$sys=(Get-Partition -DriveLetter $env:SystemDrive[0] | Get-Disk).Number; "
             "Get-PhysicalDisk | ForEach-Object { $r = $_ | Get-StorageReliabilityCounter; "
             "[pscustomobject]@{Id=$_.DeviceId; Name=$_.FriendlyName; Media=[string]$_.MediaType; Bus=[string]$_.BusType; "
-            "SizeGB=[math]::Round($_.Size/1GB); Health=[string]$_.HealthStatus; System=([string]$_.DeviceId -eq [string]$sys); "
+            "Serial=$_.SerialNumber; SizeGB=[math]::Round($_.Size/1GB); Health=[string]$_.HealthStatus; System=([string]$_.DeviceId -eq [string]$sys); "
             "Temp=$r.Temperature; Wear=$r.Wear; ReadErr=$r.ReadErrorsTotal; WriteErr=$r.WriteErrorsTotal; POH=$r.PowerOnHours} }",
             timeout=40)
+        wmi = _wmi_drive_stats()
         for r in rows:
             smart = {k: v for k, v in (("temperature_c", r.get("Temp")), ("percentage_used", r.get("Wear")),
                                        ("read_errors_total", r.get("ReadErr")), ("write_errors_total", r.get("WriteErr")),
                                        ("power_on_hours", r.get("POH"))) if isinstance(v, (int, float)) and not (k == "temperature_c" and v == 0)}
-            disks.append({"key": str(r.get("Id")), "name": f"{r.get('Name', 'Disk').strip()} · {r.get('SizeGB')} GB",
-                          "media": (r.get("Media") or "").lower(), "bus": r.get("Bus"),
-                          "system": bool(r.get("System")), "smart": smart})
+            disk = {"key": str(r.get("Id")), "name": f"{r.get('Name', 'Disk').strip()} · {r.get('SizeGB')} GB",
+                    "media": (r.get("Media") or "").lower(), "bus": r.get("Bus"), "serial": r.get("Serial"),
+                    "system": bool(r.get("System")), "smart": smart}
+            if str(r.get("Id")) in wmi and disk["media"] != "ssd":
+                disk["drive_stats"] = wmi[str(r.get("Id"))][1]
+            disks.append(disk)
     if shutil.which("smartctl"):
         scan = run(["smartctl", "--scan", "-j"])
         try:
@@ -172,15 +229,18 @@ def disks_static():
             devices = []
         for i, dev in enumerate(devices):
             try:
-                data = json.loads(run(["smartctl", "-a", "-j", dev["name"]], timeout=30) or "{}")
+                data = json.loads(run(["smartctl", "-a", "-j", "-d", dev.get("type", "auto"), dev["name"]], timeout=30) or "{}")
             except json.JSONDecodeError:
                 continue
             smart = {}
-            attrs = {a["id"]: a.get("raw", {}).get("value") for a in data.get("ata_smart_attributes", {}).get("table", [])}
+            table = data.get("ata_smart_attributes", {}).get("table", [])
+            attrs = {a["id"]: a.get("raw", {}).get("value") for a in table}
             for key, aid in (("reallocated_sectors", 5), ("pending_sectors", 197), ("uncorrectable_errors", 198),
-                             ("crc_errors", 199), ("power_on_hours", 9)):
+                             ("crc_errors", 199)):
                 if aid in attrs:
                     smart[key] = attrs[aid]
+            if 9 in attrs:
+                smart["power_on_hours"] = attrs[9] & 0xFFFFFFFF  # some vendors pack minutes above bit 32
             nv = data.get("nvme_smart_health_information_log") or {}
             for key, src in (("percentage_used", "percentage_used"), ("media_errors", "media_errors"),
                              ("available_spare", "available_spare"), ("available_spare_threshold", "available_spare_threshold"),
@@ -190,11 +250,23 @@ def disks_static():
             if data.get("temperature", {}).get("current"):
                 smart["temperature_c"] = data["temperature"]["current"]
             name = data.get("model_name", dev["name"])
+            serial = data.get("serial_number")
             media = "hdd" if data.get("rotation_rate") else "ssd"
-            if i < len(disks):  # enrich the OS view rather than duplicating it
-                disks[i]["smart"].update(smart)
+            stats = None
+            if table and media == "hdd":
+                stats = drive_stats_row(name, serial, data.get("user_capacity", {}).get("bytes"),
+                                        {a["id"]: (a.get("value"), a.get("raw", {}).get("value")) for a in table})
+            # enrich the OS view rather than duplicating it: match by serial, else by scan order
+            match = next((d for d in disks if _same_serial(d.get("serial"), serial)), None)
+            if match is None and not serial and i < len(disks):
+                match = disks[i]
+            if match is not None:
+                match["smart"].update(smart)
+                if stats:
+                    match["drive_stats"] = stats  # smartctl is the reference source; it wins over WMI
             else:
-                disks.append({"key": dev["name"], "name": name, "media": media, "system": i == 0, "smart": smart})
+                disks.append({"key": dev["name"], "name": name, "media": media, "system": not disks and i == 0,
+                              "smart": smart, **({"drive_stats": stats} if stats else {})})
     if not disks:
         disks.append({"key": "sys", "name": "System drive", "media": "", "system": True, "smart": {}})
     if not any(d["system"] for d in disks):
@@ -412,6 +484,8 @@ def collect(rounds=12, stress=True, disk_mb=48):
     for i, d in enumerate(disks):
         c = {"id": f"disk{i}", "type": "storage", "name": d["name"],
              "static": {"media": d["media"], "system": d["system"]}, "smart": d["smart"], "series": {}}
+        if d.get("drive_stats"):
+            c["drive_stats"] = d["drive_stats"]
         if d["system"]:
             if events:
                 c["static"]["event_errors_30d"] = events["disk_errors_30d"]
