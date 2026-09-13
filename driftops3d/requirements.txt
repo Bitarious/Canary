@@ -1,0 +1,10 @@
+# DriftOps 3D app (server + agent). Python 3.9 or newer.
+#   pip install -r driftops3d/requirements.txt
+#
+# The server (server.py) uses only the standard library; the agent (agent/collect.py) needs psutil.
+psutil>=5.9
+
+# Not pip packages, optional, picked up automatically when present:
+#   smartctl    (smartmontools)  disk SMART attributes; needs admin/root
+#   nvidia-smi  (NVIDIA driver)  GPU temperature, power and throttling
+# The browser needs internet access: three.js loads from cdn.jsdelivr.net, fonts from Google Fonts.

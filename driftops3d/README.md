@@ -9,7 +9,7 @@ A digital twin for infrastructure health across several sites. Data centers are 
 ## Run
 
 ```bash
-pip install psutil          # only dependency (agent); the server uses the standard library
+pip install -r requirements.txt   # psutil for the agent; the server uses the standard library
 python server.py            # http://127.0.0.1:8765  (loads the demo sites, ~15 s model warm-up)
 ```
 
