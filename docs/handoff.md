@@ -45,7 +45,7 @@ Normal source branches, tags, commit history, and model release archives remain 
 
 The source uses MIT for original code. Upstream code, Gemma-derived weights, and datasets retain their separate terms. The public project is `Bitarious/Canary`. Its `main` branch preserves this machine's verified source and all normal hackathon history. The original repository remains unchanged by this publication. Experiment archives use `v2026.09.13` and retain their original provenance. The release implementation at `b284e65` passed a fresh-checkout pilot rebuild, 97 core tests, nine demo tests, full browser evidence/navigation checks, and package builds. All 15 original archive hashes and 187 committed evidence hashes passed. See [the release guide](project-release.md) and [release audit](release-audit.md) for details.
 
-Source, model, and evidence publication must refer to their exact revisions. Preserve the selected checkpoint hashes and do not replace the original archives. Check public clone access and anonymous artifact downloads after publication.
+Source, model, and evidence publication must refer to their exact revisions. Preserve the selected checkpoint hashes and do not replace the original archives. The anonymous public clone passed the full pilot/API verification. All three GitHub Actions jobs passed. All 17 public model assets match their original digests. Anonymous checksum, manifest, and complete SSD archive downloads passed.
 
 ## Next work
 
