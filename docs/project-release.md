@@ -4,7 +4,9 @@ The public research release uses the verified Canary source, MIT licensing for o
 
 ## Publication status
 
-During release preparation, the repository was private and `v2026.09.13` was a draft release. Public clone and anonymous artifact-download checks remain pending until publication. This page does not claim that the project is already public.
+The public repository is [Bitarious/Canary](https://github.com/Bitarious/Canary). The source release is `v0.1.0`. The experiment archives use `v2026.09.13`.
+
+This repository preserves normal source history from the hackathon project. The original repository remains unchanged by this publication. Historical experiment manifests retain their original repository identity and source pins. Their hashes and archive contents remain unchanged.
 
 The release branch preserves the verified local evidence demo. The two later remote benchmark-inference commits remain in history; their code is excluded from this release. The current [architecture](architecture.md) describes what this release runs. The original `v2026.09.13` source snapshot predates those local evidence-view improvements.
 
@@ -12,14 +14,14 @@ See [release notes](../CHANGELOG.md), [release verification](release-audit.md), 
 
 ## Download the experiment artifacts
 
-While the release is private or a draft, authenticate `gh` with an account that can read it. Once published, use the GitHub release page or CLI. Read [the model terms](model-licenses.md) before using the weights.
+Download assets without an account from the [experiment release](https://github.com/Bitarious/Canary/releases/tag/v2026.09.13). The commands below use the GitHub CLI, which requires CLI authentication. Read [the model terms](model-licenses.md) before using the weights.
 
 From the repository root, use a new destination directory:
 
 ```bash
 mkdir -p artifacts/github-release/v2026.09.13
 gh release download v2026.09.13 \
-  --repo M-10001/EHL_Zurich_hackathon_team_piloty \
+  --repo Bitarious/Canary \
   --dir artifacts/github-release/v2026.09.13
 (cd artifacts/github-release/v2026.09.13 && sha256sum -c SHA256SUMS)
 ```
@@ -49,8 +51,8 @@ The archives include Gemma-derived tensors and required notices. They are not se
 1. Commit the reviewed source and run `bash scripts/verify.sh` plus `npm run test:browser` from a fresh checkout.
 2. Scan source history and release metadata for secrets. Verify all original archive hashes.
 3. Review the source comparison with remote main. Preserve the verified evidence demo and normal Git history.
-4. Publish an explicit source tag and release notes after publication approval.
-5. Publish the existing experiment artifact draft without replacing its archives.
+4. Publish an explicit source tag and release notes to the authorized repository.
+5. Publish the verified experiment archives without changing their contents.
 6. Verify clone, quick start, checksums, and model downloads with no team credentials.
 
 Use [the reproduction guide](reproduction.md) for new training. No release step should start training or paid cloud resources. Public repository access does not make the local demo server a production web service.

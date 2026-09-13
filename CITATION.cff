@@ -4,7 +4,7 @@ type: software
 title: "Canary: hardware signal descriptions with time-series language models"
 authors:
   - name: "Team Piloty"
-repository-code: "https://github.com/M-10001/EHL_Zurich_hackathon_team_piloty"
+repository-code: "https://github.com/Bitarious/Canary"
 license: MIT
 abstract: >-
   Research code for hardware dataset preparation, separate Gemma-based

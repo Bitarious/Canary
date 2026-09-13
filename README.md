@@ -38,10 +38,11 @@ Neither browser application runs fresh trained-model inference. The 3D fleet's r
 
 The server uses the Python standard library. No GPU, model download, or cloud account is required. Use a modern Python 3 installation and a browser with WebGL support. The browser needs network access for Three.js and fonts.
 
-From a copy of this revision, run:
+Clone the public repository and start the demo:
 
 ```bash
-cd EHL_Zurich_hackathon_team_piloty
+git clone https://github.com/Bitarious/Canary.git
+cd Canary
 python3 driftops3d/server.py --host 127.0.0.1 --port 8765
 ```
 
@@ -151,7 +152,7 @@ All selected models reproduced sixteen saved predictions on the same GPU hardwar
 
 The repository includes a runnable pilot and compact evaluation evidence. Selected weights and full evaluation inputs use release assets. Large raw datasets require separate publisher downloads.
 
-The `v2026.09.13` source snapshot predates the Canary evidence-view updates described here. Use this revision for the demo and that artifact set for the recorded experiments. The artifact release remains a private draft until the public publication step completes. See [release status](docs/project-release.md).
+The `v2026.09.13` source snapshot predates the Canary evidence-view updates described here. Use this revision for the demo and that artifact set for the recorded experiments. Download the unchanged experiment archives from [Canary releases](https://github.com/Bitarious/Canary/releases/tag/v2026.09.13). See [release details](docs/project-release.md).
 
 ### 1. Verify the committed evidence
 
@@ -190,7 +191,7 @@ Download the SSD checkpoint, evaluation archive, and checksums into a new direct
 ```bash
 mkdir -p artifacts/github-release/v2026.09.13
 gh release download v2026.09.13 \
-  --repo M-10001/EHL_Zurich_hackathon_team_piloty \
+  --repo Bitarious/Canary \
   --dir artifacts/github-release/v2026.09.13 \
   --pattern ssd-component-v1-model.tar.gz \
   --pattern evaluation-evidence.tar.gz \
