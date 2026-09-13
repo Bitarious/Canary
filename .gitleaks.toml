@@ -1,0 +1,13 @@
+title = "Canary secret scan"
+[extend]
+useDefault = true
+
+# Backblaze publishes this exact read-only dataset key on its Drive Stats page.
+# https://www.backblaze.com/cloud-storage/resources/hard-drive-test-data
+# This exception requires both the source path and the exact public key.
+[[allowlists]]
+description = "Publisher-provided Backblaze public read-only dataset credential"
+condition = "AND"
+paths = ['''(^|/)src/driftops/acquire\.py$''']
+regexTarget = "secret"
+regexes = ['''^K004Fs/bgmTk5dgo6GAVm2Waj3Ka\+TE$''']

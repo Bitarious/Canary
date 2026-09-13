@@ -19,7 +19,7 @@ from driftops.full_archive import file_hash
 from driftops.distributed_training import DistributedRun, local_batch, weighted_distributed_loss
 from driftops.full_training import class_weights, compact_loss, example, heldout, raw_batches, window_files
 from driftops.opentslm import generate, load_model, temporal_state
-from driftops.windows import read_yaml
+from driftops.training_config import read_training_config
 
 
 def atomic_save(path, state):
@@ -28,12 +28,12 @@ def atomic_save(path, state):
     temporary.replace(path)
 
 
-def prepare(root, run):
+def prepare(root, run, config_path=Path("config/train_full.yaml")):
     if run.exists():
         raise ValueError("Choose a new run directory. Existing run artifacts must remain intact")
     manifest_path = root / "dataset-manifest.json"
     manifest = json.loads(manifest_path.read_text())
-    config = read_yaml("config/train_full.yaml")
+    config = read_training_config(config_path)
     for split in ("train", "validation"):
         for path in window_files(root, split, manifest):
             if file_hash(path) != manifest["shards"][path.parent.name][path.name]:
@@ -61,8 +61,8 @@ def prepare(root, run):
         "hardware_cost": {"provider": "Nebius", "preferred_gpu": f"{config.get('world_size', 1)} {config['gpu_name']} GPUs, {config['gpu_memory_gb']} GB each", "vm_rate_usd_hour": config["vm_hourly_usd"],
                           "disk_128_gib_rate_usd_hour": config["disk_hourly_usd"], "training_hours_limit": config["max_train_hours"],
                           "vm_hours_limit": config["max_vm_hours"], "quoted_vm_limit_usd": (config["vm_hourly_usd"] + config["disk_hourly_usd"]) * config["max_vm_hours"],
-                          "project_ceiling_usd": 600, "balance_user_reported_usd": 605},
-        "stopping_conditions": f"At most two complete epochs, {config['max_train_hours']} training hours, nonfinite loss/gradients, signal cancellation, or the independent absolute provider API stop guard. A partial first epoch is not a full-data success.",
+                          "run_budget_usd": config["budget_usd"], "budget_note": "Configured limit, not a measured account balance. Verify current funds and a provider stop guard before launch."},
+        "stopping_conditions": f"At most {config['epochs']} complete epochs, {config['max_train_hours']} training hours, nonfinite loss/gradients, signal cancellation, or the independent absolute provider API stop guard. A partial first epoch is not a full-data success.",
         "evaluation": "Unweighted validation answer loss selects only completed-epoch checkpoints. Freeze checkpoint hash before test. Compare the upstream model, fitted model, all-constant baseline, and zero/reversed/shuffled numerical inputs. Report syntax validity, channel accuracy, macro F1, drive bootstrap intervals, and raw outputs.",
         "outputs": "Pinned data/split/source manifests, optimizer and cursor checkpoints, selected temporal/LoRA weights, progress and costs, test predictions/metrics, ablations, and verified reload results.",
         "created_at": datetime.now(timezone.utc).isoformat(),
@@ -92,7 +92,7 @@ def train(root, run, diagnostic_steps=0):
     if (run / "test-release.json").exists():
         raise ValueError("Test data was released for this run. Do not train it again")
     if not torch.cuda.is_available():
-        raise ValueError("This training run requires a Nebius CUDA GPU")
+        raise ValueError("This training run requires a CUDA GPU")
     if not (run / "overview.json").is_file():
         raise ValueError("Prepare and explain the run before training")
     if diagnostic_steps:
@@ -273,8 +273,9 @@ if __name__ == "__main__":
     parser.add_argument("--root", type=Path, default=Path("data/backblaze-full"))
     parser.add_argument("--run", type=Path, required=True)
     parser.add_argument("--diagnostic-steps", type=int, default=0)
+    parser.add_argument("--config", type=Path, default=Path("config/train_full.yaml"), help="Repository config YAML for preparation only")
     args = parser.parse_args()
     if args.action == "prepare":
-        prepare(args.root, args.run)
+        prepare(args.root, args.run, args.config)
     else:
         train(args.root, args.run, args.diagnostic_steps)

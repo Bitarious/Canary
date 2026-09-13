@@ -94,4 +94,4 @@ Controller CLI authentication is restored. All three owned VMs are stopped, with
 
 Three cloud disks remain retained. Their combined quoted storage rate is about $0.03734 per hour. No GPU compute is running. The checkpoints and full verified evaluation exports are also stored locally.
 
-All 93 tests passed in the working tree and in a fresh locked checkout. The fresh checkout rebuilt the native pilot. Entire remains enabled with its hooks and approval records present. The earlier exited-session warning remains documented in the handoff. The publication preflight found no stuck sessions, and the training-source commit received an Entire checkpoint trailer. The user authorized commits and upload on September 13.
+All 93 tests passed in the working tree and in a fresh locked checkout. The fresh checkout rebuilt the native pilot. The user later requested Entire removal. The current source preserves normal Git history and experiment artifacts without recording hooks.

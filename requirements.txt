@@ -1,24 +1,5 @@
-# Everything needed to run the whole project with pip. Python 3.12 or newer (see .python-version).
-#   python -m venv .venv && source .venv/bin/activate      (Windows: .venv\Scripts\activate)
-#   pip install -r requirements.txt
-#   pip install -e . --no-deps                              # registers the `driftops` command
-#
-# Versions match uv.lock. With uv installed, `uv sync --locked --extra model-access` gives the exact
-# locked environment instead.
-
-# Backblaze -> TimeNet data pipeline (src/driftops)
-timenet[build,s3]==0.1.0
-duckdb==1.5.5
-pyyaml==6.0.3
-boto3==1.43.93
-numpy==2.5.3
-pyarrow==25.0.1
-
-# Model weights access (Gemma / OpenTSLM checkpoints on Hugging Face)
-huggingface-hub==1.31.0
-
-# Tests
-pytest==9.1.1
-
-# DriftOps 3D app (server + agent)
+# Compatibility entry point for pip. Python 3.12 or newer.
+# Use `uv sync --locked --extra training --extra model-access` for exact versions.
+# CPU-only pip installation: add --extra-index-url https://download.pytorch.org/whl/cpu
+-e .[training,model-access]
 -r driftops3d/requirements.txt

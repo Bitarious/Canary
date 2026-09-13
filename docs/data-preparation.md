@@ -69,7 +69,7 @@ uv run --no-sync pytest -q
 uv run --no-sync driftops demo
 ```
 
-Preparation is repeatable and checks source/configuration compatibility before reuse. The preview uses training-partition windows only and explicitly labels rule descriptions. Use [bootstrap.sh](../scripts/bootstrap.sh) when setting up a development machine so Entire is installed/enabled as part of the handoff. To independently reacquire from the official source into a fresh working-data directory:
+Preparation is repeatable and checks source/configuration compatibility before reuse. The preview uses training-partition windows only and explicitly labels rule descriptions. Use [bootstrap.sh](../scripts/bootstrap.sh) when setting up a development machine to install the locked dependencies, prepare the pilot, and run tests. To independently reacquire from the official source into a fresh working-data directory:
 
 ```bash
 uv sync --locked --extra model-access

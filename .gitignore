@@ -23,3 +23,8 @@ data/
 artifacts/
 
 **/venv/**
+
+# Local browser verification and retired session recording
+playwright-report/
+test-results/
+.entire/

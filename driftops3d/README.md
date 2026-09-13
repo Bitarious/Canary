@@ -41,10 +41,20 @@ The supplied Canary logo remains unchanged in `web/assets/canary-logo.png`. CSS 
 
 ### Evidence and replay checks
 
+For the complete automated browser workflow from the repository root:
+
+```bash
+npm ci
+npx playwright install chromium
+npm run test:browser
+```
+
+The harness starts a local server with temporary device storage, checks four viewports, and checks 3D laptop/server navigation. It stops its own processes afterward. Node 22 or newer is required.
+
 From the repository root:
 
 ```bash
-TMPDIR=/home/china/agent-tmp python3 -m unittest discover -s driftops3d/tests -p 'test_*.py' -v
+python3 -m unittest discover -s driftops3d/tests -p 'test_*.py' -v
 node --check driftops3d/web/js/main.js
 node --check driftops3d/web/js/evidence.js
 node driftops3d/tests/evidence-ui.mjs http://127.0.0.1:8765
@@ -63,7 +73,7 @@ Run the separate navigation regression below to check the existing 3D geometry, 
 
 Browser navigation regression check: with the demo running and a separate Chrome
 test window started with `--remote-debugging-port=9223` and
-`--user-data-dir=/home/china/agent-tmp/driftops-navigation-chrome`, run this from the repository root
+`--user-data-dir=/tmp/canary-navigation-chrome`, run this from the repository root
 using Node 22 or newer:
 
 ```bash

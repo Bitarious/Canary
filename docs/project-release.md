@@ -1,74 +1,62 @@
 # Project release
 
-The September 13, 2026 upload combines the trained component models with the teammates' `driftops3d` application and presentation draft. The repository remains private.
+The public research release uses the verified Canary source, MIT licensing for original code, and the existing experiment artifacts. Normal Git history and model archives remain intact. Entire integration and dedicated checkpoint refs have been removed.
 
-The source, configurations, tests, public Backblaze pilot, presentation review, and compact evaluation evidence live on `main`. Selected checkpoints and full evaluation JSON use [GitHub release assets](https://github.com/M-10001/EHL_Zurich_hackathon_team_piloty/releases/tag/v2026.09.13).
+## Publication status
 
-## Download the artifacts
+During release preparation, the repository was private and `v2026.09.13` was a draft release. Public clone and anonymous artifact-download checks remain pending until publication. This page does not claim that the project is already public.
 
-Authenticate the GitHub CLI with an account that can read this private repository. Read [the model license guide](model-licenses.md) before using or distributing the weights.
+The release branch preserves the verified local evidence demo. The two later remote benchmark-inference commits remain separate. The current [architecture](architecture.md) describes what this release runs. The original `v2026.09.13` source snapshot predates those local evidence-view improvements.
 
-From the repository root, download the release files:
+See [release notes](../CHANGELOG.md), [release verification](release-audit.md), [contribution instructions](../CONTRIBUTING.md), and [security reporting](../SECURITY.md).
+
+## Download the experiment artifacts
+
+While the release is private or a draft, authenticate `gh` with an account that can read it. Once published, use the GitHub release page or CLI. Read [the model terms](model-licenses.md) before using the weights.
+
+From the repository root, use a new destination directory:
 
 ```bash
 mkdir -p artifacts/github-release/v2026.09.13
-
 gh release download v2026.09.13 \
   --repo M-10001/EHL_Zurich_hackathon_team_piloty \
   --dir artifacts/github-release/v2026.09.13
-```
-
-Verify the files before extraction:
-
-```bash
 (cd artifacts/github-release/v2026.09.13 && sha256sum -c SHA256SUMS)
 ```
 
-Each model archive restores `artifacts/tslm/<run>/best.pt` and includes license notices. The evaluation archive restores the associated run metadata and complete evaluation JSON.
+After all checks pass, extract into a checkout without existing experiment artifacts:
 
 ```bash
 for archive in artifacts/github-release/v2026.09.13/*-model.tar.gz; do
   tar -xzf "$archive"
 done
-
 tar -xzf artifacts/github-release/v2026.09.13/evaluation-evidence.tar.gz
 ```
 
-There are fourteen unique selected checkpoints for fifteen evaluations. The dated radiator-valve follow-up reused the original radiator-valve weights. Restore its expected path if you inspect that failed follow-up:
+The archives restore `artifacts/tslm/<run>/best.pt`, evaluation inputs, predictions, metrics, and notices. Fourteen selected checkpoints support fifteen evaluations. The dated radiator-valve follow-up reused the original weights. For that failed follow-up, restore its expected checkpoint path:
 
 ```bash
 cp artifacts/tslm/valve-industrial-v1/best.pt \
   artifacts/tslm/valve-industrial-followup-v1/best.pt
 ```
 
-The release manifest maps each run to its archive and checkpoint checksum. Every selected checkpoint is 682,889,851 bytes before compression. All fourteen total 9,560,457,914 bytes. Download individual archives with `gh release download --pattern` if you need only one component.
+Each selected checkpoint contains 682,889,851 bytes before compression. All fourteen total 9,560,457,914 bytes. The [release manifest](../results/2026-09-13/release-manifest.json) maps runs, archive sizes, and hashes. Use `gh release download --pattern` to select one component.
 
-## Load a selected model
+The archives include Gemma-derived tensors and required notices. They are not self-contained language models or small pure adapters. The [README CPU example](../README.md#2-replay-a-released-model-on-cpu) downloads the pinned dependencies and checks sixteen saved SSD predictions without training.
 
-Install the locked CPU inference environment:
+## Source release procedure
 
-```bash
-uv sync --locked --extra training
-```
+1. Commit the reviewed source and run `bash scripts/verify.sh` plus `npm run test:browser` from a fresh checkout.
+2. Scan source history and release metadata for secrets. Verify all original archive hashes.
+3. Review the source comparison with remote main. Preserve the verified evidence demo and normal Git history.
+4. Publish an explicit source tag and release notes after publication approval.
+5. Publish the existing experiment artifact draft without replacing its archives.
+6. Verify clone, quick start, checksums, and model downloads with no team credentials.
 
-The selected checkpoints need the pinned Gemma base and OpenTSLM assets. The [model setup guide](model-setup.md) and [training guide](training.md) contain the authenticated Hugging Face download commands. Credentials remain local.
+Use [the reproduction guide](reproduction.md) for new training. No release step should start training or paid cloud resources. Public repository access does not make the local demo server a production web service.
 
-Use the target-free reload example in [component results](component-model-results.md#exported-checkpoints). It performs inference on already released test inputs and does not train a model. Preserve the original files and hashes when reproducing the recorded evaluations.
+## Data and history
 
-These checkpoints contain trained temporal modules and attention LoRA, plus Gemma embedding and output-head tensors. They are not self-contained language models or small pure adapters.
+The repository contains the public pilot, source catalogs, compact results, source code, and documentation. Large raw archives and prepared datasets remain separate publisher downloads. Credentials and machine telemetry stay outside Git.
 
-## Included evidence and limits
-
-The [evidence directory](../results/2026-09-13/README.md) contains fifteen evaluated runs, including the two failed dated radiator-valve evaluations. Full evaluation assets retain test inputs, original protocols, raw predictions, controls, and metrics. The release does not convert failed runs into passes.
-
-The 3D application still uses synthetic telemetry and deterministic analysis. The real HDD examples contain saved model outputs. Connecting those examples to the application is proposed in [the demo review](reviews/2026-09-13/analysis.md), but is not part of this release.
-
-The teammate presentation remains a draft. The [five-minute presentation plan](reviews/2026-09-13/presentation-plan.md) supplies measured results, limitations, timing, and an appendix outline.
-
-## Data and private machine files
-
-The repository includes the public pilot sample, full source inventories, checksums, dataset contracts, and preparation code. Large raw archives and prepared datasets are not release assets. Retrieve them from their documented publishers and apply their source terms.
-
-Private credentials, environments, machine caches, cloud authentication logs, and machine telemetry are excluded. Optimizer and interrupted-run recovery files remain local. The selected weights and evaluation evidence are the reproducible model outputs for this release.
-
-Entire remains enabled. Publication uses the normal Git hooks and checkpoint push workflow.
+The user chose to retain normal source history. Old commits can include historical machine paths, old plans, and references to Entire. Dedicated Entire checkpoint refs were removed. This does not claim removal from other clones or provider backups.

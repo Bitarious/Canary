@@ -16,7 +16,7 @@ from driftops.component_data import example, target
 from driftops.full_archive import file_hash
 from driftops.full_training import raw_batches, window_files
 from driftops.tslm_dataset import PATTERNS, input_hash
-from driftops.windows import read_yaml
+from driftops.training_config import read_compute_ledger, read_training_config
 
 
 def perturb(examples, mode, config, seed=612):
@@ -69,15 +69,17 @@ def heldout(root, manifest, split, limit):
     return [example(chosen[group][1], manifest["config"]) for group in groups]
 
 
-def prepare(root, run, hdd_report, *, industrial_study=False, audio_benchmark=False):
+def prepare(root, run, hdd_report, *, industrial_study=False, audio_benchmark=False,
+            config_path=Path("config/train_full.yaml"),
+            ledger_path=Path("artifacts/nebius/full-history-v1/cost-ledger.json")):
+    if run.exists():
+        raise ValueError("Choose a new run directory. Existing run artifacts must remain intact")
+    base_config = read_training_config(config_path)
     gate = json.loads(hdd_report.read_text())
     if not gate["success_gate"]["passed"] or gate["reload_predictions_equal"] != 16:
         raise ValueError("The HDD model must pass its frozen held-out gate before component training.")
-    ledger_path = Path("artifacts/nebius/full-history-v1/cost-ledger.json")
-    ledger = json.loads(ledger_path.read_text())
-    age = (datetime.now(timezone.utc) - datetime.fromisoformat(ledger["as_of"])).total_seconds()
-    if not 0 <= age <= 300 or ledger["remaining_under_ceiling_usd"] < 50.45:
-        raise ValueError("Refresh the shared compute ledger and reserve the bounded component phase before training.")
+    ledger_path = Path(ledger_path)
+    ledger = read_compute_ledger(ledger_path, datetime.now(timezone.utc))
     manifest_path = root / "dataset-manifest.json"
     manifest = json.loads(manifest_path.read_text())
     if manifest.get("format") != "component-windows-v1":
@@ -123,7 +125,7 @@ def prepare(root, run, hdd_report, *, industrial_study=False, audio_benchmark=Fa
             break
     total = sum(counts.values())
     weights = {p: float(np.clip(total/(len(PATTERNS)*max(counts[p], 1)), .1, 30)) for p in PATTERNS}
-    config = {**read_yaml("config/train_full.yaml"), "version": run.name, "seed": 20260913,
+    config = {**base_config, "version": run.name, "seed": 20260913,
               "world_size": 1, "epochs": 12, "max_train_hours": 2, "max_vm_hours": 3.5,
               "checkpoint_every_steps": 500, "validation_every_steps": 2000,
               "validation_drives": len(validation), "test_drives": min(256, len(manifest["groups"]["test"])),
@@ -135,6 +137,9 @@ def prepare(root, run, hdd_report, *, industrial_study=False, audio_benchmark=Fa
         config.update(evaluation_kind="small-industrial-v1", test_drives=5, test_windows_per_group=256, max_train_hours=.75)
     if audio_benchmark:
         config.update(evaluation_kind=manifest["config"]["study"], test_drives=5, test_windows_per_group=1024, max_train_hours=.5)
+    reserved_cost = config["max_vm_hours"] * (config["vm_hourly_usd"] + config["disk_hourly_usd"])
+    if reserved_cost > min(config["budget_usd"], ledger["remaining_under_ceiling_usd"]):
+        raise ValueError("The configured component phase exceeds its available budget")
     run.mkdir(parents=True)
     write_json(run / "config.json", config)
     write_json(run / "dataset-manifest.json", manifest)
@@ -155,7 +160,6 @@ def prepare(root, run, hdd_report, *, industrial_study=False, audio_benchmark=Fa
         "frozen_parameters": "All original Gemma language-model parameters. No other component's fitted weights or training examples are used.",
         "augmentation": config["coverage"] + " These order perturbations are labeled numerical counterfactuals, not additional physical histories or failure events.",
         "selection": config["selection"],
-        "hardware_cost": "One assigned RTX PRO 6000 GPU inside the existing eight-GPU Nebius VM. The whole VM costs $14.40/hour plus its disk. A shared 3.5-hour component phase costs at most $50.45 and must remain inside the shared $600 ceiling and absolute VM deadline.",
         "stopping": "At most 12 epochs or two training hours. Stop after three completed epochs without validation improvement, after at least three epochs. Stop on nonfinite values, cancellation, or the independent VM guard.",
         "evaluation": "Freeze selected checkpoint before test release. Use one window per held-out group. Compare upstream, constant, fitted, zero numerical values, reversal, and shuffle. Require valid output, baseline gains, numerical dependence, target response, and 16 exact reload predictions.",
         "outputs": "Source and split pins, independent model and optimizer checkpoints, validation records, raw test generations, metrics and paired-group intervals, reload proof, and compute ledger.",
@@ -164,7 +168,6 @@ def prepare(root, run, hdd_report, *, industrial_study=False, audio_benchmark=Fa
     if industrial_study:
         from driftops.evaluate_industrial import CRITERIA
         overview["study_scope"] = "Separate small-cohort experiment. It does not inherit the large-cohort success label."
-        overview["hardware_cost"] = "Four independent small-study processes share the unused eighth RTX PRO 6000 GPU on the already-running eight-GPU VM. The existing total VM phase cap remains $50.45. No additional VM is allocated. The parent component phase owns provider stopping and may interrupt these jobs when it completes. Preserve checkpoints and inspect any interruption before a bounded resume."
         overview["stopping"] = "At most 12 epochs or 45 training minutes per model. Stop after three nonimproving completed epochs, with at least three epochs. The shared industrial service has a 90-minute limit. The parent VM's existing completion stop and absolute deadline remain controlling."
         overview["evaluation"] = "Freeze the selected checkpoint, then select up to 256 windows per held-out group. Average accuracy within groups before uncertainty calculations. Require five groups, positive paired group gains, exact one-sided group sign-randomization probability at most 0.05, valid outputs, correct numerical perturbation responses, and 16 exact reload predictions."
         overview["success_criteria"] = CRITERIA
@@ -172,12 +175,18 @@ def prepare(root, run, hdd_report, *, industrial_study=False, audio_benchmark=Fa
     if audio_benchmark:
         from driftops.evaluate_industrial import audio_criteria
         overview["study_scope"] = "Unknown-date sound benchmark. One training machine, one validation machine, five test machines. No calibration fitting or calendar-generalization claim."
-        overview["hardware_cost"] = "One free RTX PRO 6000 GPU in the existing eight-GPU Nebius VM. The whole VM costs $14.40/hour plus disk. This run shares the existing $50.45 phase reservation and absolute deadline. The parent completion stop can interrupt this supplementary job."
         overview["stopping"] = "At most 12 epochs or 30 training minutes. Stop after three nonimproving completed epochs after at least three epochs. Stop on nonfinite values or the parent provider stop. Export completed checkpoints before any bounded resume."
         overview["evaluation"] = "Freeze selected weights before releasing up to 1024 fixed-hash windows per held-out machine. Apply five-group industrial numerical-response and baseline-gain checks, unchanged quality thresholds, and 16 exact GPU reload predictions."
         from driftops.slider_data import study
         overview["success_criteria"] = audio_criteria(manifest["config"]["component"])
         overview["study_design_sha256"] = file_hash(Path(study(manifest["config"])[3]))
+    overview["hardware_cost"] = {
+        "gpu": config["gpu_name"], "world_size": config["world_size"],
+        "machine_hourly_usd": config["vm_hourly_usd"], "disk_hourly_usd": config["disk_hourly_usd"],
+        "reserved_hours": config["max_vm_hours"], "maximum_quoted_usd": reserved_cost,
+        "budget_at_preparation": ledger,
+        "stop_requirement": "Verify a current independent provider stop guard before launch. The training time limit does not stop cloud billing.",
+    }
     write_json(run / "overview.json", overview)
     sources = [*Path("src/driftops").rglob("*.py"), *Path("config").glob("*.yaml"), Path("pyproject.toml"), Path("uv.lock")]
     write_json(run / "source-hashes.json", {str(p): file_hash(p) for p in sorted(sources)})
@@ -192,11 +201,13 @@ if __name__ == "__main__":
     parser.add_argument("--hdd-report", type=Path)
     parser.add_argument("--industrial-study", action="store_true")
     parser.add_argument("--audio-benchmark", action="store_true")
+    parser.add_argument("--config", type=Path, default=Path("config/train_full.yaml"), help="Repository config YAML for preparation only")
+    parser.add_argument("--ledger", type=Path, default=Path("artifacts/nebius/full-history-v1/cost-ledger.json"), help="Current compute ledger for preparation only")
     args = parser.parse_args()
     if args.action == "prepare":
         if args.hdd_report is None:
             parser.error("Preparation requires the completed HDD report.")
-        prepare(args.root, args.run, args.hdd_report, industrial_study=args.industrial_study, audio_benchmark=args.audio_benchmark)
+        prepare(args.root, args.run, args.hdd_report, industrial_study=args.industrial_study, audio_benchmark=args.audio_benchmark, config_path=args.config, ledger_path=args.ledger)
     else:
         from driftops.train_full import train
         train(args.root, args.run)

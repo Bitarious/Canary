@@ -1,0 +1,12 @@
+Canary
+Copyright (c) 2026 Canary contributors
+
+The root MIT license covers original project code and documentation.
+Third-party code, model weights, and datasets retain their own licenses.
+
+OpenTSLM: src/driftops/_vendor/opentslm/MIT.txt
+Model weights and dataset terms: docs/model-licenses.md
+Dataset attribution: docs/licenses/DATASET-ATTRIBUTION.md
+Gemma-derived weights: docs/licenses/MODEL-TERMS.txt
+
+MIT license reference: https://opensource.org/license/mit

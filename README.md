@@ -65,7 +65,7 @@ Open <http://127.0.0.1:8000>. Preparation verifies the bundled source checksum, 
 
 The bundled sample is about 1.2 MB. It contains 547,812 observations from 3,000 HDDs during July through December 2024. Preparation produces 13,616 signal-description tasks across the splits. The preview exposes 7,151 training tasks. This small pilot differs from the full-history training dataset.
 
-If you develop with an agent, use `bash scripts/bootstrap.sh` after installing Entire and `uv`. The bootstrap enables Entire, installs training dependencies, prepares the pilot, and runs tests. Keep Entire recording and its normal Git push hook active to preserve the hackathon history.
+For the complete development environment, run `bash scripts/bootstrap.sh` after installing `uv`. The bootstrap installs training dependencies, prepares the pilot, and runs core tests. Entire is no longer used or required.
 
 ## Architecture
 
@@ -151,7 +151,7 @@ All selected models reproduced sixteen saved predictions on the same GPU hardwar
 
 The repository includes a runnable pilot and compact evaluation evidence. Selected weights and full evaluation inputs use release assets. Large raw datasets require separate publisher downloads.
 
-The `v2026.09.13` source release predates the local Canary evidence-view updates described here. Use this revision for the demo and that release for the recorded experiment artifacts.
+The `v2026.09.13` source snapshot predates the Canary evidence-view updates described here. Use this revision for the demo and that artifact set for the recorded experiments. The artifact release remains a private draft until the public publication step completes. See [release status](docs/project-release.md).
 
 ### 1. Verify the committed evidence
 
@@ -270,7 +270,7 @@ Full retraining requires a separately configured CUDA environment and bounded co
 
 The [HDD run guide](docs/full-history-training.md), [training configuration](config/train_full.yaml), and [per-run records](results/2026-09-13/runs/) preserve the experiment settings. The small [CPU training guide](docs/training.md) reproduces the earlier concept experiment, not the successful full-history model.
 
-Cloud orchestration retains hackathon-specific paths, budget checks, and expired deadlines. It requires a fresh compute ledger, valid resource configuration, and a tested provider stop guard. It is not an unattended one-command reproduction path.
+New runs accept an explicit repository training configuration through `--config`. Component preparation accepts a current budget file through `--ledger`. Follow [the portable reproduction procedure](docs/reproduction.md) for preparation, training, and frozen evaluation. Historical cloud provisioning scripts require new resource configuration and a tested provider stop guard.
 
 Before each training run, write and explain its objective, data splits, updated and frozen parameters, hardware, cost cap, stopping rules, evaluation, and outputs. Use a new run directory. Preserve the released checkpoints and test results. Retraining can vary with hardware and execution order, so retain new predictions and report differences.
 
@@ -301,7 +301,17 @@ uv run --no-sync pytest -q
 python3 -m unittest discover -s driftops3d/tests -p 'test_*.py' -v
 ```
 
-The main pytest configuration only discovers `tests/`. Run the separate demo tests as shown. Prepare the pilot first so the real-data integration test can run. Browser checks require Playwright and a supported browser. See [the demo verification instructions](driftops3d/README.md#evidence-and-replay-checks).
+The main pytest configuration only discovers `tests/`. Run the separate demo tests as shown. `bash scripts/verify.sh` runs both suites and checks released evidence hashes. Prepare the pilot first so the real-data integration test can run.
+
+For browser verification, install Node 22 or newer and run:
+
+```bash
+npm ci
+npx playwright install chromium
+npm run test:browser
+```
+
+The harness owns a temporary server, device directory, and browser. It checks four evidence-view sizes and the laptop/server navigation workflow. See [the demo verification instructions](driftops3d/README.md#evidence-and-replay-checks).
 
 Keep changes scoped and preserve the source, split, and checkpoint hashes in released evidence. New studies need new run directories and an untouched test cohort. Use [the handoff](docs/handoff.md) for development context and [the implementation plan](docs/implementation-plan.md) for remaining work.
 
@@ -331,4 +341,6 @@ We built on Aionic TimeNet, OpenTSLM, Google Gemma, and Nebius compute. The data
 
 Model weights, vendored code, and datasets have separate terms. Read [the model and dataset license guide](docs/model-licenses.md) and retain the accompanying notices. The recorded release limits DRAM and sound checkpoints to noncommercial research and evaluation.
 
-This revision does not include a project-wide source-code license. The team still needs to choose one for its original code before describing the whole repository as open source. Upstream notices do not supply a license for all project code.
+Original project code and documentation use the [MIT license](LICENSE). See [NOTICE](NOTICE) for third-party exclusions. The MIT license does not replace the separate model and dataset terms.
+
+See [contributors](CONTRIBUTORS.md), [contribution instructions](CONTRIBUTING.md), [security reporting](SECURITY.md), and [release notes](CHANGELOG.md). Citation metadata is available in [CITATION.cff](CITATION.cff).

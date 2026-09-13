@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "If you use Canary, cite this repository and the dataset and model sources relevant to your experiment."
+type: software
+title: "Canary: hardware signal descriptions with time-series language models"
+authors:
+  - name: "Team Piloty"
+repository-code: "https://github.com/M-10001/EHL_Zurich_hackathon_team_piloty"
+license: MIT
+abstract: >-
+  Research code for hardware dataset preparation, separate Gemma-based
+  OpenTSLM fine-tunes, held-out signal-description evaluation, and an
+  evidence inspection demo. Scores measure agreement with weak pattern
+  labels. Failure prediction and maintenance benefit remain unvalidated.

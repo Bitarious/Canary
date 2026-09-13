@@ -1,7 +1,9 @@
 [project]
 name = "driftops"
 version = "0.1.0"
-description = "Backblaze HDD temporal evidence and maintenance demo"
+description = "Canary hardware signal descriptions and evidence demo"
+license = "MIT"
+license-files = ["LICENSE", "NOTICE"]
 requires-python = ">=3.12"
 readme = "README.md"
 dependencies = [

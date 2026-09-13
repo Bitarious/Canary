@@ -1,10 +1,12 @@
 # Separate hardware TSLM program
 
+This is the historical experiment log. All thirteen categories reached their terminal study results. Use [the current reproduction guide](reproduction.md) for portable commands and fresh compute configuration. Earlier active-phase descriptions and account balances below are historical.
+
 The user authorized this program on September 12, 2026. First, complete and evaluate the historical Backblaze HDD model. If it passes, research the other hardware categories named in the implementation plan and dataset backlog. Train a separate TSLM for each component. Combine sources or components only if the data cannot support a separate model, and record the reason.
 
 The total compute ceiling is $600 across setup, diagnostics, HDD training, evaluation, and all later component runs. The earlier $605 console balance was user-reported before spending. It is not a current measured balance. Keep an evaluation and artifact-export reserve inside the ceiling. Do not spend on invalid data or report a failed model as working to exhaust the budget.
 
-Keep documentation and code in this GitHub repository. The user authorized commits and upload on September 13, 2026. This supersedes the earlier prohibition. Preserve the existing Entire recording configuration and hooks.
+Keep documentation and code in this GitHub repository. The user authorized commits and upload on September 13, 2026. This supersedes the earlier prohibition. Entire was removed after the hackathon at the user's request. Normal Git history and experiment artifacts remain intact.
 
 ## Success gate
 
