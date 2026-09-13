@@ -5,7 +5,7 @@ command -v uv >/dev/null || { echo 'Install uv first: https://docs.astral.sh/uv/
 command -v entire >/dev/null || { echo 'Entire is required for submission. Install it before development: https://docs.entire.io/installation' >&2; exit 1; }
 entire enable --agent codex --local
 entire status
-uv sync --locked --extra model-access
+uv sync --locked --extra model-access --extra training
 uv run --no-sync driftops prepare
 uv run --no-sync pytest -q
 echo 'Pilot verified. Run: uv run --no-sync driftops demo'

@@ -13,6 +13,8 @@ These tasks use numerical pattern rules as weak reference labels. Accuracy does 
 | `hdd-demo-cases.json` | Three post hoc presentation examples with raw signals, saved model outputs, and separate reference labels |
 | `measured-metrics.json` | Values extracted for presentation charts, including measured latency and parameter counts |
 | `training-code-verification.json` | The original fresh-checkout test receipt from the completed training program |
+| `publication-verification.json` | Fresh-checkout pilot, 93 tests, and real demo API checks for the publication source commit |
+| `release-manifest.json` | Release archive sizes, SHA-256 values, and run-to-checkpoint mapping |
 | `SHA256SUMS` | SHA-256 checksums for the evidence files |
 
 Run the integrity check from this directory:

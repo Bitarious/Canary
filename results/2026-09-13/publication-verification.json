@@ -1,0 +1,31 @@
+{
+  "commit": "c372b6d3ddbc06a0e62f0f8510b68c6ddc59b6a2",
+  "checks": [
+    {
+      "check": "pilot",
+      "exit_code": 0,
+      "last_line": "}"
+    },
+    {
+      "check": "pytest",
+      "exit_code": 0,
+      "last_line": "93 passed in 11.58s"
+    },
+    {
+      "check": "demo-http",
+      "passed": true,
+      "devices": 147,
+      "analysis_status": 200,
+      "unknown_device_status": 404
+    }
+  ],
+  "git_status": "",
+  "passed": true,
+  "ci_dependency_fix": {
+    "original_run": 34748886106,
+    "failure": "The existing model-access-only CI environment omitted torch required by the expanded tests.",
+    "verified_install_command": "uv sync --locked --extra model-access --extra training",
+    "pytest": "93 passed in 8.53s",
+    "bootstrap_syntax_check": "passed"
+  }
+}

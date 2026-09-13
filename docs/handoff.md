@@ -22,9 +22,9 @@ The requested component training program is complete within the stated benchmark
 
 The user authorized the complete GitHub upload and parallel agents for publication and private demo access. The training work and teammates' main branch were merged without conflicts. The [release guide](project-release.md) describes source, selected models, evaluation records, and dataset reproduction.
 
-The administrator-only demo route is `https://projects.home.doodlebeast.com/driftops/#/site/site-a`. It requires the existing WireGuard access and an administrator device grant. The gateway route, browser navigation, fleet data, and analysis requests passed local verification. A remote administrator device connection remains unverified. The app still uses synthetic telemetry and rules.
+The private demo route is `https://projects.home.doodlebeast.com/driftops/#/site/site-a`. It requires the existing WireGuard access and either an administrator grant or a DriftOps resource grant. The user approved a DriftOps-only grant for the registered laptop after its request reached the gateway but returned403. The laptop remains a non-administrator. The gateway route, browser navigation, fleet data, and analysis requests passed local verification. The app still uses synthetic telemetry and rules.
 
-The gateway and its access configuration belong to the private hosting project, not this source repository. The demo backend binds to loopback. No public app port or new access grant was added.
+The gateway and its access configuration belong to the private hosting project, not this source repository. The demo backend binds to loopback. No public app port was opened. The laptop received only the approved DriftOps grant.
 
 ## What this revision can run
 
