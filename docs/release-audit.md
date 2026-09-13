@@ -32,6 +32,7 @@ The release code at `b284e65` passed these checks in a fresh local Git clone wit
 | Browser navigation | All three HQ laptops and a Site A server passed picking, geometry, camera, analysis, and return checks |
 | Python source distribution and wheel | Built successfully; MIT metadata and upstream notices present |
 | Pip compatibility requirements | Dry run against the locked environment required no changes |
+| README SSD inference replay | All 16 saved GPU answers reproduced using the clean-checkout CPU environment |
 | Current public documentation | Local links, anchors, and Bash syntax passed |
 | Original release archives | All 15 archive hashes passed; 14 checkpoint files retained |
 | Release metadata secret scan | 11,200 text files, 310,681,584 bytes; no findings |
