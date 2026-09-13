@@ -21,3 +21,5 @@ dist/
 # Downloaded data and generated model artifacts
 data/
 artifacts/
+
+**/venv/**
