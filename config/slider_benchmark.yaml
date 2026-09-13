@@ -1,0 +1,41 @@
+version: audio-benchmark-v1
+study: slider-audio-benchmark-v1
+component: slide_rail
+scope: Describe two sound-energy bands in short slide-rail recordings. Acquisition dates are unknown. This benchmark does not measure faults, calendar generalization, or fleet reliability.
+provider: DCASE 2020 Task 2 / MIMII authors
+source_type: dcase-mimii-mono-pcm
+source_url: https://zenodo.org/records/3678171
+license: CC-BY-NC-SA-4.0
+timef_license: other
+license_url: https://creativecommons.org/licenses/by-nc-sa/4.0/
+citation: DCASE 2020 Task 2 development 3678171 and additional training 3727685, MIMII slide rail, first microphone with environmental noise
+clock_semantics: clip-relative-offset-only
+chronology_verified: false
+chronology_exception: User authorized MIMII with documented shortcomings if no suitable dated replacement exists, on 2026-09-13.
+calibration: absent-uncalibrated-description-benchmark
+cadence_us: 32000
+cadence_text: successive nonoverlapping 32-millisecond sound frames within one recording
+group_partitions:
+  dcase-slider:00: train
+  dcase-slider:02: validation
+  dcase-slider:01: test
+  dcase-slider:03: test
+  dcase-slider:04: test
+  dcase-slider:05: test
+  dcase-slider:06: test
+partitions:
+  train: &relative
+    start: '1970-01-01T00:00:00+00:00'
+    stop: '1970-01-01T00:00:11+00:00'
+  validation: *relative
+  calibration: *relative
+  test: *relative
+channels:
+  low_band_rms:
+    unit: dimensionless
+    minimum_band: 0.000001
+    description: RMS sound energy below 2 kHz in normalized digital units
+  high_band_rms:
+    unit: dimensionless
+    minimum_band: 0.000001
+    description: RMS sound energy from 2 through 8 kHz in normalized digital units

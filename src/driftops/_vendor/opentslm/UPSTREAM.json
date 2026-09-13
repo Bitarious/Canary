@@ -1,0 +1,18 @@
+{
+  "repository": "https://github.com/OpenTSLM/OpenTSLM",
+  "revision": "2968f4b891baab4307f7e9d0043e87677b593a30",
+  "changes": "SP-only source subset. Absolute imports use the private driftops vendor namespace. Package initializers are empty. Model methods are unchanged.",
+  "original_sha256": {
+    "model_config.py": "a91d0c776167cfb32bc9db51a8e3a62c852b8373733566094c20acef3f0539c5",
+    "model/llm/OpenTSLMSP.py": "fab32a9b4fa44bdd405e1b69ec3e1e07a2a8eadf6b0c0a1554761ad21003b118",
+    "model/llm/TimeSeriesLLM.py": "2b72ad1374ddd591fa99021b7557a8ffe12248b0302ef81ede008792856635c7",
+    "model/encoder/TransformerCNNEncoder.py": "63ad72d3e0be9526e3c00f773b4f832e88285bbc8f5c8aaec2ce1a37a3519573",
+    "model/encoder/TimeSeriesEncoderBase.py": "9a095133f277708a80a5b8215a7bff5f3678cae8471b0d165ec542865454ef32",
+    "model/projector/MLPProjector.py": "90eb1fd0ac07a2bc13ce450d5504e8689e4973ccee245eeda1ec04f7427730b1",
+    "time_series_datasets/util.py": "26b61a1c740517ec9ef295550298f9fbe7ceb4965a06428111dcd129f7a9ae8c",
+    "prompt/full_prompt.py": "d3dbb44d063d8f5512c2fe1b04cd5bb090425aa304d470cbf7aaf97cca61b0e8",
+    "prompt/text_time_series_prompt.py": "39e3cde3436920a8f2208a5ce588126f4dcf003c80f91d5dc90f2f93955df9f4",
+    "prompt/text_prompt.py": "8181ce4eac8f665b63d8187ddf8daa79276472c97c90fadac720e3273e24ff09",
+    "prompt/prompt.py": "e39e8cae1a0195dcb3f2110080f58763232765f5b8d8f50909e315f938a800b0"
+  }
+}

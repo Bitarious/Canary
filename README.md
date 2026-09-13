@@ -8,7 +8,9 @@ The first working demo uses **Backblaze HDD data only**, starting with one suppo
 
 Built for the EHL Zurich Temporal AI Challenge, using Aionic's TimeNet for data preparation, OpenTSLM for signal-language modeling, and Nebius for training compute.
 
-Current status: the **bundled pilot** contains 3,000 HDDs of one model during July–December 2024, with 547,812 daily observations and 13,616 TimeNet signal-description tasks. A local browser preview shows real development windows and rule-derived descriptions. This is a sample of the much larger public archive. Gemma 3 270M and its matching OpenTSLM checkpoint are selected and their weight access was verified; model runtime integration, training, evaluation, and the full operator workflow remain unfinished.
+All thirteen component categories now have separate models that pass their declared signal-description tests. Selected checkpoints and evaluation exports are verified. The dated radiator-valve model failed twice. A separate industrial-valve sound model passed under the documented unknown-date exception. All three owned VMs are stopped. Estimated total spend is $111.35. These results do not establish failure prediction. Read [component results](docs/component-model-results.md) for metrics, checkpoints, and limitations.
+
+The **bundled pilot** contains 3,000 HDDs of one model during July–December 2024, with 547,812 daily observations and 13,616 TimeNet signal-description tasks. The local browser still shows development windows and deterministic descriptions. The earlier local CPU concept failed its useful-input check. See its [measured result](docs/evaluation.md). The full operator workflow remains unfinished.
 
 On the Linux server, install Git, uv, and Entire, then run from this checkout:
 
@@ -24,6 +26,7 @@ Open `http://127.0.0.1:8000`. Setup uses the bundled 1.2 MB public sample and ne
 - [Nebius connection](docs/nebius-setup.md): installed CLI, authenticated profile, selected project, and PowerShell launcher.
 - [Data preparation](docs/data-preparation.md): cohort, splits, limitations, and tested acquisition/conversion commands.
 - [Model access](docs/model-setup.md): Hugging Face connection, selected Gemma/OpenTSLM weights, and remaining runtime checks.
+- [Training and reload](docs/training.md): bounded CPU adaptation, pinned dependencies, checkpoint artifacts, and evaluation commands.
 - [Linux and overnight handoff](docs/handoff.md): tested local workflow, development continuation, and training prerequisites.
 
-The required submission includes a working demo, code and training configuration, a trained checkpoint or learned adapter, dataset documentation, and evaluation against baselines. The team's compute voucher is **$600**. Nebius CLI access and GPU quota are verified; remaining balance, GPU capacity, and model loading still need checking. Every training run will be explained to the user before it starts. A partner inference endpoint is optional when the trained model can run locally or on Nebius. Real measurements, derived scores, and illustrative operational context remain explicitly distinguishable.
+The required submission includes a working demo, code and training configuration, a trained checkpoint or learned adapter, dataset documentation, and evaluation against baselines. The project compute ceiling is **$600**. The user reported a $605 Nebius balance before paid work. The first CPU experiment spent no cloud credits. Later runs use bounded Nebius compute, with costs in the [component results](docs/component-model-results.md). Every training run must be explained before it starts. Documentation and artifacts remain local. The user has prohibited commits and pushes.

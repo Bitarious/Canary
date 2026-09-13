@@ -1,0 +1,186 @@
+{
+  "version": "industrial-studies-v1",
+  "purpose": "Separate gearbox, generator bearing, gear oil pump, and radiator valve signal studies. The source catalogs retain rejected alternatives as provenance. Only Cubico and HOMESENSE numeric files are required by these models.",
+  "max_total_bytes": 4500000000,
+  "files": [
+    {
+      "name": "Kelmarsh_WT_static.csv",
+      "url": "https://zenodo.org/api/records/8252025/files/Kelmarsh_WT_static.csv/content",
+      "bytes": 807,
+      "checksum": "md5:af3a038f0f7fddfc1608ad0bfc8cf5ba",
+      "sha256": "a249919471580244d41a547e407ef371d45f2d5347a59bc23cf3c980f607ee93"
+    },
+    {
+      "name": "Kelmarsh_SCADA_2020_3086.zip",
+      "url": "https://zenodo.org/api/records/8252025/files/Kelmarsh_SCADA_2020_3086.zip/content",
+      "bytes": 473677799,
+      "checksum": "md5:e189e02da98f32e74acc72e8559ef0db",
+      "sha256": "1cf3ad08aaed0952055b3668e39f73bbea8e09654d28b104ad2c4041b256452a"
+    },
+    {
+      "name": "Kelmarsh_WT_dataSignalMapping.csv",
+      "url": "https://zenodo.org/api/records/8252025/files/Kelmarsh_WT_dataSignalMapping.csv/content",
+      "bytes": 3150,
+      "checksum": "md5:ca8fe399ab15ae7111d3214c632efd36",
+      "sha256": "2dad8552ba4d45d59b9a778c68025b8c3614179d48dfb938c3af07c90ebd06af"
+    },
+    {
+      "name": "Kelmarsh_SCADA_2019_3085.zip",
+      "url": "https://zenodo.org/api/records/8252025/files/Kelmarsh_SCADA_2019_3085.zip/content",
+      "bytes": 311269947,
+      "checksum": "md5:14348a1572b722e1be10e53cd145c39a",
+      "sha256": "c2f11578b9a1678be198fd7883a7dfe1b923c5b0565f806bdda5dd9d0097f4dc"
+    },
+    {
+      "name": "Kelmarsh_SCADA_2018_3084.zip",
+      "url": "https://zenodo.org/api/records/8252025/files/Kelmarsh_SCADA_2018_3084.zip/content",
+      "bytes": 262157463,
+      "checksum": "md5:972e5280172216a5fe76dcab19c741b0",
+      "sha256": "38be7dd50b7f5dfe5642df33117482b06c12602153af7566a9acaa2cfcf85cd7"
+    },
+    {
+      "name": "Penmanshiel_SCADA_2018_WT01-10_3113.zip",
+      "url": "https://zenodo.org/api/records/8253010/files/Penmanshiel_SCADA_2018_WT01-10_3113.zip/content",
+      "bytes": 365016408,
+      "checksum": "md5:6389e5c4ea59d6565f6712db43a504ce",
+      "sha256": "3661902e57bdae6e3423e81a3b6da7c9b1ee028489fa193676cd3558d2cb0d0b"
+    },
+    {
+      "name": "Penmanshiel_SCADA_2018_WT11-15_3116.zip",
+      "url": "https://zenodo.org/api/records/8253010/files/Penmanshiel_SCADA_2018_WT11-15_3116.zip/content",
+      "bytes": 204798983,
+      "checksum": "md5:7c40dc00df6d6301427213e15170b927",
+      "sha256": "ffedca4137f6737a82551942a4fa06d874df2a6c6373270efeada8a315e57b42"
+    },
+    {
+      "name": "Penmanshiel_SCADA_2019_WT01-10_3112.zip",
+      "url": "https://zenodo.org/api/records/8253010/files/Penmanshiel_SCADA_2019_WT01-10_3112.zip/content",
+      "bytes": 473518587,
+      "checksum": "md5:78389603cb4ae20a6a9b878f5a84bc7b",
+      "sha256": "c611f4d04fa9f42ce093db643dcb11d96a995810ca52a9b5fda76dc8f26281d7"
+    },
+    {
+      "name": "Penmanshiel_SCADA_2019_WT11-15_3117.zip",
+      "url": "https://zenodo.org/api/records/8253010/files/Penmanshiel_SCADA_2019_WT11-15_3117.zip/content",
+      "bytes": 265354191,
+      "checksum": "md5:92747a976716c5f35d9ee6462958fd7a",
+      "sha256": "54523b9bffe717566f8ef056af0836e91ae2aed3e1a4083533f659a154a60eaf"
+    },
+    {
+      "name": "Penmanshiel_SCADA_2020_WT01-10_3109.zip",
+      "url": "https://zenodo.org/api/records/8253010/files/Penmanshiel_SCADA_2020_WT01-10_3109.zip/content",
+      "bytes": 694483651,
+      "checksum": "md5:46f679f2e4ab3d69c04b31c8dc625106",
+      "sha256": "f2bbf7f4efa24c9bdcc98cb987b17830272d77067a43958cd62ee5e6c490efe1"
+    },
+    {
+      "name": "Penmanshiel_SCADA_2020_WT11-15_3118.zip",
+      "url": "https://zenodo.org/api/records/8253010/files/Penmanshiel_SCADA_2020_WT11-15_3118.zip/content",
+      "bytes": 389300869,
+      "checksum": "md5:c73323f21451c08247dbdb5d1a1434a9",
+      "sha256": "6c41960df290326831634aab2162c020a340f6ad439ed6eba2daa381ba707f31"
+    },
+    {
+      "name": "Penmanshiel_WT_dataSignalMapping.xlsx",
+      "url": "https://zenodo.org/api/records/8253010/files/Penmanshiel_WT_dataSignalMapping.xlsx/content",
+      "bytes": 19359,
+      "checksum": "md5:2eae1b84a014619268a6e4f53e6b1c91",
+      "sha256": "428392004a391bc3646e415dbd1cd5c723f6499d0f3c9ea2697736eeb3c59c63"
+    },
+    {
+      "name": "Penmanshiel_WT_static.csv",
+      "url": "https://zenodo.org/api/records/8253010/files/Penmanshiel_WT_static.csv/content",
+      "bytes": 2029,
+      "checksum": "md5:c4cd4191234c1a67a391fe5d2978256b",
+      "sha256": "2a742dfd5c8486bf54c1afb647bd803954f4c56aea31635e5aa93828f56ebd7b"
+    },
+    {
+      "name": "homesense-H03.csv",
+      "url": "https://zenodo.org/api/records/21687970/files/H03.csv/content",
+      "bytes": 71605920,
+      "checksum": "md5:b46aeb4c95b0c2b1c596beb81ee8e9a9",
+      "sha256": "f2ac7f4962d66d2cce9538fc688544018e6b3eb4cfe78af4e9b20aee2462ebfc"
+    },
+    {
+      "name": "homesense-H08.csv",
+      "url": "https://zenodo.org/api/records/21687970/files/H08.csv/content",
+      "bytes": 63508793,
+      "checksum": "md5:91b5a253ce5cbd5a0629806e737711e6",
+      "sha256": "4aa4df6502511fc5ca9d26916c657e35b1be23ce602c555e72c98660c2ea5fe9"
+    },
+    {
+      "name": "homesense-H04.csv",
+      "url": "https://zenodo.org/api/records/21687970/files/H04.csv/content",
+      "bytes": 71726419,
+      "checksum": "md5:5c9e4060851fcd91b25014edc6a8f908",
+      "sha256": "005d95af0faec220e9eba3307c39cefd3404b2ad4021b30cb172fbf56540356f"
+    },
+    {
+      "name": "homesense-H07.csv",
+      "url": "https://zenodo.org/api/records/21687970/files/H07.csv/content",
+      "bytes": 64067300,
+      "checksum": "md5:07e7d1288a554c27c022322cc0650d61",
+      "sha256": "cacf1c9272dcdd0c36eebac359d58667b97f80547960f12f537e926c6852111f"
+    },
+    {
+      "name": "homesense-H11.csv",
+      "url": "https://zenodo.org/api/records/21687970/files/H11.csv/content",
+      "bytes": 83404915,
+      "checksum": "md5:9224c2d6fbe00cd3563444fd5cc9cd94",
+      "sha256": "092ea095a62ba6abcf08eab3dee84300a76c7ee011e4031226a7746450261c81"
+    },
+    {
+      "name": "homesense-H10.csv",
+      "url": "https://zenodo.org/api/records/21687970/files/H10.csv/content",
+      "bytes": 70174159,
+      "checksum": "md5:c884fd1d419b2a1b3daa074daed06418",
+      "sha256": "5e97bc28f6dae1a45537f7ea1acef64a86982e04cc38efcfb581218a23ec0fe5"
+    },
+    {
+      "name": "homesense-H02.csv",
+      "url": "https://zenodo.org/api/records/21687970/files/H02.csv/content",
+      "bytes": 74528968,
+      "checksum": "md5:7c57f00c1551a807de0b3de452d6c3ae",
+      "sha256": "0637eacd8f38dba955f0413372fea4280a5a051daa281aea7763f985cbeb8d0a"
+    },
+    {
+      "name": "homesense-H06.csv",
+      "url": "https://zenodo.org/api/records/21687970/files/H06.csv/content",
+      "bytes": 80507028,
+      "checksum": "md5:40f296acc8a72b38396b3707e30443ac",
+      "sha256": "80f3f96f04c6b642d79cab4f25872b0c081d4c376b8c1d18c5b267411fc8a88f"
+    },
+    {
+      "name": "homesense-H05.csv",
+      "url": "https://zenodo.org/api/records/21687970/files/H05.csv/content",
+      "bytes": 65482790,
+      "checksum": "md5:89dede666d5cd52b3ecccb02113219ea",
+      "sha256": "d8274d9dd28d86f63c7dcfa90532867b8a647de5e82a4919d6c1918abcac1675"
+    },
+    {
+      "name": "homesense-H09.csv",
+      "url": "https://zenodo.org/api/records/21687970/files/H09.csv/content",
+      "bytes": 72218859,
+      "checksum": "md5:8e03524c5148ea4754a474968b50a0f5",
+      "sha256": "896b35fcef98dcc982d9bd3ec695a94697e45b3026f85a1679d09c62f85186de"
+    },
+    {
+      "name": "homesense-H01.csv",
+      "url": "https://zenodo.org/api/records/21687970/files/H01.csv/content",
+      "bytes": 68699863,
+      "checksum": "md5:a0d05da6ad5f0da49886bf3f75e15522",
+      "sha256": "9b224bfb3da83eb47ae2ea3baab189c5bc46f034627399ce482c17c545e270ae"
+    },
+    {
+      "name": "homesense-preprocess_release.py",
+      "url": "https://zenodo.org/api/records/21687970/files/preprocess_release.py/content",
+      "bytes": 67238,
+      "checksum": "md5:89e3e4ff93a17540dbc4e9a68b472dd9",
+      "sha256": "f0103df987df4b39ec8dd979b41dca76fced18d4f24d12cc0bc0654e3266740f"
+    }
+  ],
+  "metadata": {
+    "industrial-source-manifest.json": "{\n  \"version\": \"industrial-dated-source-audit-v1\",\n  \"purpose\": \"Audit dated gearbox, bearing, and pump component histories. No fitting or test scoring. Select years before reading numerical observations. These sources have limited independent machines.\",\n  \"max_total_bytes\": 4000000000,\n  \"files\": [\n    {\n      \"name\": \"Kelmarsh_WT_static.csv\",\n      \"url\": \"https://zenodo.org/api/records/8252025/files/Kelmarsh_WT_static.csv/content\",\n      \"bytes\": 807,\n      \"checksum\": \"md5:af3a038f0f7fddfc1608ad0bfc8cf5ba\"\n    },\n    {\n      \"name\": \"Kelmarsh_SCADA_2020_3086.zip\",\n      \"url\": \"https://zenodo.org/api/records/8252025/files/Kelmarsh_SCADA_2020_3086.zip/content\",\n      \"bytes\": 473677799,\n      \"checksum\": \"md5:e189e02da98f32e74acc72e8559ef0db\"\n    },\n    {\n      \"name\": \"Kelmarsh_WT_dataSignalMapping.csv\",\n      \"url\": \"https://zenodo.org/api/records/8252025/files/Kelmarsh_WT_dataSignalMapping.csv/content\",\n      \"bytes\": 3150,\n      \"checksum\": \"md5:ca8fe399ab15ae7111d3214c632efd36\"\n    },\n    {\n      \"name\": \"Kelmarsh_SCADA_2019_3085.zip\",\n      \"url\": \"https://zenodo.org/api/records/8252025/files/Kelmarsh_SCADA_2019_3085.zip/content\",\n      \"bytes\": 311269947,\n      \"checksum\": \"md5:14348a1572b722e1be10e53cd145c39a\"\n    },\n    {\n      \"name\": \"Kelmarsh_SCADA_2018_3084.zip\",\n      \"url\": \"https://zenodo.org/api/records/8252025/files/Kelmarsh_SCADA_2018_3084.zip/content\",\n      \"bytes\": 262157463,\n      \"checksum\": \"md5:972e5280172216a5fe76dcab19c741b0\"\n    },\n    {\n      \"name\": \"Penmanshiel_SCADA_2018_WT01-10_3113.zip\",\n      \"url\": \"https://zenodo.org/api/records/8253010/files/Penmanshiel_SCADA_2018_WT01-10_3113.zip/content\",\n      \"bytes\": 365016408,\n      \"checksum\": \"md5:6389e5c4ea59d6565f6712db43a504ce\"\n    },\n    {\n      \"name\": \"Penmanshiel_SCADA_2018_WT11-15_3116.zip\",\n      \"url\": \"https://zenodo.org/api/records/8253010/files/Penmanshiel_SCADA_2018_WT11-15_3116.zip/content\",\n      \"bytes\": 204798983,\n      \"checksum\": \"md5:7c40dc00df6d6301427213e15170b927\"\n    },\n    {\n      \"name\": \"Penmanshiel_SCADA_2019_WT01-10_3112.zip\",\n      \"url\": \"https://zenodo.org/api/records/8253010/files/Penmanshiel_SCADA_2019_WT01-10_3112.zip/content\",\n      \"bytes\": 473518587,\n      \"checksum\": \"md5:78389603cb4ae20a6a9b878f5a84bc7b\"\n    },\n    {\n      \"name\": \"Penmanshiel_SCADA_2019_WT11-15_3117.zip\",\n      \"url\": \"https://zenodo.org/api/records/8253010/files/Penmanshiel_SCADA_2019_WT11-15_3117.zip/content\",\n      \"bytes\": 265354191,\n      \"checksum\": \"md5:92747a976716c5f35d9ee6462958fd7a\"\n    },\n    {\n      \"name\": \"Penmanshiel_SCADA_2020_WT01-10_3109.zip\",\n      \"url\": \"https://zenodo.org/api/records/8253010/files/Penmanshiel_SCADA_2020_WT01-10_3109.zip/content\",\n      \"bytes\": 694483651,\n      \"checksum\": \"md5:46f679f2e4ab3d69c04b31c8dc625106\"\n    },\n    {\n      \"name\": \"Penmanshiel_SCADA_2020_WT11-15_3118.zip\",\n      \"url\": \"https://zenodo.org/api/records/8253010/files/Penmanshiel_SCADA_2020_WT11-15_3118.zip/content\",\n      \"bytes\": 389300869,\n      \"checksum\": \"md5:c73323f21451c08247dbdb5d1a1434a9\"\n    },\n    {\n      \"name\": \"Penmanshiel_WT_dataSignalMapping.xlsx\",\n      \"url\": \"https://zenodo.org/api/records/8253010/files/Penmanshiel_WT_dataSignalMapping.xlsx/content\",\n      \"bytes\": 19359,\n      \"checksum\": \"md5:2eae1b84a014619268a6e4f53e6b1c91\"\n    },\n    {\n      \"name\": \"Penmanshiel_WT_static.csv\",\n      \"url\": \"https://zenodo.org/api/records/8253010/files/Penmanshiel_WT_static.csv/content\",\n      \"bytes\": 2029,\n      \"checksum\": \"md5:c4cd4191234c1a67a391fe5d2978256b\"\n    },\n    {\n      \"name\": \"cira-B_2024-06-11.csv\",\n      \"url\": \"https://zenodo.org/api/records/15301820/files/B_2024-06-11.csv/content\",\n      \"bytes\": 4832416,\n      \"checksum\": \"md5:b5ebd04d1109e589849de45c40cd0664\"\n    },\n    {\n      \"name\": \"cira-C_2024-06-11.csv\",\n      \"url\": \"https://zenodo.org/api/records/15301820/files/C_2024-06-11.csv/content\",\n      \"bytes\": 2895374,\n      \"checksum\": \"md5:04f1a7007fceaae49c9d75e5cd2ef2d4\"\n    },\n    {\n      \"name\": \"cira-B_2024-04-10.csv\",\n      \"url\": \"https://zenodo.org/api/records/15301820/files/B_2024-04-10.csv/content\",\n      \"bytes\": 981579,\n      \"checksum\": \"md5:92642962af9094511ad042e3f8968686\"\n    },\n    {\n      \"name\": \"cira-C_2024-04-10.csv\",\n      \"url\": \"https://zenodo.org/api/records/15301820/files/C_2024-04-10.csv/content\",\n      \"bytes\": 987439,\n      \"checksum\": \"md5:58b441aa3f0a003680169b99176f566a\"\n    },\n    {\n      \"name\": \"cira-A_2024-04-10.csv\",\n      \"url\": \"https://zenodo.org/api/records/15301820/files/A_2024-04-10.csv/content\",\n      \"bytes\": 985538,\n      \"checksum\": \"md5:a49e78ca69f87c301a867f02c61b2dc2\"\n    },\n    {\n      \"name\": \"cira-B_2024-10-30.csv\",\n      \"url\": \"https://zenodo.org/api/records/15301820/files/B_2024-10-30.csv/content\",\n      \"bytes\": 3647529,\n      \"checksum\": \"md5:274b60fe176866cda751e0294cb7aed4\"\n    },\n    {\n      \"name\": \"cira-A_2024-06-11.csv\",\n      \"url\": \"https://zenodo.org/api/records/15301820/files/A_2024-06-11.csv/content\",\n      \"bytes\": 2870601,\n      \"checksum\": \"md5:3dafa3e7802b522931dd79eb829a051a\"\n    },\n    {\n      \"name\": \"cira-C_2024-10-30.csv\",\n      \"url\": \"https://zenodo.org/api/records/15301820/files/C_2024-10-30.csv/content\",\n      \"bytes\": 6144055,\n      \"checksum\": \"md5:1ee09c859372756f6232300363d1476b\"\n    },\n    {\n      \"name\": \"cira-README.md\",\n      \"url\": \"https://zenodo.org/api/records/15301820/files/README.md/content\",\n      \"bytes\": 3048,\n      \"checksum\": \"md5:bff288347a7d54990aa8c4630a7decd4\"\n    },\n    {\n      \"name\": \"cira-A_2024-10-30.csv\",\n      \"url\": \"https://zenodo.org/api/records/15301820/files/A_2024-10-30.csv/content\",\n      \"bytes\": 2964775,\n      \"checksum\": \"md5:d9de0f52f915e119b1d76f476d1e78e3\"\n    }\n  ],\n  \"metadata\": {}\n}\n",
+    "industrial-observed-telemetry-audit-v2.json": "{\n  \"version\": \"industrial-observed-telemetry-audit-v2\",\n  \"purpose\": \"Verify valve and pump identity, clock, channel and observed-value coverage. No training is authorized by this manifest alone.\",\n  \"max_total_bytes\": 1200000000,\n  \"files\": [\n    {\n      \"name\": \"homesense-H03.csv\",\n      \"url\": \"https://zenodo.org/api/records/21687970/files/H03.csv/content\",\n      \"bytes\": 71605920,\n      \"checksum\": \"md5:b46aeb4c95b0c2b1c596beb81ee8e9a9\"\n    },\n    {\n      \"name\": \"homesense-H08.csv\",\n      \"url\": \"https://zenodo.org/api/records/21687970/files/H08.csv/content\",\n      \"bytes\": 63508793,\n      \"checksum\": \"md5:91b5a253ce5cbd5a0629806e737711e6\"\n    },\n    {\n      \"name\": \"homesense-H04.csv\",\n      \"url\": \"https://zenodo.org/api/records/21687970/files/H04.csv/content\",\n      \"bytes\": 71726419,\n      \"checksum\": \"md5:5c9e4060851fcd91b25014edc6a8f908\"\n    },\n    {\n      \"name\": \"homesense-H07.csv\",\n      \"url\": \"https://zenodo.org/api/records/21687970/files/H07.csv/content\",\n      \"bytes\": 64067300,\n      \"checksum\": \"md5:07e7d1288a554c27c022322cc0650d61\"\n    },\n    {\n      \"name\": \"homesense-H11.csv\",\n      \"url\": \"https://zenodo.org/api/records/21687970/files/H11.csv/content\",\n      \"bytes\": 83404915,\n      \"checksum\": \"md5:9224c2d6fbe00cd3563444fd5cc9cd94\"\n    },\n    {\n      \"name\": \"homesense-H10.csv\",\n      \"url\": \"https://zenodo.org/api/records/21687970/files/H10.csv/content\",\n      \"bytes\": 70174159,\n      \"checksum\": \"md5:c884fd1d419b2a1b3daa074daed06418\"\n    },\n    {\n      \"name\": \"homesense-H02.csv\",\n      \"url\": \"https://zenodo.org/api/records/21687970/files/H02.csv/content\",\n      \"bytes\": 74528968,\n      \"checksum\": \"md5:7c57f00c1551a807de0b3de452d6c3ae\"\n    },\n    {\n      \"name\": \"homesense-H06.csv\",\n      \"url\": \"https://zenodo.org/api/records/21687970/files/H06.csv/content\",\n      \"bytes\": 80507028,\n      \"checksum\": \"md5:40f296acc8a72b38396b3707e30443ac\"\n    },\n    {\n      \"name\": \"homesense-H05.csv\",\n      \"url\": \"https://zenodo.org/api/records/21687970/files/H05.csv/content\",\n      \"bytes\": 65482790,\n      \"checksum\": \"md5:89dede666d5cd52b3ecccb02113219ea\"\n    },\n    {\n      \"name\": \"homesense-H09.csv\",\n      \"url\": \"https://zenodo.org/api/records/21687970/files/H09.csv/content\",\n      \"bytes\": 72218859,\n      \"checksum\": \"md5:8e03524c5148ea4754a474968b50a0f5\"\n    },\n    {\n      \"name\": \"homesense-H01.csv\",\n      \"url\": \"https://zenodo.org/api/records/21687970/files/H01.csv/content\",\n      \"bytes\": 68699863,\n      \"checksum\": \"md5:a0d05da6ad5f0da49886bf3f75e15522\"\n    },\n    {\n      \"name\": \"waterpump-Vibration_Sensor_-_NeWater_Pump_2_Temperature.csv\",\n      \"url\": \"https://zenodo.org/api/records/13808085/files/Vibration%20Sensor%20-%20NeWater%20Pump%202%20Temperature.csv/content\",\n      \"bytes\": 30125287,\n      \"checksum\": \"md5:fbbc6323a0cfa290babdef78671576da\"\n    },\n    {\n      \"name\": \"waterpump-Vibration_Sensor_-_NeWater_Pump_1_Temperature.csv\",\n      \"url\": \"https://zenodo.org/api/records/13808085/files/Vibration%20Sensor%20-%20NeWater%20Pump%201%20Temperature.csv/content\",\n      \"bytes\": 30217417,\n      \"checksum\": \"md5:4e61d05e31a9f5387402e782660aa684\"\n    },\n    {\n      \"name\": \"waterpump-Power_Sensor_-_NeWater_Pump_1.csv\",\n      \"url\": \"https://zenodo.org/api/records/13808085/files/Power%20Sensor%20-%20NeWater%20Pump%201.csv/content\",\n      \"bytes\": 20011102,\n      \"checksum\": \"md5:ef9aef4f588ec1a3c0328db122a65d5b\"\n    },\n    {\n      \"name\": \"waterpump-Power_Sensor_-_NeWater_Pump_2.csv\",\n      \"url\": \"https://zenodo.org/api/records/13808085/files/Power%20Sensor%20-%20NeWater%20Pump%202.csv/content\",\n      \"bytes\": 15512318,\n      \"checksum\": \"md5:65d78100d586a40886b1c84b7a834f13\"\n    },\n    {\n      \"name\": \"waterpump-Power_Sensor_-_Potable_Pump_2.csv\",\n      \"url\": \"https://zenodo.org/api/records/13808085/files/Power%20Sensor%20-%20Potable%20Pump%202.csv/content\",\n      \"bytes\": 21579712,\n      \"checksum\": \"md5:9f826f8adfb7cf71c09d7f82c8d98c5d\"\n    },\n    {\n      \"name\": \"waterpump-Power_Sensor_-_Potable_Pump_1.csv\",\n      \"url\": \"https://zenodo.org/api/records/13808085/files/Power%20Sensor%20-%20Potable%20Pump%201.csv/content\",\n      \"bytes\": 20963488,\n      \"checksum\": \"md5:8d5a1aeb90a0f8a3654dab63b7a69eaf\"\n    },\n    {\n      \"name\": \"waterpump-Vibration_Sensor_-_Potable_Pump_1_Temperature.csv\",\n      \"url\": \"https://zenodo.org/api/records/13808085/files/Vibration%20Sensor%20-%20Potable%20Pump%201%20Temperature.csv/content\",\n      \"bytes\": 39210247,\n      \"checksum\": \"md5:3b5d1251362cdeee4ba0149a563ee824\"\n    },\n    {\n      \"name\": \"waterpump-Vibration_Sensor_-_Potable_Pump_2_Temperature.csv\",\n      \"url\": \"https://zenodo.org/api/records/13808085/files/Vibration%20Sensor%20-%20Potable%20Pump%202%20Temperature.csv/content\",\n      \"bytes\": 34176517,\n      \"checksum\": \"md5:6633c85d8ce188155a8c54492b835988\"\n    }\n  ],\n  \"metadata\": {}\n}\n"
+  }
+}

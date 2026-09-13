@@ -1,0 +1,384 @@
+{
+  "version": "component-public-sources-v1",
+  "purpose": "Reproduce the verified component sources and source metadata. Backblaze uses its separate full-history acquisition command.",
+  "max_total_bytes": 80000000000,
+  "files": [
+    {
+      "name": "ceph-202001.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-01.zip",
+      "bytes": 394885,
+      "checksum": "md5:81d33aba4bedfe3abfd17e4eed469bbc",
+      "sha256": "9f7087af9f5a5bb9ea9936c46016972a594f71b0d7483168fab97af94e8aed32",
+      "verified": true,
+      "verified_at": "2026-09-13T02:44:00.916415+00:00",
+      "method": "Verified the previously downloaded schema probe against the current publisher size and checksum. No new download."
+    },
+    {
+      "name": "ceph-202002.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-02.zip",
+      "bytes": 7980968,
+      "checksum": "md5:a192cebe0dec57f63f9046302f596def",
+      "sha256": "7b68f8075f17f44d45c37896ed98e0c0299a8b88b9f538d5f780874dd1f152d0",
+      "verified": true,
+      "fetched_at": "2026-09-13T02:33:59.654861+00:00",
+      "elapsed_seconds": 1.3712258460000157
+    },
+    {
+      "name": "ceph-202003.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-03.zip",
+      "bytes": 9273682,
+      "checksum": "md5:c8dd949895963cbd6a7e428b878750b0",
+      "sha256": "aa3203c6a2e3cbecb2f0f592db4c771bb2207c25d1e51ad793ced569f1217cac",
+      "verified": true,
+      "fetched_at": "2026-09-13T02:33:59.642471+00:00",
+      "elapsed_seconds": 1.3578850631602108
+    },
+    {
+      "name": "ceph-202004.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-04.zip",
+      "bytes": 13888876,
+      "checksum": "md5:bac255a34e833abd3bf527ef349effb5",
+      "sha256": "699402f57d51cc667680def2385cb13d0efcf57383c1e30c5d15451375425f56",
+      "verified": true,
+      "fetched_at": "2026-09-13T02:33:59.823737+00:00",
+      "elapsed_seconds": 1.5389834819361567
+    },
+    {
+      "name": "ceph-202005.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-05.zip",
+      "bytes": 17317324,
+      "checksum": "md5:91ff6317ad74142902bc70e869c0aa12",
+      "sha256": "6abdba5a04412b1df781ab21abba5e7e69d632b2fa3594e400bfedea5c6a6781",
+      "verified": true,
+      "fetched_at": "2026-09-13T02:34:01.282080+00:00",
+      "elapsed_seconds": 1.6393291461281478
+    },
+    {
+      "name": "ceph-202006.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-06.zip",
+      "bytes": 26885548,
+      "checksum": "md5:19814820d42e57209493dc55358f0056",
+      "sha256": "316fdd6eb0c99bf610a5339c9a823b52b48aea18d7198d63f84f0d07364fe201",
+      "verified": true,
+      "fetched_at": "2026-09-13T02:34:01.678467+00:00",
+      "elapsed_seconds": 2.0234783831983805
+    },
+    {
+      "name": "ceph-202007.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-07.zip",
+      "bytes": 36559211,
+      "checksum": "md5:0f910e4ddc5c7fbf908128bdb34c78c1",
+      "sha256": "ba886a7e96622cda4c848c2477e1ac6505c26202d767582c3bda48859e80462e",
+      "verified": true,
+      "fetched_at": "2026-09-13T02:34:03.222216+00:00",
+      "elapsed_seconds": 3.3981894459575415
+    },
+    {
+      "name": "ceph-202008.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-08.zip",
+      "bytes": 54577495,
+      "checksum": "md5:fec94c8835864d3e33ab119b85755f65",
+      "sha256": "b9243c5e0cb77b1a5190b7e7fa5bc3fa9a646a4bb403768ab62dfb5f068f207d",
+      "verified": true,
+      "fetched_at": "2026-09-13T02:34:04.277563+00:00",
+      "elapsed_seconds": 2.995208900887519
+    },
+    {
+      "name": "ceph-202009.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-09.zip",
+      "bytes": 61141819,
+      "checksum": "md5:f3e392b00b0eebeec41b782294eeac21",
+      "sha256": "aaeac70cb49cc1312ebc94bf80f33ae8299ecaec3e4773b0c3d8597382db8d99",
+      "verified": true,
+      "fetched_at": "2026-09-13T02:34:04.775772+00:00",
+      "elapsed_seconds": 3.0970557490363717
+    },
+    {
+      "name": "ceph-202010.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-10.zip",
+      "bytes": 82897309,
+      "checksum": "md5:66fcf388d4417b5d6058c129b00c5316",
+      "sha256": "96b7850d94f1483ab1f2386e161025951c861a09e89b56c2bb064c79c89c67f9",
+      "verified": true,
+      "fetched_at": "2026-09-13T02:34:14.394480+00:00",
+      "elapsed_seconds": 11.171995289158076
+    },
+    {
+      "name": "ceph-202011.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-11.zip",
+      "bytes": 102111058,
+      "checksum": "md5:f756b5869052fe2e10018301f74f6e55",
+      "sha256": "047473dedf9165b537da172be7902f6d16bf822f2f23f73203560b5a4cf095f8",
+      "verified": true,
+      "fetched_at": "2026-09-13T02:34:08.721675+00:00",
+      "elapsed_seconds": 4.443870751187205
+    },
+    {
+      "name": "ceph-202012.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-12.zip",
+      "bytes": 255909211,
+      "checksum": "md5:6dc9da67fd06c5d610516e69c0a3ce7b",
+      "sha256": "b866fd61a3cb25c4737000841b99afb3ff3e6f1533640a9da4735b15fbcb3516",
+      "verified": true,
+      "fetched_at": "2026-09-13T02:34:14.555044+00:00",
+      "elapsed_seconds": 9.779020498972386
+    },
+    {
+      "name": "ceph-202101.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-01.zip",
+      "bytes": 317434214,
+      "checksum": "md5:4c6a04bdc84c4b8fd47905c15532c761",
+      "sha256": "8760527625ae8482c10e3e506307ff09fabf1a3452e4242871c7b2afaa28a882",
+      "verified": true,
+      "fetched_at": "2026-09-13T01:48:07.309129+00:00",
+      "elapsed_seconds": 11.914505550637841
+    },
+    {
+      "name": "ceph-202102.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-02.zip",
+      "bytes": 358686695,
+      "checksum": "md5:040bf78f6ded1894a4ba3043d86a5c85",
+      "sha256": "74265ca68b78e801f6305ad30faa4a1578c1518e1d0dfd453e4de4e413616146",
+      "verified": true,
+      "fetched_at": "2026-09-13T02:34:43.513788+00:00",
+      "elapsed_seconds": 34.79184828698635
+    },
+    {
+      "name": "ceph-202103.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-03.zip",
+      "bytes": 529436105,
+      "checksum": "md5:735826a165a4618d5f0c030d0be6b8da",
+      "sha256": "7494a11163db640368a49d456145ccb62ea3a08c76980c5e0916cf98c961cba2",
+      "verified": true,
+      "fetched_at": "2026-09-13T02:34:34.038192+00:00",
+      "elapsed_seconds": 19.643484150990844
+    },
+    {
+      "name": "ceph-202104.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-04.zip",
+      "bytes": 694686327,
+      "checksum": "md5:11d8550d433bf85e50d4d669befd79d0",
+      "sha256": "20883903e8227c0d3bc0a57126b2e54275904a8f7b4f4604e5f663800faec0f1",
+      "verified": true,
+      "fetched_at": "2026-09-13T02:34:45.222777+00:00",
+      "elapsed_seconds": 30.667543231975287
+    },
+    {
+      "name": "ceph-202105.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-05.zip",
+      "bytes": 1003639528,
+      "checksum": "md5:9f9d91af598b75ad0351b07fc1e27804",
+      "sha256": "6c3c833dae192afd1ea9315635a56bafe7bb80511d6e1f86d1e4022e9ba62d97",
+      "verified": true,
+      "fetched_at": "2026-09-13T02:35:09.865080+00:00",
+      "elapsed_seconds": 35.826605178415775
+    },
+    {
+      "name": "ceph-202106.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-06.zip",
+      "bytes": 1147048903,
+      "checksum": "md5:91ba1537074fbddef42f85d57ed702dd",
+      "sha256": "ea0ebc9a2959eb1034f745330a1b51198e936c5890293b3f134c756b9f1b2673",
+      "verified": true,
+      "fetched_at": "2026-09-13T02:35:32.379305+00:00",
+      "elapsed_seconds": 48.865054877940565
+    },
+    {
+      "name": "ceph-202107.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-07.zip",
+      "bytes": 1881134122,
+      "checksum": "md5:20b6c49256398c1fd266be3bdcb8f8ad",
+      "sha256": "b78b363908da614d730109687ea5f2aed4bdaa21b017e1a113fe10fa51e7115b"
+    },
+    {
+      "name": "ceph-202108.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-08.zip",
+      "bytes": 2585971998,
+      "checksum": "md5:4f6375ef9933a290c6c6d8b96ab09cdf",
+      "sha256": "a83dbd02cc071d8a9ccbf0d9544337dbde72ad4da71ae0bd5bc83c07bd0c0b87"
+    },
+    {
+      "name": "ceph-202109.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-09.zip",
+      "bytes": 2260363409,
+      "checksum": "md5:921412e3c93003cd1fe6afa548918ba6",
+      "sha256": "a73c05ded6a1c25b375d327fe30c476e50b681731c83428d98369856c81c5eb2"
+    },
+    {
+      "name": "ceph-202110.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-10.zip",
+      "bytes": 2240482973,
+      "checksum": "md5:496def7697ccc44f27fe019744584101",
+      "sha256": "4a9240dc5efce11c3212ea3dd1848d66b4acf51e643cbbf309b0f3da1e3edab6"
+    },
+    {
+      "name": "ceph-202111.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-11.zip",
+      "bytes": 2461641437,
+      "checksum": "md5:efd963f59fe19b4853e453961617af70",
+      "sha256": "19ec6ad2b53ae23c6bb8ddd8ccaad487c900771e48a0467cd704bbe2d932ed62"
+    },
+    {
+      "name": "ceph-202112.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-12.zip",
+      "bytes": 3377475679,
+      "checksum": "md5:f2bc8d007083b973701fc25c3ae34027",
+      "sha256": "ee402a56a6f092a82c9b742f961c55a6d221a0bde658dba6efde09afade1223c"
+    },
+    {
+      "name": "ceph-202201.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2022-01.zip",
+      "bytes": 3461345177,
+      "checksum": "md5:ce0a07c2f078ade6630b10b1e4db675f",
+      "sha256": "0e8b9a8ff327c12fb152620ecf9e10daf9df49bcc2b62998b411729c4ce4146a"
+    },
+    {
+      "name": "ceph-202202.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2022-02.zip",
+      "bytes": 3821037283,
+      "checksum": "md5:369af2a7c96fda8a229c422123966a29",
+      "sha256": "9f41ce830caa7a034166c0258c04f0b7a6f76c1b8824034856d663422e95d4c6"
+    },
+    {
+      "name": "ceph-202203.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2022-03.zip",
+      "bytes": 3698316357,
+      "checksum": "md5:e0b850fcc7553c702e184a60bb64e242",
+      "sha256": "7b7b800de32d905f8299bb3ddad0875fc60a0f1580b32087f46929accd9c19d1"
+    },
+    {
+      "name": "ceph-202204.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2022-04.zip",
+      "bytes": 3536489783,
+      "checksum": "md5:ebee5b9da263e691cde9bd2d4bc7f1cd",
+      "sha256": "c7fe7eadee5c5bd9457b155378fb781b974e414abb670d1cdfb4c0a168e1cba6"
+    },
+    {
+      "name": "ceph-202205.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2022-05.zip",
+      "bytes": 4077131264,
+      "checksum": "md5:fb3a8b3ed9922b5a3c3e280ef55daf33",
+      "sha256": "63bf5f3b95ebac4e92a3a802a81b529aae951adb19dcec09f0be83fe85544763"
+    },
+    {
+      "name": "ceph-202206.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2022-06.zip",
+      "bytes": 4675193428,
+      "checksum": "md5:c4f232bdba94cfcc9d74357a11726cd1",
+      "sha256": "81020d74a63cd8b70d392ee2d903e3ce31c085243a33d91a6d6c768ed6c2d605"
+    },
+    {
+      "name": "ceph-202207.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2022-07.zip",
+      "bytes": 4834825934,
+      "checksum": "md5:709fce5d64ff7950839036d30ebcb134",
+      "sha256": "ed73c710ab3f887b8482767d72da0b389c4496002af2bdf74291fa769b2cab0e"
+    },
+    {
+      "name": "ceph-202208.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2022-08.zip",
+      "bytes": 4940753764,
+      "checksum": "md5:0b88f985b9d8c02eeadea9200a0f7455",
+      "sha256": "2baac7856b1afea920e9fd14222798863adb39e8b3b967458125edf13cbd3a99"
+    },
+    {
+      "name": "ceph-202209.zip",
+      "url": "https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2022-09.zip",
+      "bytes": 5934189658,
+      "checksum": "multipart-md5:2ae16be4193c7dc5988af130ad616799-708",
+      "part_size_bytes": 8388608,
+      "sha256": "ad025fa72a8b967b4635c6fc4b905f2238c994abfed3b69c31f909612ff3249d"
+    },
+    {
+      "name": "clusterwise-20200101.parquet",
+      "url": "https://huggingface.co/datasets/MachaParfait/ClusterWise/resolve/93fb62c369fcfb36536252a9bb4a539dcdb2b229/202001/20200101.parquet",
+      "bytes": 1658676858,
+      "checksum": "sha256:c11ac3b30e659d532331f38626f777b215de542391ee2d5367c135b24051ae2b",
+      "sha256": "c11ac3b30e659d532331f38626f777b215de542391ee2d5367c135b24051ae2b"
+    },
+    {
+      "name": "clusterwise-20200111.parquet",
+      "url": "https://huggingface.co/datasets/MachaParfait/ClusterWise/resolve/93fb62c369fcfb36536252a9bb4a539dcdb2b229/202001/20200111.parquet",
+      "bytes": 1672405153,
+      "checksum": "sha256:6b0b6ad2c35eb378f6b37b119cb7c6e5fdb1e1149efccdf5ba69f468b8856c9b",
+      "sha256": "6b0b6ad2c35eb378f6b37b119cb7c6e5fdb1e1149efccdf5ba69f468b8856c9b"
+    },
+    {
+      "name": "clusterwise-20200121.parquet",
+      "url": "https://huggingface.co/datasets/MachaParfait/ClusterWise/resolve/93fb62c369fcfb36536252a9bb4a539dcdb2b229/202001/20200121.parquet",
+      "bytes": 1601369035,
+      "checksum": "sha256:e3cc4a2c9760d7e45a1b255f7a5a12179006b419ec3cc7741b22d2e9505461af",
+      "sha256": "e3cc4a2c9760d7e45a1b255f7a5a12179006b419ec3cc7741b22d2e9505461af"
+    },
+    {
+      "name": "clusterwise-20200801.parquet",
+      "url": "https://huggingface.co/datasets/MachaParfait/ClusterWise/resolve/93fb62c369fcfb36536252a9bb4a539dcdb2b229/202008/20200801.parquet",
+      "bytes": 1695413486,
+      "checksum": "sha256:2613b1d7fab0f4a9c7cee261d9325f08405603199c802e5e4807a7a6d83cd7b0",
+      "sha256": "2613b1d7fab0f4a9c7cee261d9325f08405603199c802e5e4807a7a6d83cd7b0"
+    },
+    {
+      "name": "clusterwise-20200811.parquet",
+      "url": "https://huggingface.co/datasets/MachaParfait/ClusterWise/resolve/93fb62c369fcfb36536252a9bb4a539dcdb2b229/202008/20200811.parquet",
+      "bytes": 1682642267,
+      "checksum": "sha256:a302ca87b47bf2e4822c088da9d4fd8a2a2a132190311038683ccd43735bf972",
+      "sha256": "a302ca87b47bf2e4822c088da9d4fd8a2a2a132190311038683ccd43735bf972"
+    },
+    {
+      "name": "clusterwise-20210201.parquet",
+      "url": "https://huggingface.co/datasets/MachaParfait/ClusterWise/resolve/93fb62c369fcfb36536252a9bb4a539dcdb2b229/202102/20210201.parquet",
+      "bytes": 1700651461,
+      "checksum": "sha256:88f2e3e5914460209f6fabb3aa12090a5868cdb974ca8551a0f97ca9bfe64be9",
+      "sha256": "88f2e3e5914460209f6fabb3aa12090a5868cdb974ca8551a0f97ca9bfe64be9"
+    },
+    {
+      "name": "clusterwise-20210211.parquet",
+      "url": "https://huggingface.co/datasets/MachaParfait/ClusterWise/resolve/93fb62c369fcfb36536252a9bb4a539dcdb2b229/202102/20210211.parquet",
+      "bytes": 1704468523,
+      "checksum": "sha256:a7be1aa48e482b20349b01b87618444c6418b7aef33b3eff63912e4fb046894f",
+      "sha256": "a7be1aa48e482b20349b01b87618444c6418b7aef33b3eff63912e4fb046894f"
+    },
+    {
+      "name": "smartmem.zip",
+      "url": "https://zenodo.org/api/records/15516113/files/Smartmem_dataset.zip/content",
+      "bytes": 5621070729,
+      "checksum": "md5:a939b612db2fea8b49a8014fb380a4ba",
+      "sha256": "f2b069cf6f80dd8e1aca3879986429efb653e4107c00d337354b91e2d2fa3f69"
+    },
+    {
+      "name": "hpc-README.md",
+      "url": "https://raw.githubusercontent.com/YiyangLu/hpc_dataset/265302720c020e97256718973232aeb0b3fa2641/README.md",
+      "bytes": 11501,
+      "checksum": "sha256:3a1dfa18d90821bcd3433d69dfa6bcb09c5c0c0aa83649c19ac70e6b5ec65d17",
+      "sha256": "3a1dfa18d90821bcd3433d69dfa6bcb09c5c0c0aa83649c19ac70e6b5ec65d17"
+    },
+    {
+      "name": "smartmontools-nvmeprint.cpp",
+      "url": "https://raw.githubusercontent.com/smartmontools/smartmontools/9f83095a631ff71df44f8065c7a4a00134d3d404/smartmontools/nvmeprint.cpp",
+      "bytes": 38005,
+      "checksum": "sha256:4770d9852c2b2b1d66ac2c195952f4f7087db9bc1951e0737c414033df0e4e98",
+      "sha256": "4770d9852c2b2b1d66ac2c195952f4f7087db9bc1951e0737c414033df0e4e98"
+    },
+    {
+      "name": "ceph-v16-devicehealth.py",
+      "url": "https://raw.githubusercontent.com/ceph/ceph/v16.2.0/src/pybind/mgr/devicehealth/module.py",
+      "bytes": 28148,
+      "checksum": "sha256:ac67b70d732b6339c51cb32760fd8f76f7b7018dd333eb246e359b6e7b953949",
+      "sha256": "ac67b70d732b6339c51cb32760fd8f76f7b7018dd333eb246e359b6e7b953949"
+    },
+    {
+      "name": "barracuda120-manual.pdf",
+      "url": "https://www.seagate.com/content/dam/seagate/migrated-assets/www-content/support-content/internal-products/barracuda/barracuda-ssd/_shared/masters/100858062_A.pdf",
+      "bytes": 233183,
+      "checksum": "sha256:c59cb37db4bb9f21c0e5de5e7a9dc7c5d7499d2cf5aa95c67ffe45c4a8ebb28e",
+      "sha256": "c59cb37db4bb9f21c0e5de5e7a9dc7c5d7499d2cf5aa95c67ffe45c4a8ebb28e"
+    }
+  ],
+  "metadata": {
+    "ceph-cohort-manifest.json": "{\n  \"version\": \"ceph-nvme-cohort-v1\",\n  \"selection\": \"All published monthly reports from January 2020 through June 2021. Split hosts and ordered dates with config/components.yaml.\",\n  \"files\": [\n    {\n      \"name\": \"ceph-202001.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-01.zip\",\n      \"bytes\": 394885,\n      \"checksum\": \"md5:81d33aba4bedfe3abfd17e4eed469bbc\"\n    },\n    {\n      \"name\": \"ceph-202002.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-02.zip\",\n      \"bytes\": 7980968,\n      \"checksum\": \"md5:a192cebe0dec57f63f9046302f596def\"\n    },\n    {\n      \"name\": \"ceph-202003.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-03.zip\",\n      \"bytes\": 9273682,\n      \"checksum\": \"md5:c8dd949895963cbd6a7e428b878750b0\"\n    },\n    {\n      \"name\": \"ceph-202004.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-04.zip\",\n      \"bytes\": 13888876,\n      \"checksum\": \"md5:bac255a34e833abd3bf527ef349effb5\"\n    },\n    {\n      \"name\": \"ceph-202005.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-05.zip\",\n      \"bytes\": 17317324,\n      \"checksum\": \"md5:91ff6317ad74142902bc70e869c0aa12\"\n    },\n    {\n      \"name\": \"ceph-202006.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-06.zip\",\n      \"bytes\": 26885548,\n      \"checksum\": \"md5:19814820d42e57209493dc55358f0056\"\n    },\n    {\n      \"name\": \"ceph-202007.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-07.zip\",\n      \"bytes\": 36559211,\n      \"checksum\": \"md5:0f910e4ddc5c7fbf908128bdb34c78c1\"\n    },\n    {\n      \"name\": \"ceph-202008.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-08.zip\",\n      \"bytes\": 54577495,\n      \"checksum\": \"md5:fec94c8835864d3e33ab119b85755f65\"\n    },\n    {\n      \"name\": \"ceph-202009.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-09.zip\",\n      \"bytes\": 61141819,\n      \"checksum\": \"md5:f3e392b00b0eebeec41b782294eeac21\"\n    },\n    {\n      \"name\": \"ceph-202010.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-10.zip\",\n      \"bytes\": 82897309,\n      \"checksum\": \"md5:66fcf388d4417b5d6058c129b00c5316\"\n    },\n    {\n      \"name\": \"ceph-202011.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-11.zip\",\n      \"bytes\": 102111058,\n      \"checksum\": \"md5:f756b5869052fe2e10018301f74f6e55\"\n    },\n    {\n      \"name\": \"ceph-202012.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-12.zip\",\n      \"bytes\": 255909211,\n      \"checksum\": \"md5:6dc9da67fd06c5d610516e69c0a3ce7b\"\n    },\n    {\n      \"name\": \"ceph-202101.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-01.zip\",\n      \"bytes\": 317434214,\n      \"checksum\": \"md5:4c6a04bdc84c4b8fd47905c15532c761\",\n      \"sha256\": \"8760527625ae8482c10e3e506307ff09fabf1a3452e4242871c7b2afaa28a882\",\n      \"verified\": true,\n      \"fetched_at\": \"2026-09-13T01:48:07.309129+00:00\",\n      \"elapsed_seconds\": 11.914505550637841\n    },\n    {\n      \"name\": \"ceph-202102.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-02.zip\",\n      \"bytes\": 358686695,\n      \"checksum\": \"md5:040bf78f6ded1894a4ba3043d86a5c85\"\n    },\n    {\n      \"name\": \"ceph-202103.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-03.zip\",\n      \"bytes\": 529436105,\n      \"checksum\": \"md5:735826a165a4618d5f0c030d0be6b8da\"\n    },\n    {\n      \"name\": \"ceph-202104.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-04.zip\",\n      \"bytes\": 694686327,\n      \"checksum\": \"md5:11d8550d433bf85e50d4d669befd79d0\"\n    },\n    {\n      \"name\": \"ceph-202105.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-05.zip\",\n      \"bytes\": 1003639528,\n      \"checksum\": \"md5:9f9d91af598b75ad0351b07fc1e27804\"\n    },\n    {\n      \"name\": \"ceph-202106.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-06.zip\",\n      \"bytes\": 1147048903,\n      \"checksum\": \"md5:91ba1537074fbddef42f85d57ed702dd\"\n    }\n  ],\n  \"max_total_bytes\": 6000000000\n}\n",
+    "ceph-cohort-v2-manifest.json": "{\n  \"version\": \"ceph-nvme-cohort-v2\",\n  \"selection\": \"All monthly archives linked by the publisher, January 2020 through September 2022. Expanded for independent validation support before component fitting.\",\n  \"files\": [\n    {\n      \"name\": \"ceph-202001.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-01.zip\",\n      \"bytes\": 394885,\n      \"checksum\": \"md5:81d33aba4bedfe3abfd17e4eed469bbc\",\n      \"sha256\": \"9f7087af9f5a5bb9ea9936c46016972a594f71b0d7483168fab97af94e8aed32\",\n      \"verified\": true,\n      \"verified_at\": \"2026-09-13T02:44:00.916415+00:00\",\n      \"method\": \"Verified the previously downloaded schema probe against the current publisher size and checksum. No new download.\"\n    },\n    {\n      \"name\": \"ceph-202002.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-02.zip\",\n      \"bytes\": 7980968,\n      \"checksum\": \"md5:a192cebe0dec57f63f9046302f596def\",\n      \"sha256\": \"7b68f8075f17f44d45c37896ed98e0c0299a8b88b9f538d5f780874dd1f152d0\",\n      \"verified\": true,\n      \"fetched_at\": \"2026-09-13T02:33:59.654861+00:00\",\n      \"elapsed_seconds\": 1.3712258460000157\n    },\n    {\n      \"name\": \"ceph-202003.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-03.zip\",\n      \"bytes\": 9273682,\n      \"checksum\": \"md5:c8dd949895963cbd6a7e428b878750b0\",\n      \"sha256\": \"aa3203c6a2e3cbecb2f0f592db4c771bb2207c25d1e51ad793ced569f1217cac\",\n      \"verified\": true,\n      \"fetched_at\": \"2026-09-13T02:33:59.642471+00:00\",\n      \"elapsed_seconds\": 1.3578850631602108\n    },\n    {\n      \"name\": \"ceph-202004.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-04.zip\",\n      \"bytes\": 13888876,\n      \"checksum\": \"md5:bac255a34e833abd3bf527ef349effb5\",\n      \"sha256\": \"699402f57d51cc667680def2385cb13d0efcf57383c1e30c5d15451375425f56\",\n      \"verified\": true,\n      \"fetched_at\": \"2026-09-13T02:33:59.823737+00:00\",\n      \"elapsed_seconds\": 1.5389834819361567\n    },\n    {\n      \"name\": \"ceph-202005.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-05.zip\",\n      \"bytes\": 17317324,\n      \"checksum\": \"md5:91ff6317ad74142902bc70e869c0aa12\",\n      \"sha256\": \"6abdba5a04412b1df781ab21abba5e7e69d632b2fa3594e400bfedea5c6a6781\",\n      \"verified\": true,\n      \"fetched_at\": \"2026-09-13T02:34:01.282080+00:00\",\n      \"elapsed_seconds\": 1.6393291461281478\n    },\n    {\n      \"name\": \"ceph-202006.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-06.zip\",\n      \"bytes\": 26885548,\n      \"checksum\": \"md5:19814820d42e57209493dc55358f0056\",\n      \"sha256\": \"316fdd6eb0c99bf610a5339c9a823b52b48aea18d7198d63f84f0d07364fe201\",\n      \"verified\": true,\n      \"fetched_at\": \"2026-09-13T02:34:01.678467+00:00\",\n      \"elapsed_seconds\": 2.0234783831983805\n    },\n    {\n      \"name\": \"ceph-202007.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-07.zip\",\n      \"bytes\": 36559211,\n      \"checksum\": \"md5:0f910e4ddc5c7fbf908128bdb34c78c1\",\n      \"sha256\": \"ba886a7e96622cda4c848c2477e1ac6505c26202d767582c3bda48859e80462e\",\n      \"verified\": true,\n      \"fetched_at\": \"2026-09-13T02:34:03.222216+00:00\",\n      \"elapsed_seconds\": 3.3981894459575415\n    },\n    {\n      \"name\": \"ceph-202008.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-08.zip\",\n      \"bytes\": 54577495,\n      \"checksum\": \"md5:fec94c8835864d3e33ab119b85755f65\",\n      \"sha256\": \"b9243c5e0cb77b1a5190b7e7fa5bc3fa9a646a4bb403768ab62dfb5f068f207d\",\n      \"verified\": true,\n      \"fetched_at\": \"2026-09-13T02:34:04.277563+00:00\",\n      \"elapsed_seconds\": 2.995208900887519\n    },\n    {\n      \"name\": \"ceph-202009.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-09.zip\",\n      \"bytes\": 61141819,\n      \"checksum\": \"md5:f3e392b00b0eebeec41b782294eeac21\",\n      \"sha256\": \"aaeac70cb49cc1312ebc94bf80f33ae8299ecaec3e4773b0c3d8597382db8d99\",\n      \"verified\": true,\n      \"fetched_at\": \"2026-09-13T02:34:04.775772+00:00\",\n      \"elapsed_seconds\": 3.0970557490363717\n    },\n    {\n      \"name\": \"ceph-202010.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-10.zip\",\n      \"bytes\": 82897309,\n      \"checksum\": \"md5:66fcf388d4417b5d6058c129b00c5316\",\n      \"sha256\": \"96b7850d94f1483ab1f2386e161025951c861a09e89b56c2bb064c79c89c67f9\",\n      \"verified\": true,\n      \"fetched_at\": \"2026-09-13T02:34:14.394480+00:00\",\n      \"elapsed_seconds\": 11.171995289158076\n    },\n    {\n      \"name\": \"ceph-202011.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-11.zip\",\n      \"bytes\": 102111058,\n      \"checksum\": \"md5:f756b5869052fe2e10018301f74f6e55\",\n      \"sha256\": \"047473dedf9165b537da172be7902f6d16bf822f2f23f73203560b5a4cf095f8\",\n      \"verified\": true,\n      \"fetched_at\": \"2026-09-13T02:34:08.721675+00:00\",\n      \"elapsed_seconds\": 4.443870751187205\n    },\n    {\n      \"name\": \"ceph-202012.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2020-12.zip\",\n      \"bytes\": 255909211,\n      \"checksum\": \"md5:6dc9da67fd06c5d610516e69c0a3ce7b\",\n      \"sha256\": \"b866fd61a3cb25c4737000841b99afb3ff3e6f1533640a9da4735b15fbcb3516\",\n      \"verified\": true,\n      \"fetched_at\": \"2026-09-13T02:34:14.555044+00:00\",\n      \"elapsed_seconds\": 9.779020498972386\n    },\n    {\n      \"name\": \"ceph-202101.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-01.zip\",\n      \"bytes\": 317434214,\n      \"checksum\": \"md5:4c6a04bdc84c4b8fd47905c15532c761\",\n      \"sha256\": \"8760527625ae8482c10e3e506307ff09fabf1a3452e4242871c7b2afaa28a882\",\n      \"verified\": true,\n      \"fetched_at\": \"2026-09-13T01:48:07.309129+00:00\",\n      \"elapsed_seconds\": 11.914505550637841\n    },\n    {\n      \"name\": \"ceph-202102.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-02.zip\",\n      \"bytes\": 358686695,\n      \"checksum\": \"md5:040bf78f6ded1894a4ba3043d86a5c85\",\n      \"sha256\": \"74265ca68b78e801f6305ad30faa4a1578c1518e1d0dfd453e4de4e413616146\",\n      \"verified\": true,\n      \"fetched_at\": \"2026-09-13T02:34:43.513788+00:00\",\n      \"elapsed_seconds\": 34.79184828698635\n    },\n    {\n      \"name\": \"ceph-202103.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-03.zip\",\n      \"bytes\": 529436105,\n      \"checksum\": \"md5:735826a165a4618d5f0c030d0be6b8da\",\n      \"sha256\": \"7494a11163db640368a49d456145ccb62ea3a08c76980c5e0916cf98c961cba2\",\n      \"verified\": true,\n      \"fetched_at\": \"2026-09-13T02:34:34.038192+00:00\",\n      \"elapsed_seconds\": 19.643484150990844\n    },\n    {\n      \"name\": \"ceph-202104.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-04.zip\",\n      \"bytes\": 694686327,\n      \"checksum\": \"md5:11d8550d433bf85e50d4d669befd79d0\",\n      \"sha256\": \"20883903e8227c0d3bc0a57126b2e54275904a8f7b4f4604e5f663800faec0f1\",\n      \"verified\": true,\n      \"fetched_at\": \"2026-09-13T02:34:45.222777+00:00\",\n      \"elapsed_seconds\": 30.667543231975287\n    },\n    {\n      \"name\": \"ceph-202105.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-05.zip\",\n      \"bytes\": 1003639528,\n      \"checksum\": \"md5:9f9d91af598b75ad0351b07fc1e27804\",\n      \"sha256\": \"6c3c833dae192afd1ea9315635a56bafe7bb80511d6e1f86d1e4022e9ba62d97\",\n      \"verified\": true,\n      \"fetched_at\": \"2026-09-13T02:35:09.865080+00:00\",\n      \"elapsed_seconds\": 35.826605178415775\n    },\n    {\n      \"name\": \"ceph-202106.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-06.zip\",\n      \"bytes\": 1147048903,\n      \"checksum\": \"md5:91ba1537074fbddef42f85d57ed702dd\",\n      \"sha256\": \"ea0ebc9a2959eb1034f745330a1b51198e936c5890293b3f134c756b9f1b2673\",\n      \"verified\": true,\n      \"fetched_at\": \"2026-09-13T02:35:32.379305+00:00\",\n      \"elapsed_seconds\": 48.865054877940565\n    },\n    {\n      \"name\": \"ceph-202107.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-07.zip\",\n      \"bytes\": 1881134122,\n      \"checksum\": \"md5:20b6c49256398c1fd266be3bdcb8f8ad\"\n    },\n    {\n      \"name\": \"ceph-202108.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-08.zip\",\n      \"bytes\": 2585971998,\n      \"checksum\": \"md5:4f6375ef9933a290c6c6d8b96ab09cdf\"\n    },\n    {\n      \"name\": \"ceph-202109.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-09.zip\",\n      \"bytes\": 2260363409,\n      \"checksum\": \"md5:921412e3c93003cd1fe6afa548918ba6\"\n    },\n    {\n      \"name\": \"ceph-202110.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-10.zip\",\n      \"bytes\": 2240482973,\n      \"checksum\": \"md5:496def7697ccc44f27fe019744584101\"\n    },\n    {\n      \"name\": \"ceph-202111.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-11.zip\",\n      \"bytes\": 2461641437,\n      \"checksum\": \"md5:efd963f59fe19b4853e453961617af70\"\n    },\n    {\n      \"name\": \"ceph-202112.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2021-12.zip\",\n      \"bytes\": 3377475679,\n      \"checksum\": \"md5:f2bc8d007083b973701fc25c3ae34027\"\n    },\n    {\n      \"name\": \"ceph-202201.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2022-01.zip\",\n      \"bytes\": 3461345177,\n      \"checksum\": \"md5:ce0a07c2f078ade6630b10b1e4db675f\"\n    },\n    {\n      \"name\": \"ceph-202202.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2022-02.zip\",\n      \"bytes\": 3821037283,\n      \"checksum\": \"md5:369af2a7c96fda8a229c422123966a29\"\n    },\n    {\n      \"name\": \"ceph-202203.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2022-03.zip\",\n      \"bytes\": 3698316357,\n      \"checksum\": \"md5:e0b850fcc7553c702e184a60bb64e242\"\n    },\n    {\n      \"name\": \"ceph-202204.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2022-04.zip\",\n      \"bytes\": 3536489783,\n      \"checksum\": \"md5:ebee5b9da263e691cde9bd2d4bc7f1cd\"\n    },\n    {\n      \"name\": \"ceph-202205.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2022-05.zip\",\n      \"bytes\": 4077131264,\n      \"checksum\": \"md5:fb3a8b3ed9922b5a3c3e280ef55daf33\"\n    },\n    {\n      \"name\": \"ceph-202206.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2022-06.zip\",\n      \"bytes\": 4675193428,\n      \"checksum\": \"md5:c4f232bdba94cfcc9d74357a11726cd1\"\n    },\n    {\n      \"name\": \"ceph-202207.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2022-07.zip\",\n      \"bytes\": 4834825934,\n      \"checksum\": \"md5:709fce5d64ff7950839036d30ebcb134\"\n    },\n    {\n      \"name\": \"ceph-202208.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2022-08.zip\",\n      \"bytes\": 4940753764,\n      \"checksum\": \"md5:0b88f985b9d8c02eeadea9200a0f7455\"\n    },\n    {\n      \"name\": \"ceph-202209.zip\",\n      \"url\": \"https://stack.nerc.mghpcc.org:13808/swift/v1/AUTH_b1cd8ed7d4014cca989aac13cfdc0872/devicehealth/device_health_metrics_2022-09.zip\",\n      \"bytes\": 5934189658,\n      \"checksum\": \"multipart-md5:2ae16be4193c7dc5988af130ad616799-708\",\n      \"part_size_bytes\": 8388608\n    }\n  ],\n  \"max_total_bytes\": 70000000000,\n  \"metadata\": {}\n}\n",
+    "clusterwise-cohort-manifest.json": "{\n  \"version\": \"clusterwise-component-cohort-v1\",\n  \"source_revision\": \"93fb62c369fcfb36536252a9bb4a539dcdb2b229\",\n  \"selection\": \"Dates fixed before reading new numerical files. Training uses January 2020, validation and calibration use August 2020, test uses February 2021. Host hash assignments are disjoint. Exclude target, error, and job metadata from inputs.\",\n  \"files\": [\n    {\n      \"name\": \"clusterwise-20200101.parquet\",\n      \"url\": \"https://huggingface.co/datasets/MachaParfait/ClusterWise/resolve/93fb62c369fcfb36536252a9bb4a539dcdb2b229/202001/20200101.parquet\",\n      \"bytes\": 1658676858,\n      \"checksum\": \"sha256:c11ac3b30e659d532331f38626f777b215de542391ee2d5367c135b24051ae2b\"\n    },\n    {\n      \"name\": \"clusterwise-20200111.parquet\",\n      \"url\": \"https://huggingface.co/datasets/MachaParfait/ClusterWise/resolve/93fb62c369fcfb36536252a9bb4a539dcdb2b229/202001/20200111.parquet\",\n      \"bytes\": 1672405153,\n      \"checksum\": \"sha256:6b0b6ad2c35eb378f6b37b119cb7c6e5fdb1e1149efccdf5ba69f468b8856c9b\"\n    },\n    {\n      \"name\": \"clusterwise-20200121.parquet\",\n      \"url\": \"https://huggingface.co/datasets/MachaParfait/ClusterWise/resolve/93fb62c369fcfb36536252a9bb4a539dcdb2b229/202001/20200121.parquet\",\n      \"bytes\": 1601369035,\n      \"checksum\": \"sha256:e3cc4a2c9760d7e45a1b255f7a5a12179006b419ec3cc7741b22d2e9505461af\"\n    },\n    {\n      \"name\": \"clusterwise-20200801.parquet\",\n      \"url\": \"https://huggingface.co/datasets/MachaParfait/ClusterWise/resolve/93fb62c369fcfb36536252a9bb4a539dcdb2b229/202008/20200801.parquet\",\n      \"bytes\": 1695413486,\n      \"checksum\": \"sha256:2613b1d7fab0f4a9c7cee261d9325f08405603199c802e5e4807a7a6d83cd7b0\"\n    },\n    {\n      \"name\": \"clusterwise-20200811.parquet\",\n      \"url\": \"https://huggingface.co/datasets/MachaParfait/ClusterWise/resolve/93fb62c369fcfb36536252a9bb4a539dcdb2b229/202008/20200811.parquet\",\n      \"bytes\": 1682642267,\n      \"checksum\": \"sha256:a302ca87b47bf2e4822c088da9d4fd8a2a2a132190311038683ccd43735bf972\"\n    },\n    {\n      \"name\": \"clusterwise-20210201.parquet\",\n      \"url\": \"https://huggingface.co/datasets/MachaParfait/ClusterWise/resolve/93fb62c369fcfb36536252a9bb4a539dcdb2b229/202102/20210201.parquet\",\n      \"bytes\": 1700651461,\n      \"checksum\": \"sha256:88f2e3e5914460209f6fabb3aa12090a5868cdb974ca8551a0f97ca9bfe64be9\"\n    },\n    {\n      \"name\": \"clusterwise-20210211.parquet\",\n      \"url\": \"https://huggingface.co/datasets/MachaParfait/ClusterWise/resolve/93fb62c369fcfb36536252a9bb4a539dcdb2b229/202102/20210211.parquet\",\n      \"bytes\": 1704468523,\n      \"checksum\": \"sha256:a7be1aa48e482b20349b01b87618444c6418b7aef33b3eff63912e4fb046894f\"\n    }\n  ],\n  \"max_total_bytes\": 12000000000\n}\n",
+    "smartmontools-nvme-receipt.json": "{\n  \"revision\": \"9f83095a631ff71df44f8065c7a4a00134d3d404\",\n  \"url\": \"https://raw.githubusercontent.com/smartmontools/smartmontools/9f83095a631ff71df44f8065c7a4a00134d3d404/smartmontools/nvmeprint.cpp\",\n  \"sha256\": \"4770d9852c2b2b1d66ac2c195952f4f7087db9bc1951e0737c414033df0e4e98\",\n  \"purpose\": \"Verify published JSON units, including Celsius conversion.\"\n}\n",
+    "ceph-devicehealth-receipt.json": "{\n  \"url\": \"https://raw.githubusercontent.com/ceph/ceph/v16.2.0/src/pybind/mgr/devicehealth/module.py\",\n  \"sha256\": \"ac67b70d732b6339c51cb32760fd8f76f7b7018dd333eb246e359b6e7b953949\"\n}\n"
+  }
+}

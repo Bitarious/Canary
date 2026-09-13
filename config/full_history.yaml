@@ -1,0 +1,27 @@
+version: full-history-v1
+source_root: data/backblaze-full
+scope: Every official historical Backblaze Drive Stats ZIP archive through Q1 2026.
+language_channels: [smart_5_raw, smart_187_raw, smart_194_raw, smart_197_raw]
+lookback_days: 28
+task_stride_days: 28
+drive_hash_salt: 'driftops-split-v1:'
+partitions:
+  train:
+    buckets: [0, 60]
+    start: '2013-01-01'
+    end: '2024-12-31'
+  validation:
+    buckets: [60, 75]
+    start: '2025-01-01'
+    end: '2025-09-30'
+  calibration:
+    buckets: [75, 85]
+    start: '2025-01-01'
+    end: '2025-09-30'
+  test:
+    buckets: [85, 100]
+    start: '2025-10-01'
+    end: '2026-03-31'
+split_policy: Each serial belongs to one split. The entire input window must fall inside that split's date interval.
+selection_policy: Use validation to select the checkpoint. Open test examples only after checkpoint selection is frozen.
+coverage_policy: Use every eligible nonoverlapping training window. Report all excluded rows, devices, and windows.

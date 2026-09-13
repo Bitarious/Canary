@@ -1,0 +1,49 @@
+version: component-v1
+component: fan
+scope: Describe observed fan-module speed patterns. No fan failure or maintenance-benefit prediction.
+split_salt: 'driftops-m100-fan-host-v1:'
+provider: CINECA Marconi100 / ExaData
+source_type: m100-ipmi-fan-module-speeds
+source_url: https://zenodo.org/records/7541722
+license: CC-BY-4.0
+license_url: https://creativecommons.org/licenses/by/4.0/
+citation: M100 ExaData node-aggregated IPMI observations, pinned Zenodo record 7541722
+cadence_us: 900000000
+cadence_text: fifteen-minute mean fan speeds available at interval end
+availability: The publisher uses left-labeled fifteen-minute bins. Add fifteen minutes before model availability. Exclude the schema-probe rack and all Nagios labels. Group all four fan modules by host.
+partitions:
+  train:
+    buckets: [0, 60]
+    start: '2020-03-01T00:00:00+00:00'
+    stop: '2022-01-01T00:00:00+00:00'
+  validation:
+    buckets: [60, 75]
+    start: '2022-01-01T00:00:00+00:00'
+    stop: '2022-04-01T00:00:00+00:00'
+  calibration:
+    buckets: [75, 85]
+    start: '2022-04-01T00:00:00+00:00'
+    stop: '2022-07-01T00:00:00+00:00'
+  test:
+    buckets: [85, 100]
+    start: '2022-07-01T00:00:00+00:00'
+    stop: '2022-10-01T00:00:00+00:00'
+host_limits:
+  train: 400
+  validation: 128
+  calibration: 64
+  test: 128
+windows_per_module:
+  train: 128
+  validation: 8
+  calibration: 8
+  test: 8
+channels:
+  rotor_0_speed:
+    unit: rpm
+    description: first rotor speed in the fan module, in revolutions per minute
+    minimum_band: 1.0
+  rotor_1_speed:
+    unit: rpm
+    description: second rotor speed in the fan module, in revolutions per minute
+    minimum_band: 1.0

@@ -20,7 +20,7 @@ def status() -> dict:
     return {"dataset": config["dataset_id"], "dataset_version": config["dataset_version"],
             "timef_ready": (version / "manifest.json").is_file(),
             "base_model": read_yaml("config/model.yaml")["base_model"]["repo_id"],
-            "model_state": "not_integrated", "training_state": "not_started",
+            "model_state": "not_loaded_in_preview", "training_state": "offline_runner_available",
             "capability": "Real observed windows and deterministic descriptions",
             "limitations": ["No learned predictions or calibrated failure probabilities",
                             "Generated descriptions use measured rules, not OpenTSLM inference"]}

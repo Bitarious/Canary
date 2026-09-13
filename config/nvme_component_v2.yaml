@@ -1,0 +1,20 @@
+version: component-v2
+scope: Describe observed NVMe signal patterns with weak rule targets. No failure or maintenance-benefit prediction.
+split_buckets:
+  train: [0, 60]
+  validation: [60, 75]
+  calibration: [75, 85]
+  test: [85, 100]
+ceph:
+  split_salt: 'driftops-ceph-host-v1:'
+  source_first_month: '2020-01'
+  source_last_month: '2022-09'
+  cohort_manifest: ceph-cohort-v2-manifest.json
+  time_intervals:
+    train: ['2020-01-01T00:00:00+00:00', '2022-01-01T00:00:00+00:00']
+    validation: ['2022-01-01T00:00:00+00:00', '2022-04-01T00:00:00+00:00']
+    calibration: ['2022-04-01T00:00:00+00:00', '2022-07-01T00:00:00+00:00']
+    test: ['2022-07-01T00:00:00+00:00', '2022-10-02T00:00:00+00:00']
+  stride_days: 7
+  availability: Use the last valid report in each UTC day, available at the next midnight. Require 28 consecutive reporting days. Group splits by connected device and host identities. Missing reports are not failures.
+  expansion_reason: The first cohort had only 63 independent validation groups, below the unchanged minimum of 64. No component fitting or model scoring used that cohort.

@@ -1,0 +1,312 @@
+{
+  "version": "m100-fan-component-cohort-v1",
+  "source_record": 7541722,
+  "source_revision": "db994a39cb256da3d623fbfe28257a4531db075f",
+  "selection": "All 49 rack archives are acquired. Rack 0 is reserved for schema development and excluded from model splits. Fixed host hashes select at most 400 training hosts, 128 validation hosts, 64 calibration hosts, and 128 test hosts. Training dates are March2020 through December2021, validation January-March2022, calibration April-June2022, and test July-September2022. No Nagios labels or nonfan components enter model inputs.",
+  "max_total_bytes": 26000000000,
+  "files": [
+    {
+      "name": "m100-17.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/17.tar/content",
+      "bytes": 509859840,
+      "checksum": "md5:8c06f6ea698fe13cf96dffb43487998e"
+    },
+    {
+      "name": "m100-37.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/37.tar/content",
+      "bytes": 435834880,
+      "checksum": "md5:357f8d854509b06b21333f9f71526761"
+    },
+    {
+      "name": "m100-48.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/48.tar/content",
+      "bytes": 497735680,
+      "checksum": "md5:1eec14ba23f74a4af8e004ed9f4e0e1b"
+    },
+    {
+      "name": "m100-8.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/8.tar/content",
+      "bytes": 584028160,
+      "checksum": "md5:fd60d0e308348929915fd95d5e1a6b3e"
+    },
+    {
+      "name": "m100-26.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/26.tar/content",
+      "bytes": 455116800,
+      "checksum": "md5:c9ab8bd92fe9843a12cb4fa4fffa6861"
+    },
+    {
+      "name": "m100-9.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/9.tar/content",
+      "bytes": 562636800,
+      "checksum": "md5:646786fea4a992948cce586e646b77a9"
+    },
+    {
+      "name": "m100-5.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/5.tar/content",
+      "bytes": 296663040,
+      "checksum": "md5:a2901f5006ebb0841338decaf8795861"
+    },
+    {
+      "name": "m100-43.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/43.tar/content",
+      "bytes": 500377600,
+      "checksum": "md5:9435eed9c0fecd0f4fb2971c06a8c89b"
+    },
+    {
+      "name": "m100-47.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/47.tar/content",
+      "bytes": 510218240,
+      "checksum": "md5:6bad90d6bec73079d7892859d6c8cb8b"
+    },
+    {
+      "name": "m100-3.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/3.tar/content",
+      "bytes": 449064960,
+      "checksum": "md5:838af5a2775b753fb964f06376e921fd"
+    },
+    {
+      "name": "m100-16.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/16.tar/content",
+      "bytes": 519311360,
+      "checksum": "md5:b0cd1d24a33cb2e13c7d4b4ff1651549"
+    },
+    {
+      "name": "m100-15.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/15.tar/content",
+      "bytes": 489297920,
+      "checksum": "md5:66ad9ff2afbff27a557c5a82af80ddfb"
+    },
+    {
+      "name": "m100-27.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/27.tar/content",
+      "bytes": 513966080,
+      "checksum": "md5:9de6a827bfeff99b36a9e7675272fa93"
+    },
+    {
+      "name": "m100-42.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/42.tar/content",
+      "bytes": 538460160,
+      "checksum": "md5:474580e0a2634c800cc8d71fd22afd76"
+    },
+    {
+      "name": "m100-24.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/24.tar/content",
+      "bytes": 450211840,
+      "checksum": "md5:7acce9bbdf64092fe9d5796fbc7d1167"
+    },
+    {
+      "name": "m100-29.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/29.tar/content",
+      "bytes": 522496000,
+      "checksum": "md5:a3eace84e42c8cce0364b925db3e1833"
+    },
+    {
+      "name": "m100-2.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/2.tar/content",
+      "bytes": 518154240,
+      "checksum": "md5:81b29652d655f09715ef3429990916a8"
+    },
+    {
+      "name": "m100-25.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/25.tar/content",
+      "bytes": 535869440,
+      "checksum": "md5:578ebfeed6d651c07f3eb2b227479db0"
+    },
+    {
+      "name": "m100-36.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/36.tar/content",
+      "bytes": 520273920,
+      "checksum": "md5:fbe74ec00b176004fd9ce2876c043112"
+    },
+    {
+      "name": "m100-35.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/35.tar/content",
+      "bytes": 540303360,
+      "checksum": "md5:e747879087a800683c9224b16f19d80a"
+    },
+    {
+      "name": "m100-39.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/39.tar/content",
+      "bytes": 525977600,
+      "checksum": "md5:9027a7550e249fe146c2dc6a1c9eaa27"
+    },
+    {
+      "name": "m100-23.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/23.tar/content",
+      "bytes": 444692480,
+      "checksum": "md5:ba1dd79fbeea08f15d0afffbe7e773d3"
+    },
+    {
+      "name": "m100-34.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/34.tar/content",
+      "bytes": 579276800,
+      "checksum": "md5:03b96b3840f3e5e44715bb5189365d4d"
+    },
+    {
+      "name": "m100-22.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/22.tar/content",
+      "bytes": 448286720,
+      "checksum": "md5:be05e8e011bf806eac0f6859387040ef"
+    },
+    {
+      "name": "m100-33.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/33.tar/content",
+      "bytes": 442142720,
+      "checksum": "md5:7def9a7d0468b7aca69068de7f01467d"
+    },
+    {
+      "name": "m100-21.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/21.tar/content",
+      "bytes": 482539520,
+      "checksum": "md5:d68d9fb06ec35c47c9cfd182842dcc84"
+    },
+    {
+      "name": "m100-30.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/30.tar/content",
+      "bytes": 535429120,
+      "checksum": "md5:d9796a0e9d07d6a8374625e686b3075d"
+    },
+    {
+      "name": "m100-20.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/20.tar/content",
+      "bytes": 491530240,
+      "checksum": "md5:09796154b8da2ea525fd452c5653c267"
+    },
+    {
+      "name": "m100-1.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/1.tar/content",
+      "bytes": 509143040,
+      "checksum": "md5:6313d691ce2e280bb363681983b2decf"
+    },
+    {
+      "name": "m100-19.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/19.tar/content",
+      "bytes": 536729600,
+      "checksum": "md5:b0c1c6447ff6689955624a8a10f4e116"
+    },
+    {
+      "name": "m100-38.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/38.tar/content",
+      "bytes": 545863680,
+      "checksum": "md5:de38f2f4df6ee485c13a49c643ea13dd"
+    },
+    {
+      "name": "m100-18.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/18.tar/content",
+      "bytes": 563036160,
+      "checksum": "md5:0ba004a57e01a37123bbb2a70f2f68c0"
+    },
+    {
+      "name": "m100-45.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/45.tar/content",
+      "bytes": 584796160,
+      "checksum": "md5:7c6233a5041c4a87acdd63a743fd594c"
+    },
+    {
+      "name": "m100-14.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/14.tar/content",
+      "bytes": 594073600,
+      "checksum": "md5:b50cd1140eb44c17dbf7fa363d2c3659"
+    },
+    {
+      "name": "m100-13.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/13.tar/content",
+      "bytes": 575416320,
+      "checksum": "md5:f7f057e084982f512d14ac5185b1b76a"
+    },
+    {
+      "name": "m100-7.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/7.tar/content",
+      "bytes": 444887040,
+      "checksum": "md5:bdf1904f71a323ac1abea3defde25f4a"
+    },
+    {
+      "name": "m100-4.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/4.tar/content",
+      "bytes": 491356160,
+      "checksum": "md5:311c9dd7bcb2adfb25a516306da58371"
+    },
+    {
+      "name": "m100-12.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/12.tar/content",
+      "bytes": 551833600,
+      "checksum": "md5:b1b49b21769a02e3bbcc66a3627594fd"
+    },
+    {
+      "name": "m100-40.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/40.tar/content",
+      "bytes": 494284800,
+      "checksum": "md5:34679a04d8c5850014f2dbe97c406431"
+    },
+    {
+      "name": "m100-44.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/44.tar/content",
+      "bytes": 591534080,
+      "checksum": "md5:e212206091bf61562593d2d2e01d1c04"
+    },
+    {
+      "name": "m100-6.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/6.tar/content",
+      "bytes": 434360320,
+      "checksum": "md5:b62fa55199f50a1db567ba7a40146530"
+    },
+    {
+      "name": "m100-11.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/11.tar/content",
+      "bytes": 539473920,
+      "checksum": "md5:4adfa8f9c7af78401cd86974ffcc3cb0"
+    },
+    {
+      "name": "m100-10.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/10.tar/content",
+      "bytes": 402933760,
+      "checksum": "md5:05f4aebe4eb932ed8b2c4fd5bf65b10e"
+    },
+    {
+      "name": "m100-0.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/0.tar/content",
+      "bytes": 269844480,
+      "checksum": "md5:ae8a04b847562dfa807863100dc6777d"
+    },
+    {
+      "name": "m100-28.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/28.tar/content",
+      "bytes": 584755200,
+      "checksum": "md5:39072272f9c6218ea40d122fbf0e5da1"
+    },
+    {
+      "name": "m100-32.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/32.tar/content",
+      "bytes": 589803520,
+      "checksum": "md5:4d7ade9807695913d4154d88f5b94718"
+    },
+    {
+      "name": "m100-46.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/46.tar/content",
+      "bytes": 556840960,
+      "checksum": "md5:25ffac24562321ce6c90ea1333ac2899"
+    },
+    {
+      "name": "m100-41.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/41.tar/content",
+      "bytes": 584427520,
+      "checksum": "md5:80e82123d80916020c984df6c8d7e78e"
+    },
+    {
+      "name": "m100-31.tar",
+      "url": "https://zenodo.org/api/records/7541722/files/31.tar/content",
+      "bytes": 436490240,
+      "checksum": "md5:ad0e112012e12b40c0573276f2caa25b"
+    }
+  ],
+  "metadata": {
+    "m100-fan-cohort-manifest.json": "{\n  \"version\": \"m100-fan-component-cohort-v1\",\n  \"source_record\": 7541722,\n  \"source_revision\": \"db994a39cb256da3d623fbfe28257a4531db075f\",\n  \"selection\": \"All 49 rack archives are acquired. Rack 0 is reserved for schema development and excluded from model splits. Fixed host hashes select at most 400 training hosts, 128 validation hosts, 64 calibration hosts, and 128 test hosts. Training dates are March2020 through December2021, validation January-March2022, calibration April-June2022, and test July-September2022. No Nagios labels or nonfan components enter model inputs.\",\n  \"max_total_bytes\": 26000000000,\n  \"files\": [\n    {\n      \"name\": \"m100-17.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/17.tar/content\",\n      \"bytes\": 509859840,\n      \"checksum\": \"md5:8c06f6ea698fe13cf96dffb43487998e\"\n    },\n    {\n      \"name\": \"m100-37.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/37.tar/content\",\n      \"bytes\": 435834880,\n      \"checksum\": \"md5:357f8d854509b06b21333f9f71526761\"\n    },\n    {\n      \"name\": \"m100-48.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/48.tar/content\",\n      \"bytes\": 497735680,\n      \"checksum\": \"md5:1eec14ba23f74a4af8e004ed9f4e0e1b\"\n    },\n    {\n      \"name\": \"m100-8.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/8.tar/content\",\n      \"bytes\": 584028160,\n      \"checksum\": \"md5:fd60d0e308348929915fd95d5e1a6b3e\"\n    },\n    {\n      \"name\": \"m100-26.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/26.tar/content\",\n      \"bytes\": 455116800,\n      \"checksum\": \"md5:c9ab8bd92fe9843a12cb4fa4fffa6861\"\n    },\n    {\n      \"name\": \"m100-9.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/9.tar/content\",\n      \"bytes\": 562636800,\n      \"checksum\": \"md5:646786fea4a992948cce586e646b77a9\"\n    },\n    {\n      \"name\": \"m100-5.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/5.tar/content\",\n      \"bytes\": 296663040,\n      \"checksum\": \"md5:a2901f5006ebb0841338decaf8795861\"\n    },\n    {\n      \"name\": \"m100-43.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/43.tar/content\",\n      \"bytes\": 500377600,\n      \"checksum\": \"md5:9435eed9c0fecd0f4fb2971c06a8c89b\"\n    },\n    {\n      \"name\": \"m100-47.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/47.tar/content\",\n      \"bytes\": 510218240,\n      \"checksum\": \"md5:6bad90d6bec73079d7892859d6c8cb8b\"\n    },\n    {\n      \"name\": \"m100-3.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/3.tar/content\",\n      \"bytes\": 449064960,\n      \"checksum\": \"md5:838af5a2775b753fb964f06376e921fd\"\n    },\n    {\n      \"name\": \"m100-16.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/16.tar/content\",\n      \"bytes\": 519311360,\n      \"checksum\": \"md5:b0cd1d24a33cb2e13c7d4b4ff1651549\"\n    },\n    {\n      \"name\": \"m100-15.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/15.tar/content\",\n      \"bytes\": 489297920,\n      \"checksum\": \"md5:66ad9ff2afbff27a557c5a82af80ddfb\"\n    },\n    {\n      \"name\": \"m100-27.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/27.tar/content\",\n      \"bytes\": 513966080,\n      \"checksum\": \"md5:9de6a827bfeff99b36a9e7675272fa93\"\n    },\n    {\n      \"name\": \"m100-42.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/42.tar/content\",\n      \"bytes\": 538460160,\n      \"checksum\": \"md5:474580e0a2634c800cc8d71fd22afd76\"\n    },\n    {\n      \"name\": \"m100-24.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/24.tar/content\",\n      \"bytes\": 450211840,\n      \"checksum\": \"md5:7acce9bbdf64092fe9d5796fbc7d1167\"\n    },\n    {\n      \"name\": \"m100-29.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/29.tar/content\",\n      \"bytes\": 522496000,\n      \"checksum\": \"md5:a3eace84e42c8cce0364b925db3e1833\"\n    },\n    {\n      \"name\": \"m100-2.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/2.tar/content\",\n      \"bytes\": 518154240,\n      \"checksum\": \"md5:81b29652d655f09715ef3429990916a8\"\n    },\n    {\n      \"name\": \"m100-25.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/25.tar/content\",\n      \"bytes\": 535869440,\n      \"checksum\": \"md5:578ebfeed6d651c07f3eb2b227479db0\"\n    },\n    {\n      \"name\": \"m100-36.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/36.tar/content\",\n      \"bytes\": 520273920,\n      \"checksum\": \"md5:fbe74ec00b176004fd9ce2876c043112\"\n    },\n    {\n      \"name\": \"m100-35.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/35.tar/content\",\n      \"bytes\": 540303360,\n      \"checksum\": \"md5:e747879087a800683c9224b16f19d80a\"\n    },\n    {\n      \"name\": \"m100-39.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/39.tar/content\",\n      \"bytes\": 525977600,\n      \"checksum\": \"md5:9027a7550e249fe146c2dc6a1c9eaa27\"\n    },\n    {\n      \"name\": \"m100-23.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/23.tar/content\",\n      \"bytes\": 444692480,\n      \"checksum\": \"md5:ba1dd79fbeea08f15d0afffbe7e773d3\"\n    },\n    {\n      \"name\": \"m100-34.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/34.tar/content\",\n      \"bytes\": 579276800,\n      \"checksum\": \"md5:03b96b3840f3e5e44715bb5189365d4d\"\n    },\n    {\n      \"name\": \"m100-22.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/22.tar/content\",\n      \"bytes\": 448286720,\n      \"checksum\": \"md5:be05e8e011bf806eac0f6859387040ef\"\n    },\n    {\n      \"name\": \"m100-33.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/33.tar/content\",\n      \"bytes\": 442142720,\n      \"checksum\": \"md5:7def9a7d0468b7aca69068de7f01467d\"\n    },\n    {\n      \"name\": \"m100-21.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/21.tar/content\",\n      \"bytes\": 482539520,\n      \"checksum\": \"md5:d68d9fb06ec35c47c9cfd182842dcc84\"\n    },\n    {\n      \"name\": \"m100-30.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/30.tar/content\",\n      \"bytes\": 535429120,\n      \"checksum\": \"md5:d9796a0e9d07d6a8374625e686b3075d\"\n    },\n    {\n      \"name\": \"m100-20.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/20.tar/content\",\n      \"bytes\": 491530240,\n      \"checksum\": \"md5:09796154b8da2ea525fd452c5653c267\"\n    },\n    {\n      \"name\": \"m100-1.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/1.tar/content\",\n      \"bytes\": 509143040,\n      \"checksum\": \"md5:6313d691ce2e280bb363681983b2decf\"\n    },\n    {\n      \"name\": \"m100-19.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/19.tar/content\",\n      \"bytes\": 536729600,\n      \"checksum\": \"md5:b0c1c6447ff6689955624a8a10f4e116\"\n    },\n    {\n      \"name\": \"m100-38.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/38.tar/content\",\n      \"bytes\": 545863680,\n      \"checksum\": \"md5:de38f2f4df6ee485c13a49c643ea13dd\"\n    },\n    {\n      \"name\": \"m100-18.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/18.tar/content\",\n      \"bytes\": 563036160,\n      \"checksum\": \"md5:0ba004a57e01a37123bbb2a70f2f68c0\"\n    },\n    {\n      \"name\": \"m100-45.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/45.tar/content\",\n      \"bytes\": 584796160,\n      \"checksum\": \"md5:7c6233a5041c4a87acdd63a743fd594c\"\n    },\n    {\n      \"name\": \"m100-14.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/14.tar/content\",\n      \"bytes\": 594073600,\n      \"checksum\": \"md5:b50cd1140eb44c17dbf7fa363d2c3659\"\n    },\n    {\n      \"name\": \"m100-13.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/13.tar/content\",\n      \"bytes\": 575416320,\n      \"checksum\": \"md5:f7f057e084982f512d14ac5185b1b76a\"\n    },\n    {\n      \"name\": \"m100-7.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/7.tar/content\",\n      \"bytes\": 444887040,\n      \"checksum\": \"md5:bdf1904f71a323ac1abea3defde25f4a\"\n    },\n    {\n      \"name\": \"m100-4.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/4.tar/content\",\n      \"bytes\": 491356160,\n      \"checksum\": \"md5:311c9dd7bcb2adfb25a516306da58371\"\n    },\n    {\n      \"name\": \"m100-12.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/12.tar/content\",\n      \"bytes\": 551833600,\n      \"checksum\": \"md5:b1b49b21769a02e3bbcc66a3627594fd\"\n    },\n    {\n      \"name\": \"m100-40.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/40.tar/content\",\n      \"bytes\": 494284800,\n      \"checksum\": \"md5:34679a04d8c5850014f2dbe97c406431\"\n    },\n    {\n      \"name\": \"m100-44.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/44.tar/content\",\n      \"bytes\": 591534080,\n      \"checksum\": \"md5:e212206091bf61562593d2d2e01d1c04\"\n    },\n    {\n      \"name\": \"m100-6.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/6.tar/content\",\n      \"bytes\": 434360320,\n      \"checksum\": \"md5:b62fa55199f50a1db567ba7a40146530\"\n    },\n    {\n      \"name\": \"m100-11.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/11.tar/content\",\n      \"bytes\": 539473920,\n      \"checksum\": \"md5:4adfa8f9c7af78401cd86974ffcc3cb0\"\n    },\n    {\n      \"name\": \"m100-10.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/10.tar/content\",\n      \"bytes\": 402933760,\n      \"checksum\": \"md5:05f4aebe4eb932ed8b2c4fd5bf65b10e\"\n    },\n    {\n      \"name\": \"m100-0.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/0.tar/content\",\n      \"bytes\": 269844480,\n      \"checksum\": \"md5:ae8a04b847562dfa807863100dc6777d\"\n    },\n    {\n      \"name\": \"m100-28.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/28.tar/content\",\n      \"bytes\": 584755200,\n      \"checksum\": \"md5:39072272f9c6218ea40d122fbf0e5da1\"\n    },\n    {\n      \"name\": \"m100-32.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/32.tar/content\",\n      \"bytes\": 589803520,\n      \"checksum\": \"md5:4d7ade9807695913d4154d88f5b94718\"\n    },\n    {\n      \"name\": \"m100-46.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/46.tar/content\",\n      \"bytes\": 556840960,\n      \"checksum\": \"md5:25ffac24562321ce6c90ea1333ac2899\"\n    },\n    {\n      \"name\": \"m100-41.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/41.tar/content\",\n      \"bytes\": 584427520,\n      \"checksum\": \"md5:80e82123d80916020c984df6c8d7e78e\"\n    },\n    {\n      \"name\": \"m100-31.tar\",\n      \"url\": \"https://zenodo.org/api/records/7541722/files/31.tar/content\",\n      \"bytes\": 436490240,\n      \"checksum\": \"md5:ad0e112012e12b40c0573276f2caa25b\"\n    }\n  ],\n  \"metadata\": {}\n}\n",
+    "m100-documentation-plugins-ipmi.md": "# IPMI\nThe IPMI plugin collects all the sensor data provided by the OOB management interface (BMC) of cluster nodes.\n\n## Plugin-specific columns\n\n|Column|Description|\n|------|-----------|\n|node|The hostname of the server|\n\n## Metrics\n|Metric|Description|Unit (ExaMon)|Unit (doc)|Value type|Sampling period|\n|------|-----------|-------------|----------|----------|---------------|\n|ambient|Temperature at the node inlet|degreesC|\u00b0C|float|20s (per node)|\n|dimmX_temp|Temperature of DIMM module n. X. X=0..15|degreesC|\u00b0C|int|20s (per node)|\n|fanX_Y|Speed of the Fan Y in module X. X=0..3, Y=0,1|revolutions|RPM|int|20s (per node)|\n|fan_disk_power|Power consumption of the disk fan|Watts|W|int|20s (per node)|\n|gpuX_core_temp|Temperature of the core for the GPU id X. X=0,1,3,4|degreesC|\u00b0C|int|20s (per node)|\n|gpuX_mem_temp|Temperature of the memory for the GPU id X. X=0,1,3,4|degreesC|\u00b0C|int|20s (per node)|\n|gv100cardX|X=0..3|unspecified||int|20s (per node)|\n|pX_coreY_temp|Temperature of core n. Y in the CPU socket n. X. X=0..1, Y=0..23|degreesC|\u00b0C|int|20s (per node)|\n|pX_io_power|Power consumption for the I/O subsystem for the CPU socket n. X. X=0..1|Watts|W|int|20s (per node)|\n|pX_mem_power|Power consumption for the memory subsystem for the CPU socket n. X. X=0..1|Watts|W|int|20s (per node)|\n|pX_power|Power consumption for the CPU socket n. X. X=0..1|Watts|W|int|20s (per node)|\n|pX_vdd_temp|Temperature of the voltage regulator for the CPU socket n. X. X=0..1|degreesC|\u00b0C|int|20s (per node)|\n|pcie|Temperature at the PCIExpress slots|degreesC|\u00b0C|float|20s (per node)|\n|psX_input_power|Power consumption at the input of power supply n. X. X=0..1|Watts|W|int|20s (per node)|\n|psX_input_voltag|Voltage at the input of power supply n. X. X=0..1|Volts|V|int|20s (per node)|\n|psX_output_curre|Current at the output of power supply n. X. X=0..1|Amps|A|int|20s (per node)|\n|psX_output_volta|Voltage at the output of power supply n. X. X=0..1|Volts|V|float|20s (per node)|\n|total_power|Total node power consumption|Watts|W|int|20s (per node)|",
+    "m100-documentation-plugins-ipmi.md-receipt.json": "{\n  \"source_file\": \"documentation/plugins/ipmi.md\",\n  \"url\": \"https://gitlab.com/api/v4/projects/ecs-lab%2Fexadata/repository/files/documentation%2Fplugins%2Fipmi.md/raw?ref=db994a39cb256da3d623fbfe28257a4531db075f\",\n  \"revision\": \"db994a39cb256da3d623fbfe28257a4531db075f\",\n  \"bytes\": 2051,\n  \"sha256\": \"a7ad099b2f4df20f8d028af9af7d161a23bb3a2483351845ad654ffc09640850\"\n}\n",
+    "m100-parquet_dataset-node_aggregated_data-step1.py": "import sys\nsys.path.append('/nas/home/cdisanti/examon-dataset/parquet_dataset/query_tool')\nfrom query_tool import M100DataClient\nimport pyarrow as pa\nimport pandas as pd\nimport numpy as np\nimport time\nimport multiprocessing as mp\nimport os\n\n\nNPROC=48\ndataset_path = '/nas/cinecadataset/parquet_testbed/dataset_zstd_9_mid_fix'\nresults_path = './results_temp'\npa.set_io_thread_count(48)\npa.set_cpu_count(48)\n\n\ndef custom_resampler(arraylike):\n    if len(arraylike):\n        avg = np.sum(arraylike)/len(arraylike)\n        std = np.std(arraylike)\n        m = min(arraylike)\n        M = max(arraylike)\n        return (avg, std, m, M)\n    else:\n        return(np.nan, np.nan, np.nan, np.nan)\n\n\ndef resample_metric(df, metric, freq = '15T'):\n    fdf = df\n    fdf = fdf.set_index('timestamp')\n    fdf = fdf.resample(rule = freq, origin = 'start_day').apply(custom_resampler)\n    \n    new_cols = [f'{metric}_avg', f'{metric}_std', f'{metric}_min', f'{metric}_max']\n    fdf[new_cols] = pd.DataFrame(fdf['value'].tolist(), index=fdf.index)\n    fdf = fdf.drop('value', axis = 1)\n    return fdf\n        \n\ndef resample_metric_mp(queue, month, iolock, metric, freq = '15T'):\n    while True:\n        node_tuple = queue.get()\n\n        if node_tuple is None:\n            break\n        \n        node, df_node = node_tuple\n\n        resampled_col = resample_metric(df_node.drop('node', axis=1), metric, freq).reset_index()\n\n        out_path = os.path.join(results_path, f'/node={node}/metric={metric}/year_month={month}')\n        os.makedirs(out_path, exist_ok=True)\n        resampled_col.to_parquet(os.path.join(out_path,'a_0.parquet'), index=False)\n        #with iolock:\n        #    print(f'[Worker] Wrote {out_path}')\n\n    #with iolock:\n    #    print('[Worker] Done.')\n\n\nif __name__ == '__main__':\n\n    client = M100DataClient(dataset_path)\n\n    metrics =  client.metrics_per_plugin['ipmi']\n\n    months = pd.date_range('2020-03-01', '2022-09-01', freq='MS').strftime('%y-%m').tolist()\n\n    for i, metric in enumerate(metrics):\n        s0 = time.time()\n        for month in months:\n\n            s1=time.time()\n            df = client.query(metric, columns=['timestamp', 'value', 'node'], year_month=month)\n            print(time.time()-s1)\n\n            # splitting df by node; not parallelized atm...\n            s3 = time.time()\n            dfs = [x for x in df.groupby('node')]\n            del df\n\n            with mp.Manager() as manager:\n                queue = mp.Queue()\n                iolock = mp.Lock()\n                pool = mp.Pool(NPROC, initializer=resample_metric_mp, initargs=(queue,\n                                                                                month,\n                                                                                iolock,\n                                                                                metric,\n                                                                                '15T'))\n\n\n            while len(dfs) > 0:\n                queue.put(dfs.pop())\n\n\n            # terminate workers\n            for _ in range(NPROC):\n                queue.put(None)\n\n            # waiting\n            pool.close()\n            pool.join()\n\n            print(f'Done {metric} {month} in {time.time()-s1}')\n\n        print(f'Done {i+1} ({metric}) in {time.time()-s0}')\n",
+    "m100-parquet_dataset-node_aggregated_data-step1.py-receipt.json": "{\n  \"source_file\": \"parquet_dataset/node_aggregated_data/step1.py\",\n  \"url\": \"https://gitlab.com/api/v4/projects/ecs-lab%2Fexadata/repository/files/parquet_dataset%2Fnode_aggregated_data%2Fstep1.py/raw?ref=db994a39cb256da3d623fbfe28257a4531db075f\",\n  \"revision\": \"db994a39cb256da3d623fbfe28257a4531db075f\",\n  \"bytes\": 3303,\n  \"sha256\": \"6ef04fcef63d4ea2c3e5f7be01b8019e18e4d925e9076f02ddbf3b6b9eb3dc9a\"\n}\n",
+    "m100-parquet_dataset-node_aggregated_data-step2.py": "import sys\nsys.path.append('/nas/home/cdisanti/examon-dataset/parquet_dataset/query_tool')\nfrom query_tool import M100DataClient\nimport os\nimport time\nimport logging\nimport multiprocessing as mp\nimport pandas as pd\nimport pyarrow as pa\nimport pyarrow.parquet as pq\n\nNPROC=48\ndataset_path = '/nas/cinecadataset/parquet_testbed/dataset_zstd_9_mid_fix'\nstep1_path = './results_temp'\nresults_path = './aggregated_data_per_node'\npa.set_io_thread_count(48)\npa.set_cpu_count(48)\n\ndef worker(queue, ipmi_metrics):\n    logger = logging.getLogger(__name__)\n    while True:\n        queue_tuple = queue.get()\n\n        if queue_tuple is None:\n            break\n            \n        s = time.time()\n\n        node, state_node = queue_tuple\n\n        first_done = False\n        for i, metric in enumerate(ipmi_metrics):\n            node_metric_path = os.path.join(step1_path, f'/node={node}/metric={metric}/')\n            if os.path.exists(node_metric_path):\n                #s = time.time()\n                cols = ['timestamp'] + [metric+suffix for suffix in ['_avg', '_std', '_min', '_max']]\n                \n                if first_done:\n                    df_o = pq.read_table(node_metric_path, columns=cols).to_pandas()\n                    df = df.merge(df_o, how='inner', on='timestamp')\n                else:\n                    df = pq.read_table(node_metric_path, columns=cols).to_pandas()\n                    first_done = True\n      \n                if len(df) == 0:\n                    logging.info(f'[{node}] Empty when joining with {metric}: interrupting')\n                    break\n                #   logging.info(node, metric, i, time.time()-s, len(df))\n\n\n        # left join with labels\n        if first_done and len(df)>0:\n            df = df.merge(state_node, how='left', on='timestamp').drop('node', axis=1)\n\n            #df.to_parquet(os.path.join('./aggregated_data_per_node',f'{node}.parquet'), index=False)\n            df = pa.Table.from_pandas(df)\n            pq.write_table(df,\n                           os.path.join('./aggregated_data_per_node',f'{node}.parquet'),\n                           compression='zstd',\n                           compression_level=19)\n        \n        logging.info(f'[{node}] Done in {time.time()-s}')\n\n\nif __name__ == '__main__':\n\n    # logger\n    logging.basicConfig(filename='./logs/step2_1.log',\n                        level=logging.INFO,\n                        format='[%(asctime)s] %(message)s',\n                        datefmt='%Y-%m-%d %H:%M:%S')\n    logger = logging.getLogger(__name__)\n\n    s0 = time.time()\n    client = M100DataClient(dataset_path)\n \n    ipmi_metrics = sorted(client.metrics_per_plugin['ipmi'])\n    ipmi_metrics.remove('0_0') # test metric that still has to be removed \n    ipmi_nodes = [x.split('=')[1] for x in os.listdir(step1_path)]\n    \n    s1=time.time()\n    labels = client.query('state',\n                          description='batchs::client::state',\n                          columns=['timestamp', 'value', 'node'])\n        \n    labels = labels[labels.node.isin(ipmi_nodes)]\n    labels.node = labels.node.cat.remove_unused_categories()\n    logging.info(time.time()-s1)\n\n    # splitting labels by node\n    s2 = time.time()\n    label_nodes = [x for x in labels.groupby('node')]\n    logging.info(time.time()-s2)\n    del labels\n    \n    os.makedirs(results_path, exist_ok=True)\n\n    # multiprocessing\n    queue = mp.Queue()\n    #iolock = mp.Lock()\n\n    s3 = time.time()\n    while len(label_nodes) > 0:\n        queue.put(label_nodes.pop())\n    logging.info(time.time()-s3)\n\n    # terminate workers\n    for _ in range(NPROC):\n        queue.put(None)\n\n    pool = mp.Pool(NPROC, initializer=worker, initargs=(queue,\n                                                        ipmi_metrics))\n\n    # waiting\n    pool.close()\n    pool.join()\n\n    logging.info(f'Done all in {time.time()-s0}')\n",
+    "m100-parquet_dataset-node_aggregated_data-step2.py-receipt.json": "{\n  \"source_file\": \"parquet_dataset/node_aggregated_data/step2.py\",\n  \"url\": \"https://gitlab.com/api/v4/projects/ecs-lab%2Fexadata/repository/files/parquet_dataset%2Fnode_aggregated_data%2Fstep2.py/raw?ref=db994a39cb256da3d623fbfe28257a4531db075f\",\n  \"revision\": \"db994a39cb256da3d623fbfe28257a4531db075f\",\n  \"bytes\": 3856,\n  \"sha256\": \"3e811600cb673222c6ec1df58c25ef1cec61b9e8f2571a075bc7afc296671e56\"\n}\n"
+  }
+}

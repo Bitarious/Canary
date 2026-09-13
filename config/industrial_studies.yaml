@@ -1,0 +1,185 @@
+version: small-industrial-v1
+components:
+  gearbox:
+    version: industrial-v1
+    study: small-industrial-v1
+    split_salt: unused-explicit-cohort
+    provider: Cubico Sustainable Investments
+    source_type: cubico-scada
+    source_url: https://zenodo.org/records/8252025
+    license: CC-BY-4.0
+    license_url: https://creativecommons.org/licenses/by/4.0/
+    citation: Kelmarsh 8252025 and Penmanshiel 8253010, source signal mappings and
+      UTC SCADA exports
+    cadence_us: 600000000
+    cadence_text: ten-minute recorded values available after a full interval
+    availability: Conservative full-interval delay. Unknown publication-bin start/end
+      convention cannot move values earlier.
+    group_partitions: &id001
+      cubico:Kelmarsh:1: train
+      cubico:Penmanshiel:8: train
+      cubico:Penmanshiel:11: train
+      cubico:Kelmarsh:5: train
+      cubico:Penmanshiel:15: train
+      cubico:Penmanshiel:7: train
+      cubico:Kelmarsh:3: train
+      cubico:Penmanshiel:1: train
+      cubico:Penmanshiel:5: train
+      cubico:Kelmarsh:6: train
+      cubico:Kelmarsh:2: validation
+      cubico:Penmanshiel:13: validation
+      cubico:Penmanshiel:12: validation
+      cubico:Penmanshiel:2: calibration
+      cubico:Kelmarsh:4: calibration
+      cubico:Penmanshiel:10: test
+      cubico:Penmanshiel:14: test
+      cubico:Penmanshiel:4: test
+      cubico:Penmanshiel:6: test
+      cubico:Penmanshiel:9: test
+    partitions: &id002
+      train:
+        start: '2018-01-01T00:00:00+00:00'
+        stop: '2019-01-01T00:00:00+00:00'
+      validation:
+        start: '2019-01-01T00:00:00+00:00'
+        stop: '2019-07-01T00:00:00+00:00'
+      calibration:
+        start: '2019-07-01T00:00:00+00:00'
+        stop: '2020-01-01T00:00:00+00:00'
+      test:
+        start: '2020-01-01T00:00:00+00:00'
+        stop: '2021-01-01T00:00:00+00:00'
+    component: gearbox
+    scope: Describe observed gearbox signals on a small held-out turbine cohort. No
+      failure or fleet-wide reliability claim.
+    channels:
+      gear_oil_temperature:
+        source_column: "Gear oil temperature (\xB0C)"
+        unit: degC
+        minimum_band: 1.0
+        description: gearbox oil temperature in Celsius
+      gear_oil_inlet_temperature:
+        source_column: "Gear oil inlet temperature (\xB0C)"
+        unit: degC
+        minimum_band: 1.0
+        description: gearbox oil inlet temperature in Celsius
+  bearing:
+    version: industrial-v1
+    study: small-industrial-v1
+    split_salt: unused-explicit-cohort
+    provider: Cubico Sustainable Investments
+    source_type: cubico-scada
+    source_url: https://zenodo.org/records/8252025
+    license: CC-BY-4.0
+    license_url: https://creativecommons.org/licenses/by/4.0/
+    citation: Kelmarsh 8252025 and Penmanshiel 8253010, source signal mappings and
+      UTC SCADA exports
+    cadence_us: 600000000
+    cadence_text: ten-minute recorded values available after a full interval
+    availability: Conservative full-interval delay. Unknown publication-bin start/end
+      convention cannot move values earlier.
+    group_partitions: *id001
+    partitions: *id002
+    component: bearing
+    scope: Describe observed bearing signals on a small held-out turbine cohort. No
+      failure or fleet-wide reliability claim.
+    channels:
+      generator_bearing_front_temperature:
+        source_column: "Generator bearing front temperature (\xB0C)"
+        unit: degC
+        minimum_band: 1.0
+        description: generator front bearing temperature in Celsius
+      generator_bearing_rear_temperature:
+        source_column: "Generator bearing rear temperature (\xB0C)"
+        unit: degC
+        minimum_band: 1.0
+        description: generator rear bearing temperature in Celsius
+  pump:
+    version: industrial-v1
+    study: small-industrial-v1
+    split_salt: unused-explicit-cohort
+    provider: Cubico Sustainable Investments
+    source_type: cubico-scada
+    source_url: https://zenodo.org/records/8252025
+    license: CC-BY-4.0
+    license_url: https://creativecommons.org/licenses/by/4.0/
+    citation: Kelmarsh 8252025 and Penmanshiel 8253010, source signal mappings and
+      UTC SCADA exports
+    cadence_us: 600000000
+    cadence_text: ten-minute recorded values available after a full interval
+    availability: Conservative full-interval delay. Unknown publication-bin start/end
+      convention cannot move values earlier.
+    group_partitions: *id001
+    partitions: *id002
+    component: pump
+    scope: Describe observed pump signals on a small held-out turbine cohort. No failure
+      or fleet-wide reliability claim.
+    channels:
+      gear_oil_pump_pressure:
+        source_column: Gear oil pump pressure (bar)
+        unit: bar
+        minimum_band: 0.1
+        description: gear oil pump pressure in bar
+      gear_oil_inlet_pressure:
+        source_column: Gear oil inlet pressure (bar)
+        unit: bar
+        minimum_band: 0.1
+        description: pressure at the gearbox oil inlet in bar
+  valve:
+    version: industrial-v1
+    study: small-industrial-v1
+    component: valve
+    scope: Describe observed thermostatic-valve signals on a small held-out household
+      cohort. No valve failure, occupancy, or household-behavior inference.
+    split_salt: unused-explicit-cohort
+    provider: Open University of the Netherlands / HOMESENSE
+    source_type: homesense-observed-valve
+    source_url: https://zenodo.org/records/21687970
+    license: CC-BY-4.0
+    license_url: https://creativecommons.org/licenses/by/4.0/
+    citation: HOMESENSE 21687970 version1.0.0, observed Vicki valve fields only
+    cadence_us: 600000000
+    cadence_text: ten-minute observed valve values available at interval end
+    availability: Use explicit UTC offsets, add ten minutes, require observed QC for
+      every field. Exclude imputation and all non-valve fields.
+    group_partitions:
+      homesense:H06: train
+      homesense:H03: train
+      homesense:H04: train
+      homesense:H01: validation
+      homesense:H11: validation
+      homesense:H07: calibration
+      homesense:H08: test
+      homesense:H05: test
+      homesense:H09: test
+      homesense:H02: test
+      homesense:H10: test
+    partitions:
+      train:
+        start: '2024-11-25T00:00:00+00:00'
+        stop: '2025-03-01T00:00:00+00:00'
+      validation:
+        start: '2025-03-01T00:00:00+00:00'
+        stop: '2025-05-01T00:00:00+00:00'
+      calibration:
+        start: '2025-05-01T00:00:00+00:00'
+        stop: '2025-07-01T00:00:00+00:00'
+      test:
+        start: '2025-07-01T00:00:00+00:00'
+        stop: '2025-11-27T00:00:00+00:00'
+    channels:
+      motor_position:
+        source_variable: motorposition
+        unit: dimensionless
+        description: valve motor position in raw motor steps, from zero to 800
+        minimum_band: 1.0
+      device_temperature:
+        source_variable: temperature
+        unit: degC
+        description: valve device temperature in Celsius
+        minimum_band: 1.0
+      temperature_setpoint:
+        source_variable: temperatureset
+        unit: degC
+        description: commanded valve temperature setpoint in Celsius
+        minimum_band: 1.0

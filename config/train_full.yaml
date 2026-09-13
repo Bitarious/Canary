@@ -1,0 +1,30 @@
+version: full-history-rtx6000-v2
+seed: 20260912
+device: cuda
+epochs: 2
+batch_size: 64
+world_size: 8
+max_train_hours: 7
+max_vm_hours: 8
+gpu_name: NVIDIA RTX PRO 6000
+gpu_memory_gb: 96
+vm_hourly_usd: 14.4
+disk_hourly_usd: 0.01244928
+budget_usd: 600
+checkpoint_every_steps: 500
+validation_every_steps: 2000
+validation_drives: 512
+test_drives: 2048
+encoder_lr: 0.0001
+projector_lr: 0.0001
+lora_lr: 0.00005
+weight_decay: 0.01
+clip_grad_norm: 1.0
+lora:
+  lora_r: 8
+  lora_alpha: 16
+  lora_dropout: 0.0
+  target_modules: [q_proj, k_proj, v_proj, o_proj]
+objective: Weighted answer-token cross entropy. Weights use training pattern counts only.
+coverage: Up to two complete passes through every eligible training window, without replacement or a sample cap.
+selection: Lowest unweighted answer loss among checkpoints at completed epochs on the frozen validation subset. No test reads during training.

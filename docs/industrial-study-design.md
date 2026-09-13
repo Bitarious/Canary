@@ -1,0 +1,15 @@
+# Small industrial component studies
+
+The remaining industrial sources contain fewer independent units than the telemetry cohorts. The large-cohort readiness and success rules remain unchanged. These separate studies test transfer to a small, named population. They cannot establish fleet-wide reliability or failure prediction.
+
+The Cubico archives contain twenty turbines. Separate gearbox, generator-bearing, and gear-oil-pump models will use their respective channels. Fixed identity hashes assign ten turbines to training, three to validation, two to calibration, and five to test. Training uses 2018, validation the first half of 2019, calibration the second half of 2019, and test 2020. The same turbine assignments apply across all three models. Each model receives only its own declared component signals.
+
+HOMESENSE provides thermostatic valve telemetry from eleven pseudonymized households. All valves in a household share one partition. Fixed identity hashes assign three households to training, two to validation, one to calibration, and five to test. Training ends before March 2025. Validation uses March and April, calibration May and June, and test July through November. The model receives only motor position, device temperature, and temperature setpoint. Every input value must have the publisher's `observed` quality flag. Interpolated and imputed values are excluded.
+
+Windows contain 28 consecutive ten-minute observations. The study delays availability by one full interval. It excludes gaps, missing values, identities, outcome records, and unrelated component channels from model inputs. Native TimeF checks must pass before fitting. Cohort assignment and numerical transformations are fixed before model training.
+
+Each study will reserve up to 256 fixed-hash test windows per held-out group. Windows from one unit do not count as independent units. Evaluation will aggregate accuracy by group before bootstrap intervals and exact paired sign-randomization tests. A result needs positive gains against the starting model, constant baseline, and zero numerical input. Each comparison also needs a one-sided exact group-randomization probability of at most 0.05. With five groups, this requires consistently positive group-level evidence. Reversal and shuffle require changed targets in all five groups and correct responses beyond unchanged answers. Valid output and exact checkpoint reload remain mandatory.
+
+These studies have only five held-out groups each. Their results must retain that denominator and the small-cohort limitation. They do not inherit the large-cohort success label. Missing eligible groups or changed-target support produces an insufficient-evidence result. A missing dataset, including the current slide-rail chronology gap, does not justify fabricated timestamps or reused physical units.
+
+This document fixes the study design before any industrial model fitting. Preparation and source audits may still show that a study cannot proceed. Each paid run still requires its own advance overview, immutable source bundle, shared-budget check, and provider shutdown guard.

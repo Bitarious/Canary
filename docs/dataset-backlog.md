@@ -1,8 +1,8 @@
 # Hardware dataset backlog
 
-**Current scope:** build the working DriftOps demo with **Backblaze HDD data only**, beginning with one supported drive model. Other HDD sources and all other hardware categories below are future candidates, not implementation dependencies.
+**Current scope:** complete the historical Backblaze HDD TSLM first. The user has authorized research and separate TSLMs for the other hardware components below if the HDD model passes its evaluation. All runs share the $600 compute ceiling. See the [component training program](component-training-program.md). The listed candidates still require a source audit before use.
 
-These references were supplied by the user on 12 September 2026. Tracking parameters have been removed. Except for the current Backblaze source, the links, dataset descriptions, hardware coverage, sizes, labels, and access conditions have not been independently validated. Repeated sources are retained where they span the user's intended hardware categories.
+These references were supplied by the user on 12 September 2026. Tracking parameters have been removed. The [component dataset audit](component-dataset-audit.md) records the sources checked on September 13 and the remaining data checks. Repeated sources can contain the same physical devices. They are not independent datasets.
 
 ## HDD
 
@@ -17,13 +17,15 @@ These references were supplied by the user on 12 September 2026. Tracking parame
 
 | Candidate | User-provided note to verify |
 |---|---|
-| [Alibaba SSD Open Data](https://github.com/alibaba-edu/dcbrain/tree/master/ssd_open_data) | Approximately 1 million SSDs |
-| [Alibaba SSD SMART Logs](https://github.com/alibaba-edu/dcbrain/tree/master/ssd_smart_logs) | Approximately 500,000 SSDs |
+| [Alibaba SSD Open Data](https://github.com/alibaba-edu/dcbrain/tree/master/ssd_open_data) | Publisher describes nearly 1 million SSDs, but releases only one day of SMART values plus location and failure records |
+| [Alibaba SSD SMART Logs](https://github.com/alibaba-edu/dcbrain/tree/master/ssd_smart_logs) | Separate daily histories for 2018–2019, with overlapping devices from SSD Open Data. Download uses Tianchi 95044 |
 | [Backblaze Drive Stats](https://www.backblaze.com/cloud-storage/resources/hard-drive-test-data) | SSD coverage; choose a separate cohort and semantic mapping |
 
 ## NVMe
 
-- [Alibaba Fail-Slow Detection Open Dataset](https://tianchi.aliyun.com/dataset/132973)
+- [Alibaba NVMe SSD Open Dataset](https://tianchi.aliyun.com/dataset/128972). The previous link, 132973, is the DRAM dataset.
+- [SNIA NVMe source README](https://iotta.snia.org/traces/reliability/36779/download?type=readme). Snapshot SMART tables and separate latency histories require different tasks.
+- [SNIA Perseus fail-slow README](https://iotta.snia.org/traces/reliability/36782/download?type=readme). Mixed HDD/SSD telemetry requires component identification.
 - [Ceph Device Health Telemetry](https://ceph.io/en/users/telemetry/device-telemetry/)
 - [Alibaba DCBrain Storage Datasets](https://github.com/alibaba-edu/dcbrain)
 
@@ -44,7 +46,7 @@ These references were supplied by the user on 12 September 2026. Tracking parame
 ## CPU / processor / general hardware failures
 
 - [Los Alamos National Laboratory HPC Failure Data](https://usrc.lanl.gov/data%20sources/failure-data.php)
-- [Blue Gene/P Intrepid RAS Hardware Failure Logs](https://www.usenix.org/cfdr-data)
+- [USENIX CFDR hardware and event logs](https://www.usenix.org/cfdr-data). The checked page lists Blue Gene/L. The previous Blue Gene/P Intrepid claim remains unverified.
 
 ## Whole server / datacenter
 
@@ -64,6 +66,9 @@ These references were supplied by the user on 12 September 2026. Tracking parame
 - [MIMII - Malfunctioning Industrial Machine Dataset](https://zenodo.org/records/3384388)
 - [MIMII DUE - Domain-Shift Machine Failure Dataset](https://zenodo.org/records/4740355)
 - [MIMII DG - Fans, Gearboxes, Bearings, Slide Rails & Valves](https://zenodo.org/records/6529888)
+- [NASA IMS bearing experiments](https://data.nasa.gov/dataset/ims-bearings)
+
+The MIMII releases require further physical-device and capture-chronology checks. MIMII DG also has conflicting license fields. See the audit before using these sources.
 
 ## Before adding a source
 

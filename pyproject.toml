@@ -8,6 +8,7 @@ dependencies = [
   "timenet[build,s3]==0.1.0",
   "duckdb>=1.4,<2",
   "pyyaml>=6,<7",
+  "requests>=2.32,<3",
 ]
 
 [build-system]
@@ -19,8 +20,41 @@ driftops = "driftops.cli:main"
 
 [project.optional-dependencies]
 model-access = [
-    "huggingface-hub>=1,<2",
+    "huggingface-hub>=0.36.2,<1",
 ]
+training = [
+    "torch==2.8.0",
+    "transformers==4.56.2",
+    "accelerate==1.10.1",
+    "sentencepiece==0.2.1",
+    "peft==0.17.1",
+]
+nebius-training = [
+    "torch==2.8.0",
+    "transformers==4.56.2",
+    "accelerate==1.10.1",
+    "sentencepiece==0.2.1",
+    "peft==0.17.1",
+]
+
+[tool.uv]
+conflicts = [[{extra = "training"}, {extra = "nebius-training"}]]
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cpu", extra = "training" },
+  { index = "pytorch-cu128", extra = "nebius-training" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
 
 [dependency-groups]
 dev = ["pytest>=8,<10"]

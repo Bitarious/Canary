@@ -1,6 +1,6 @@
 # Model selection and immutable references; this is not a runnable training config.
 backend: opentslm-sp
-selection_status: weight-access-verified-runtime-check-pending
+selection_status: runtime-training-and-reload-verified
 base_model:
   repo_id: google/gemma-3-270m
   revision: 9b0cfec892e2bc2afd938c98eabe4e4a7b1e0ca1
@@ -16,5 +16,5 @@ intended_adaptation:
   freeze: [base_language_model]
   update: [time_series_encoder, projector]
   lora: false
-  status: proposed-until-model-load-and-parameter-audit
-training_started: false
+  status: verified-frozen-gemma-and-trained-temporal-modules
+training_started: true

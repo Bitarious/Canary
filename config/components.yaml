@@ -1,0 +1,54 @@
+version: component-v1
+window_samples: 28
+annotation: component-window-description-v1
+scope: Describe observed signal patterns with weak rule targets. No model predicts failure or a maintenance benefit.
+split_buckets:
+  train: [0, 60]
+  validation: [60, 75]
+  calibration: [75, 85]
+  test: [85, 100]
+ssd:
+  models: [Seagate BarraCuda 120 SSD ZA250CM10003, Seagate BarraCuda 120 SSD ZA500CM10003]
+  split_salt: 'driftops-ssd-component-v1:'
+  time_intervals:
+    train: ['2019-01-01T00:00:00+00:00', '2025-01-01T00:00:00+00:00']
+    validation: ['2025-01-01T00:00:00+00:00', '2025-10-01T00:00:00+00:00']
+    calibration: ['2025-01-01T00:00:00+00:00', '2025-10-01T00:00:00+00:00']
+    test: ['2025-10-01T00:00:00+00:00', '2026-04-02T00:00:00+00:00']
+  stride_days: 28
+  availability: Treat a daily snapshot as available at the next UTC midnight. Exclude at and after recorded failure.
+clusterwise:
+  split_salt: 'driftops-clusterwise-host-v1:'
+  cohort_hash_salt: 'driftops-clusterwise-cohort-v1:'
+  window_hash_salt: 'driftops-clusterwise-window-v1:'
+  host_limits: {train: 600, validation: 200, calibration: 128, test: 256}
+  windows_per_host_day: {train: 32, validation: 4, calibration: 4, test: 4}
+  time_intervals:
+    train: ['2020-01-01T00:00:00+00:00', '2020-02-01T00:00:00+00:00']
+    validation: ['2020-08-01T00:00:00+00:00', '2020-09-01T00:00:00+00:00']
+    calibration: ['2020-08-01T00:00:00+00:00', '2020-09-01T00:00:00+00:00']
+    test: ['2021-02-01T00:00:00+00:00', '2021-03-01T00:00:00+00:00']
+  source_days: ['20200101', '20200111', '20200121', '20200801', '20200811', '20210201', '20210211']
+  availability: Treat each ten-second aggregate as available ten seconds after its source timestamp. Exclude jobs, node state, error labels, and error codes from model inputs.
+smartmem:
+  split_salt: 'smartmem-split-v1:'
+  cohort_hash_salt: 'driftops-smartmem-cohort-v1:'
+  device_limits: {train: 8000, validation: 2000, calibration: 1000, test: 2000}
+  time_intervals:
+    train: ['2024-01-01T00:00:00+00:00', '2024-06-01T00:00:00+00:00']
+    validation: ['2024-06-01T00:00:00+00:00', '2024-08-01T00:00:00+00:00']
+    calibration: ['2024-06-01T00:00:00+00:00', '2024-08-01T00:00:00+00:00']
+    test: ['2024-08-01T00:00:00+00:00', '2024-10-01T00:00:00+00:00']
+  stride_days: 7
+  availability: Count recorded error logs in closed UTC days. Zero means no recorded logs, not verified healthy observation. A window ends on a day with a recorded log and starts after the first recorded log. Exclude at and after a recorded failure ticket.
+ceph:
+  split_salt: 'driftops-ceph-host-v1:'
+  source_first_month: '2020-01'
+  source_last_month: '2021-06'
+  time_intervals:
+    train: ['2020-01-01T00:00:00+00:00', '2021-02-01T00:00:00+00:00']
+    validation: ['2021-02-01T00:00:00+00:00', '2021-04-01T00:00:00+00:00']
+    calibration: ['2021-04-01T00:00:00+00:00', '2021-05-01T00:00:00+00:00']
+    test: ['2021-05-01T00:00:00+00:00', '2021-07-02T00:00:00+00:00']
+  stride_days: 7
+  availability: Use the last valid report in each UTC day, available at the next midnight. Require 28 consecutive reporting days. Group splits by connected device and host identities. Missing reports are not failures.
