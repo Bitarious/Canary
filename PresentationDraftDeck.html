@@ -1,0 +1,613 @@
+<title>DriftOps</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --paper:#F7F5F1; --ink:#0F0F0E; --ink2:#5B5B58; --ink3:#96948E; --rule:rgba(15,15,14,.10); --rule2:rgba(15,15,14,.08);
+    --night:#0F0F0E; --nink:#F0EEE9; --n2:#C7C3BB; --n3:#8A857D;
+    --sans:"Söhne", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --serif:"Instrument Serif", ui-serif, Georgia, serif;
+    --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  *{box-sizing:border-box;margin:0}
+  [hidden]{display:none!important}
+  html,body{height:100%}
+  body{background:#0A0A0A;overflow:hidden;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
+  #stage{position:absolute;top:0;left:0;width:1920px;height:1080px;transform-origin:0 0}
+  .slide{position:absolute;inset:0;padding:100px 128px;opacity:0;visibility:hidden;transform:translateY(10px);
+    transition:opacity .45s ease,transform .45s ease,visibility 0s .45s;display:flex;flex-direction:column;
+    background:var(--paper);color:var(--ink)}
+  .slide.dark{background:var(--night);color:var(--nink)}
+  .slide.active{opacity:1;visibility:visible;transform:none;transition:opacity .5s ease,transform .5s ease}
+  #bar{position:absolute;top:0;left:0;height:2px;background:var(--ink);width:0;z-index:60;transition:width .45s ease}
+  .dark ~ #bar,body:has(.slide.dark.active) #bar{background:var(--nink)}
+  .eyebrow{font:500 12px/1 var(--mono);letter-spacing:.22em;color:var(--ink3);text-transform:uppercase}
+  .dark .eyebrow{color:var(--n3)}
+  .count{position:absolute;bottom:60px;right:128px;font:400 11.5px/1 var(--mono);color:var(--ink3)}
+  .dark .count{color:var(--n3)}
+  .src{position:absolute;bottom:60px;left:128px;right:220px;font:400 11.5px/1.5 var(--mono);color:var(--ink3);max-width:90ch}
+  .dark .src{color:var(--n3)}
+  .hl{font-family:var(--serif);font-weight:400;letter-spacing:-.02em;line-height:1;margin:0}
+  em{font-style:italic}
+  .frag{opacity:0;transform:translateY(6px);transition:opacity .5s ease,transform .5s ease}
+  .frag.on{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){.frag{opacity:1;transform:none}*{animation:none!important;transition:none!important}}
+  svg text{font-family:var(--mono)}
+
+  /* 01 hook + 09 product + 15 close */
+  .hero{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+  .brandmark{font:500 12px/1 var(--mono);letter-spacing:.22em;color:var(--n3);text-transform:uppercase}
+  .foot{display:flex;justify-content:space-between;align-items:baseline;font:400 12px/1 var(--mono);letter-spacing:.16em;color:var(--n3);text-transform:uppercase}
+  .foot .count-inline{color:var(--n3)}
+
+  /* 02 cost */
+  .costhead{margin-top:44px;max-width:1400px}
+  .costgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:64px;margin-top:80px;padding-top:40px;border-top:1px solid var(--rule)}
+  .costk{font:500 11px/1 var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase}
+  .costn{font-family:var(--serif);font-weight:400;font-size:76px;line-height:1;letter-spacing:-.02em;margin-top:20px;font-variant-numeric:tabular-nums}
+  .costn .u{font-size:26px;color:var(--ink3)}
+  .costd{margin-top:16px;font-size:15.5px;line-height:1.5;color:var(--ink2);max-width:36ch}
+  .formula{margin-top:72px;padding-top:32px;border-top:1px solid var(--rule);font-family:var(--serif);font-style:italic;font-size:20px;line-height:1.5;max-width:90ch}
+
+  /* 03 BA */
+  .bagrid{display:grid;grid-template-columns:1.1fr 1fr;gap:120px;align-items:center;flex:1;margin-top:20px}
+  .balist{border-top:1px solid var(--rule)}
+  .balist .row{display:grid;grid-template-columns:auto 1fr;gap:32px 40px;align-items:baseline;padding:32px 0;border-bottom:1px solid var(--rule)}
+  .balist .row:last-child{border-bottom:none}
+  .balist .n{font-family:var(--serif);font-weight:400;font-size:56px;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .balist .l{font-size:18px;color:var(--ink2);line-height:1.4}
+
+  /* 04 AWS */
+  .flow{display:grid;grid-template-columns:repeat(4,1fr);gap:48px;margin-top:64px;padding-top:32px;border-top:1px solid var(--rule)}
+  .fst .k{font:500 11px/1 var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase}
+  .fst .h{margin-top:18px;font-family:var(--serif);font-weight:400;font-size:26px;line-height:1.2;letter-spacing:-.01em}
+  .fst .d{margin-top:14px;font-size:14.5px;line-height:1.5;color:var(--ink2)}
+  .chipsrow{margin-top:48px;display:flex;flex-wrap:wrap;gap:10px 22px;align-items:baseline;font-size:16px;color:var(--ink2)}
+  .chipsrow .lbl{font:500 11px var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase;margin-right:8px}
+  .chipsrow .n{color:var(--ink);font-weight:500}
+  .chipsrow .sep{color:#C7C3BB}
+  .bridge{margin-top:56px;padding-top:40px;border-top:1px solid var(--rule);display:grid;grid-template-columns:1fr 1fr;gap:80px}
+  .bridge .t{font-family:var(--serif);font-weight:400;font-size:30px;line-height:1.25;letter-spacing:-.01em}
+  .bridge .b{margin-top:12px;font-size:15.5px;line-height:1.55;color:var(--ink2);max-width:48ch}
+
+  /* 05 thesis */
+  .thesis{display:grid;grid-template-columns:1fr 1fr;gap:96px;margin-top:60px;padding-top:36px;border-top:1px solid var(--rule)}
+  .thesis .col .k{font:500 11px/1 var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase}
+  .thesis .col .items{margin-top:26px}
+  .thesis .item{padding:22px 0;border-bottom:1px solid var(--rule)}
+  .thesis .item:last-child{border-bottom:none}
+  .thesis .item .h{font-family:var(--serif);font-weight:400;font-size:26px;line-height:1.15;letter-spacing:-.01em}
+  .thesis .item .d{margin-top:8px;font-size:15.5px;color:var(--ink2);line-height:1.5}
+  .pipe{margin-top:56px;display:flex;align-items:baseline;gap:24px;font-family:var(--serif);font-style:italic;font-size:24px;letter-spacing:-.01em}
+  .pipe .sep{color:var(--ink3)}
+  .pipek{margin-top:56px;font:500 12px/1 var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase}
+
+  /* 06 concession */
+  .conhead{margin:44px 0 0 0}
+  .conhead h2{font-family:var(--serif);font-weight:400;font-size:108px;line-height:1;letter-spacing:-.02em;max-width:20ch}
+  .concols{margin-top:80px;padding-top:36px;border-top:1px solid var(--rule);display:grid;grid-template-columns:1fr 1fr;gap:96px}
+  .concols .k{font:500 11px/1 var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase}
+  .concols ul{list-style:none;padding:0;margin:24px 0 0;font-size:20px;line-height:1.7}
+  .concols li{padding:4px 0}
+  .conclose{margin-top:72px;font-family:var(--serif);font-weight:400;font-size:32px;line-height:1.35;letter-spacing:-.01em;max-width:42ch}
+
+  /* 07 components */
+  .compgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:48px;margin-top:72px;padding-top:36px;border-top:1px solid var(--rule)}
+  .compgrid .k{font:500 11px/1 var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase}
+  .compgrid .n{font-family:var(--serif);font-weight:400;font-size:72px;line-height:1;letter-spacing:-.02em;margin-top:22px;font-variant-numeric:tabular-nums}
+  .compgrid .d{margin-top:16px;font-size:15.5px;line-height:1.5;color:var(--ink2)}
+  .compclose{margin-top:72px;padding-top:32px;border-top:1px solid var(--rule);font-family:var(--serif);font-weight:400;font-size:26px;line-height:1.4;letter-spacing:-.01em;max-width:58ch}
+
+  /* 08 chart */
+  .chartclose{margin-top:60px;padding-top:36px;border-top:1px solid var(--rule);font-family:var(--serif);font-weight:400;font-size:32px;line-height:1.3;letter-spacing:-.01em}
+
+  /* 10 stack */
+  .stackhead{margin-top:44px}
+  .stackhead h2{font-family:var(--serif);font-weight:400;font-size:88px;line-height:1;letter-spacing:-.02em;max-width:22ch}
+  .stackhead p{margin-top:20px;font-size:22px;line-height:1.45;color:var(--ink2)}
+  .stackgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:72px;margin-top:72px;padding-top:36px;border-top:1px solid var(--rule)}
+  .sbox .k{font:500 11px/1 var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase}
+  .sbox .h{margin-top:18px;font-family:var(--serif);font-weight:400;font-size:32px;line-height:1.15;letter-spacing:-.01em}
+  .sbox .sub2{margin-top:10px;font:400 13px var(--mono);color:var(--ink3)}
+  .sbox ul{list-style:none;padding:0;margin:24px 0 0;font-size:15.5px;line-height:1.65;color:var(--ink2)}
+  .sbox li{padding:5px 0;border-bottom:1px solid var(--rule2)}
+  .sbox li:last-child{border-bottom:none}
+  .sbox li b{color:var(--ink);font-weight:500}
+  .sbox code{color:var(--ink);font:400 13px var(--mono)}
+
+  /* 11 demo */
+  .demogrid{display:grid;grid-template-columns:1fr 1fr;gap:96px;align-items:center;flex:1;margin-top:20px}
+  .demogrid h2{font-family:var(--serif);font-weight:400;font-size:96px;line-height:1;letter-spacing:-.02em}
+  .demogrid p{margin-top:32px;font-size:22px;line-height:1.5;color:var(--ink2);max-width:40ch}
+  .quote{margin-top:40px;padding:24px 0 24px 26px;border-left:2px solid var(--ink);font-family:var(--serif);font-style:italic;font-size:22px;line-height:1.4;max-width:640px}
+  .democue{margin-top:32px;font:500 11.5px var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase}
+  .panel{border:1px solid rgba(15,15,14,.14);background:#FFFFFF}
+  .panel .ph{display:flex;justify-content:space-between;align-items:center;padding:22px 28px;border-bottom:1px solid var(--rule);font:500 12px var(--mono);letter-spacing:.12em;color:var(--ink);text-transform:uppercase}
+  .panel .ph .st{display:inline-flex;align-items:center;gap:8px;font-size:11px;color:var(--ink2);text-transform:none;letter-spacing:.08em}
+  .panel .ph .st .dot{width:6px;height:6px;border-radius:50%;background:var(--ink)}
+  .panel .body{padding:32px 30px}
+  .panel .stats{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px}
+  .panel .stats .k{font:500 10.5px var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase}
+  .panel .stats .h{font-family:var(--serif);font-weight:400;font-size:72px;line-height:1;letter-spacing:-.02em;margin-top:12px;font-variant-numeric:tabular-nums}
+  .panel .stats .h .u{font-size:22px;color:var(--ink3)}
+  .panel .stats .r{text-align:right}
+  .panel .stats .r .v{margin-top:12px;font-family:var(--serif);font-weight:400;font-size:22px;letter-spacing:-.01em}
+
+  /* 12 prioritization */
+  .priog{display:grid;grid-template-columns:1fr 1.1fr;gap:96px;margin-top:60px;padding-top:36px;border-top:1px solid var(--rule);align-items:start}
+  .drivers{display:grid;grid-template-columns:1fr 1fr;gap:48px}
+  .drv .k{font:500 11px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase}
+  .drv.a .k{color:var(--ink3)}
+  .drv.b .k{color:var(--ink)}
+  .drv .n{font-family:var(--serif);font-weight:400;font-size:84px;line-height:1;letter-spacing:-.02em;margin:18px 0 8px;font-variant-numeric:tabular-nums}
+  .drv .d{font-size:14.5px;color:var(--ink2);line-height:1.55}
+  .drv .p{margin-top:16px;font:500 11px var(--mono);letter-spacing:.18em;text-transform:uppercase}
+  .drv.a .p{color:var(--ink3)}
+  .drv.b .p{color:var(--ink)}
+  .prioclose{margin-top:40px;padding-top:24px;border-top:1px solid var(--rule);font-family:var(--serif);font-style:italic;font-size:22px;line-height:1.4}
+  .planner .hd{font:500 11px var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase;padding-bottom:20px;border-bottom:1px solid rgba(15,15,14,.14)}
+  .planner .row{display:grid;grid-template-columns:auto 1fr auto;gap:24px 32px;align-items:baseline;padding:22px 0;border-bottom:1px solid var(--rule2);font-size:17px}
+  .planner .row:last-child{border-bottom:none}
+  .planner .row .num{font-family:var(--serif);font-weight:400;font-size:24px;color:var(--ink);font-variant-numeric:tabular-nums}
+  .planner .row.med .num,.planner .row.dim .num{color:var(--ink3)}
+  .planner .row .lbl{font:500 11px var(--mono);letter-spacing:.16em;text-transform:uppercase}
+  .planner .row .lbl.hi{color:var(--ink)}
+  .planner .row .lbl.med{color:var(--ink3)}
+  .planner .row.dim{color:var(--ink3);font-style:italic}
+  .planner .row b{font-weight:500}
+  .planner .row .sub{color:var(--ink2)}
+
+  /* 13 status */
+  .statushead h2{font-family:var(--serif);font-weight:400;font-size:108px;line-height:1;letter-spacing:-.02em;margin:40px 0 0}
+  .statusgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:64px;margin-top:60px;padding-top:36px;border-top:1px solid var(--rule)}
+  .stc .k{font:500 11px/1 var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase;display:flex;align-items:center;gap:8px}
+  .stc .k .dot{width:6px;height:6px;border-radius:50%}
+  .stc.built .k{color:var(--ink)}.stc.built .dot{background:var(--ink)}
+  .stc.draft .k .dot{background:var(--ink3)}
+  .stc.next .k .dot{background:#C7C3BB}
+  .stc ul{list-style:none;padding:0;margin:24px 0 0}
+  .stc li{padding:14px 0;border-bottom:1px solid var(--rule2)}
+  .stc li:last-child{border-bottom:none}
+  .stc li .t{font-size:16px;color:var(--ink);font-weight:500}
+  .stc li .m{margin-top:4px;font:400 12px var(--mono);color:var(--ink3)}
+
+  /* 14 payoff */
+  .payhead h2{font-family:var(--serif);font-weight:400;font-size:96px;line-height:1;letter-spacing:-.02em;margin:40px 0 0;max-width:22ch}
+  .paygrid{display:grid;grid-template-columns:1fr 1fr;gap:96px;margin-top:80px;padding-top:36px;border-top:1px solid var(--rule)}
+  .paygrid .k{font:500 11px/1 var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase}
+  .paygrid .big{font-family:var(--serif);font-weight:400;font-size:88px;line-height:1;letter-spacing:-.02em;margin:24px 0 0;font-variant-numeric:tabular-nums}
+  .paygrid .big.italic{font-style:italic}
+  .paygrid ul{list-style:none;padding:0;margin:36px 0 0;font-size:19px;line-height:2;color:var(--ink2)}
+
+  /* 16 sources */
+  .sourceshead h2{font-family:var(--serif);font-weight:400;font-size:76px;line-height:1;letter-spacing:-.02em;margin:32px 0 0}
+  .srclist{display:grid;grid-template-columns:1fr 1fr;gap:12px 72px;margin-top:44px}
+  .si{padding:16px 0;border-top:1px solid var(--rule)}
+  .si .claim{font-size:15.5px;font-weight:500;color:var(--ink)}
+  .si .cite{margin-top:6px;font:400 12px/1.5 var(--mono);color:var(--ink3)}
+  .honest{margin-top:32px;padding-top:24px;border-top:1px solid var(--rule);font-family:var(--serif);font-style:italic;font-size:15px;line-height:1.55;color:var(--ink2);max-width:110ch}
+</style>
+
+<div id="stage">
+<div id="bar"></div>
+
+<!-- 01 HOOK -->
+<section class="slide dark active">
+  <div class="brandmark">DriftOps &nbsp;·&nbsp; Team Piloty</div>
+  <div class="hero">
+    <h1 class="hl" style="font-size:220px;line-height:.92">It drifts.</h1>
+    <p class="frag" style="margin-top:40px;font-size:26px;line-height:1.4;color:var(--n2);max-width:30ch">Infrastructure doesn't fail suddenly. It drifts toward failure &mdash; for days.</p>
+  </div>
+  <div class="foot"><div>Trajectory, not thresholds.</div><div>01 &mdash; 16</div></div>
+</section>
+
+<!-- 02 COST -->
+<section class="slide">
+  <div class="eyebrow">02 &nbsp;·&nbsp; The stakes</div>
+  <div class="costhead">
+    <h2 class="hl" style="font-size:88px">The anatomy of impact.</h2>
+    <p style="margin-top:24px;font-size:24px;line-height:1.45;color:var(--ink2);max-width:46ch">Downtime is balance-sheet erosion &mdash; not an IT inconvenience.</p>
+  </div>
+  <div class="costgrid">
+    <div>
+      <div class="costk">Revenue burn</div>
+      <div class="costn">$5.6&ndash;9k<span class="u"> / min</span></div>
+      <div class="costd">Direct sales and transactions lost every minute the service is dark.</div>
+    </div>
+    <div class="frag">
+      <div class="costk">Cascading ops</div>
+      <div class="costn">$500M+</div>
+      <div class="costd">Class-event failures once recovery, refunds and overtime compound (Delta, 2024).</div>
+    </div>
+    <div class="frag">
+      <div class="costk">SLA credits</div>
+      <div class="costn">10&ndash;30%</div>
+      <div class="costd">Contractual service credits owed back to customers per breach tier.</div>
+    </div>
+  </div>
+  <div class="formula frag">Total downtime cost &nbsp;=&nbsp; direct + recovery + contract + reputation.</div>
+  <div class="src">Gartner (2014) &amp; Ponemon (2016) benchmarks &middot; Delta Air Lines, 2024 &middot; standard cloud service-credit tiers. Illustrative ranges.</div>
+  <div class="count">02 &mdash; 16</div>
+</section>
+
+<!-- 03 BA -->
+<section class="slide">
+  <div class="eyebrow">03 &nbsp;·&nbsp; Example case &nbsp;·&nbsp; May 2017</div>
+  <div class="bagrid">
+    <div>
+      <h2 class="hl" style="font-size:96px">One data-centre<br><em>power failure.</em></h2>
+      <p style="margin-top:32px;font-size:22px;line-height:1.5;color:var(--ink2);max-width:34ch">British Airways &mdash; a single site failure grounded the entire airline over a bank-holiday weekend.</p>
+      <p style="margin-top:24px;font-size:17px;line-height:1.6;color:var(--ink2);max-width:44ch">Power &amp; thermal are the #1 cause of major outages &mdash; ~54% (Uptime Institute). The physical layer DriftOps watches.</p>
+    </div>
+    <div class="balist frag">
+      <div class="row"><div class="n">£58M</div><div class="l">in passenger claims</div></div>
+      <div class="row"><div class="n">~75,000</div><div class="l">passengers stranded</div></div>
+      <div class="row"><div class="n">672</div><div class="l">flights cancelled</div></div>
+      <div class="row"><div class="n">3 days</div><div class="l">of disruption</div></div>
+    </div>
+  </div>
+  <div class="src">BA/CBRE settlement, 2019 (Data Center Dynamics) &middot; Uptime Institute Annual Outage Analysis 2025. Cause officially undetermined at settlement; BA attributed it to a power-supply issue.</div>
+  <div class="count">03 &mdash; 16</div>
+</section>
+
+<!-- 04 AWS -->
+<section class="slide">
+  <div class="eyebrow">04 &nbsp;·&nbsp; AWS us-east-1 &nbsp;·&nbsp; October 2025</div>
+  <h2 class="hl" style="font-size:88px;margin-top:40px;max-width:24ch">When racks are up<br>and the world is <em>down.</em></h2>
+  <div class="flow">
+    <div class="fst"><div class="k">T&#8320; &middot; Trigger</div><div class="h">DNS / DynamoDB glitch</div><div class="d">A race condition writes an empty DNS record for the regional endpoint.</div></div>
+    <div class="fst"><div class="k">Cascade</div><div class="h">Control-plane collapse</div><div class="d">New EC2 instances launch but never finish networking; failover backs up.</div></div>
+    <div class="fst"><div class="k">113 services</div><div class="h">EC2 · Lambda · SQS · IAM</div><div class="d">Core services and global control planes hosted in us-east-1 stall together.</div></div>
+    <div class="fst"><div class="k">Blast radius</div><div class="h">Global apps go dark</div><div class="d">~2,500 companies disrupted; 11M+ outage reports worldwide.</div></div>
+  </div>
+  <div class="chipsrow frag">
+    <span class="lbl">Down</span>
+    <span class="n">Snapchat</span><span class="sep">·</span>
+    <span class="n">Coinbase</span><span class="sep">·</span>
+    <span class="n">Netflix</span><span class="sep">·</span>
+    <span class="n">Disney+</span><span class="sep">·</span>
+    <em>and ~2,500 more</em>
+  </div>
+  <div class="bridge frag">
+    <div><div class="t">One region &mdash; the whole internet.</div><div class="b">us-east-1 is AWS's oldest, default region and hosts global control planes &mdash; a single fault propagates worldwide.</div></div>
+    <div><div class="t"><em>Physical power &ne; service health.</em></div><div class="b">Every rack stayed powered. The failure was in coupling and control state &mdash; a class DriftOps does not target.</div></div>
+  </div>
+  <div class="src">AWS post-event summary &amp; InfoQ DynamoDB outage postmortem, 2025 &middot; Downdetector (11M+ reports) &middot; affected apps per NBC / CNN / Technical.ly coverage.</div>
+  <div class="count">04 &mdash; 16</div>
+</section>
+
+<!-- 05 THESIS -->
+<section class="slide">
+  <div class="eyebrow">05 &nbsp;·&nbsp; The thesis</div>
+  <h2 class="hl" style="font-size:88px;margin-top:40px;max-width:22ch">Hard to avoid &mdash;<br><em>but avoidable.</em></h2>
+  <div class="thesis">
+    <div class="col">
+      <div class="k">Why it's hard</div>
+      <div class="items">
+        <div class="item"><div class="h">Hidden couplings</div><div class="d">Dependencies you can't see until one link fails them all.</div></div>
+        <div class="item"><div class="h">Thundering herd</div><div class="d">Recovery retries stampede and re-crash the system.</div></div>
+        <div class="item"><div class="h">Silent physical drift</div><div class="d">Hardware degrades for days with green dashboards.</div></div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="k">Why it's avoidable</div>
+      <div class="items">
+        <div class="item"><div class="h">Static stability</div><div class="d">Systems that keep serving even when the control plane is down.</div></div>
+        <div class="item"><div class="h">Pre-incident drift tracking</div><div class="d">Catch the degradation trajectory before T&#8320;.</div></div>
+        <div class="item"><div class="h">Multi-region active-active</div><div class="d">No single region can take the whole system down.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="pipek frag">DriftOps &nbsp;·&nbsp; the decision engine</div>
+  <div class="pipe frag">
+    <span>Trajectory</span><span class="sep">&rarr;</span>
+    <span>Risk</span><span class="sep">&rarr;</span>
+    <span>Evidence</span><span class="sep">&rarr;</span>
+    <span>Priority</span><span class="sep">&rarr;</span>
+    <span>Action</span>
+  </div>
+  <div class="count">05 &mdash; 16</div>
+</section>
+
+<!-- 06 CONCESSION -->
+<section class="slide">
+  <div class="eyebrow">06 &nbsp;·&nbsp; Let's be honest</div>
+  <div class="conhead"><h2 class="hl">Detection exists.<br><em>Deciding doesn't.</em></h2></div>
+  <div class="concols">
+    <div>
+      <div class="k">Monitoring &mdash; solved</div>
+      <ul>
+        <li>Dashboards, thresholds, anomaly detection.</li>
+        <li>SMART, ECC &amp; sensor telemetry.</li>
+      </ul>
+    </div>
+    <div class="frag">
+      <div class="k">Prediction &mdash; also solved</div>
+      <ul>
+        <li>Google + Seagate: 98% precision drive-failure ML.</li>
+        <li>Dell iDRAC · NetApp Active IQ · HPE InfoSight.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="conclose frag">Yet operators still ask the one question none of them answer&nbsp;&mdash;&nbsp;<em>what do I fix first?</em></p>
+  <div class="src">Google Cloud + Seagate, 2021 (98% precision / 35% recall) &middot; Dell iDRAC &middot; NetApp &middot; HPE &mdash; each single-vendor.</div>
+  <div class="count">06 &mdash; 16</div>
+</section>
+
+<!-- 07 COMPONENTS -->
+<section class="slide">
+  <div class="eyebrow">07 &nbsp;·&nbsp; It's not just disks</div>
+  <h2 class="hl" style="font-size:88px;margin-top:40px;max-width:20ch">Every layer of the rack<br><em>drifts before it dies.</em></h2>
+  <div class="compgrid">
+    <div><div class="k">Disks</div><div class="n">1 in 4</div><div class="d">fail with zero SMART warning &mdash; real fleet of 67,814 drives.</div></div>
+    <div class="frag"><div class="k">Memory</div><div class="n">65&ndash;80%</div><div class="d">of uncorrectable failures preceded by correctable-error drift.</div></div>
+    <div class="frag"><div class="k">GPUs</div><div class="n">~1 / 3h</div><div class="d">interruption at cluster scale &mdash; 58.7% GPU-related on 16,384 GPUs.</div></div>
+    <div class="frag"><div class="k">CPUs</div><div class="n">~1 / 1k</div><div class="d">devices silently corrupt data &mdash; degradation you can't even see.</div></div>
+  </div>
+  <p class="compclose frag">The warning signs are in the data <em>before</em> the failure &mdash; on every component. Thresholds only trip at the end.</p>
+  <div class="src">Backblaze 2016 &middot; Google "DRAM Errors in the Wild" 2009 &middot; Meta Llama 3 2024 &middot; Meta/Google silent-data-corruption 2021.</div>
+  <div class="count">07 &mdash; 16</div>
+</section>
+
+<!-- 08 CHART -->
+<section class="slide">
+  <div class="eyebrow">08 &nbsp;·&nbsp; What that looks like</div>
+  <h2 class="hl" style="font-size:88px;margin-top:40px;max-width:22ch">Degrading for days.<br><em>Green on every dashboard.</em></h2>
+  <svg viewBox="0 0 1650 360" width="1650" style="margin-top:72px">
+    <line x1="0" y1="300" x2="1650" y2="300" stroke="rgba(15,15,14,.14)" stroke-width="1"></line>
+    <line x1="0" y1="70" x2="1650" y2="70" stroke="rgba(15,15,14,.18)" stroke-dasharray="2 6" stroke-width="1"></line>
+    <text x="4" y="56" font-size="12" fill="#96948E" letter-spacing=".18em">ALERT THRESHOLD</text>
+    <path d="M40,254 C400,250 700,236 950,206 C1150,178 1300,128 1470,70" stroke="#0F0F0E" stroke-width="1.6" fill="none"></path>
+    <line x1="1470" y1="30" x2="1470" y2="322" stroke="#0F0F0E" stroke-width="1"></line>
+    <text x="1470" y="348" text-anchor="middle" font-size="12" fill="#0F0F0E" letter-spacing=".2em">INCIDENT</text>
+    <text x="120" y="240" font-size="12" fill="#5B5B58" letter-spacing=".06em">drift starts &mdash; day 1</text>
+    <text x="770" y="160" font-size="12" fill="#5B5B58" letter-spacing=".06em">still "healthy" to your tools</text>
+    <circle cx="1470" cy="70" r="5" fill="#0F0F0E"></circle>
+  </svg>
+  <p class="chartclose frag"><em>DriftOps reads the slope.</em>&nbsp;&nbsp;Your threshold only sees the wire.</p>
+  <div class="count">08 &mdash; 16</div>
+</section>
+
+<!-- 09 PRODUCT -->
+<section class="slide dark">
+  <div class="eyebrow">09 &nbsp;·&nbsp; The product</div>
+  <div class="hero">
+    <h2 class="hl" style="font-size:220px;line-height:.94">DriftOps.</h2>
+    <p class="frag" style="margin-top:44px;font-size:28px;line-height:1.4;color:var(--n2);max-width:34ch">A temporal health layer that sees where your infrastructure is <em style="color:var(--nink)">going</em> &mdash; and what to do before it's an incident.</p>
+  </div>
+  <div class="foot"><div>Trajectory &nbsp;&rarr;&nbsp; Priority &nbsp;&rarr;&nbsp; Action</div><div>09 &mdash; 16</div></div>
+</section>
+
+<!-- 10 STACK -->
+<section class="slide">
+  <div class="eyebrow">10 &nbsp;·&nbsp; How it's built</div>
+  <div class="stackhead">
+    <h2 class="hl">The temporal AI <em>stack.</em></h2>
+    <p>Real dataset. Small, runnable model. Bounded compute.</p>
+  </div>
+  <div class="stackgrid">
+    <div class="sbox">
+      <div class="k">01 &middot; Data</div>
+      <div class="h">TimeNet + Backblaze</div>
+      <div class="sub2">Public HDD telemetry, verified pipeline</div>
+      <ul>
+        <li><b>3,000 drives</b> &middot; ST8000NM0055</li>
+        <li><b>547,812</b> daily observations, Jul&ndash;Dec 2024</li>
+        <li><b>13,616</b> TimeNet signal-description tasks</li>
+        <li>Disjoint splits by drive-hash; ordered cutoffs</li>
+        <li>Checksums pinned; causal windows tested</li>
+      </ul>
+    </div>
+    <div class="sbox frag">
+      <div class="k">02 &middot; Model</div>
+      <div class="h">OpenTSLM-SP on Gemma 3&nbsp;270M</div>
+      <div class="sub2">Time-series language model, runnable</div>
+      <ul>
+        <li><b>Base LM frozen</b>; encoder + projector adapted</li>
+        <li>Small enough to run on-prem &mdash; no vendor lock-in</li>
+        <li>Weights &amp; revisions pinned in <code>config/model.yaml</code></li>
+        <li>Weak SMART labels &mdash; kept honest, not oversold</li>
+      </ul>
+    </div>
+    <div class="sbox frag">
+      <div class="k">03 &middot; Compute</div>
+      <div class="h">Nebius GPU, $600 cap</div>
+      <div class="sub2">Bounded training, resumable jobs</div>
+      <ul>
+        <li>Every run: pre-declared budget &amp; stop conditions</li>
+        <li>Atomic checkpoints, tested resume</li>
+        <li><b>Held-out test partition</b>, never tuned on</li>
+        <li>Baseline comparison mandatory</li>
+      </ul>
+    </div>
+  </div>
+  <div class="src">Repo: EHL_Zurich_hackathon_team_piloty &middot; annotation method after OpenTSLM (arXiv 2410.02897) &middot; Backblaze Drive Stats, public archive.</div>
+  <div class="count">10 &mdash; 16</div>
+</section>
+
+<!-- 11 DEMO -->
+<section class="slide">
+  <div class="eyebrow">11 &nbsp;·&nbsp; Live demo &nbsp;·&nbsp; 3D digital twin</div>
+  <div class="demogrid">
+    <div>
+      <h2 class="hl">Click a rack.<br>Ask what's <em>drifting.</em></h2>
+      <p>Sites &rarr; racks &rarr; servers &rarr; components. Analyze makes the chassis transparent and colors every part by health.</p>
+      <div class="quote frag">"Inspect Drive 3 tonight &mdash; 2&ndash;6 day window, before it takes the node down."</div>
+      <div class="democue frag">▸&nbsp; Switch to live console</div>
+    </div>
+    <div class="panel frag">
+      <div class="ph"><span>Server 142 &middot; Site A / Rack 06</span><span class="st"><span class="dot"></span>Deteriorating</span></div>
+      <div class="body">
+        <div class="stats">
+          <div><div class="k">Health</div><div class="h">67<span class="u">/100</span></div></div>
+          <div class="r"><div class="k">Risk</div><div class="v">High &middot; 2&ndash;6 days</div></div>
+        </div>
+        <svg viewBox="0 0 640 150" width="100%">
+          <line x1="10" y1="130" x2="630" y2="130" stroke="rgba(15,15,14,.10)"></line>
+          <path d="M10,26 C150,30 260,44 360,70 C460,96 540,116 630,124" stroke="#0F0F0E" stroke-width="1.5" fill="none"></path>
+          <circle cx="630" cy="124" r="4" fill="#0F0F0E"></circle>
+          <text x="12" y="20" font-size="10" fill="#96948E" letter-spacing=".18em">HEALTH · 14 DAYS · 92 → 67</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <div class="src">Demo fleet: 147 devices across Site A (7×12), Site B (6×10), HQ laptops. Rule-based baseline v0; OpenTSLM replaces the scoring, keeps the same output contract.</div>
+  <div class="count">11 &mdash; 16</div>
+</section>
+
+<!-- 12 PRIORITIZATION -->
+<section class="slide">
+  <div class="eyebrow">12 &nbsp;·&nbsp; The wedge &nbsp;·&nbsp; decision, not prediction</div>
+  <h2 class="hl" style="font-size:88px;margin-top:40px;max-width:22ch">The riskiest isn't<br><em>the most urgent.</em></h2>
+  <div class="priog">
+    <div>
+      <div class="drivers">
+        <div class="drv a">
+          <div class="k">Drive A</div>
+          <div class="n">91%</div>
+          <div class="d">redundant &middot; low workload &middot; hot spare</div>
+          <div class="p">Priority &middot; medium</div>
+        </div>
+        <div class="drv b">
+          <div class="k">Drive B</div>
+          <div class="n">76%</div>
+          <div class="d">critical workload &middot; low redundancy</div>
+          <div class="p">▪ Priority &middot; critical</div>
+        </div>
+      </div>
+      <p class="prioclose">Risk = failure probability &times; operational context.</p>
+    </div>
+    <div class="planner frag">
+      <div class="hd">"I have a 4-hour window tonight &mdash; what do I fix?"</div>
+      <div class="row"><span class="num">01</span><div><b>Server 142 / Drive 3</b> &mdash; <span class="sub">deteriorating fast, low redundancy</span></div><span class="lbl hi">High</span></div>
+      <div class="row"><span class="num">02</span><div><b>Rack 18 / thermal cluster</b> &mdash; <span class="sub">7 systems drifting together</span></div><span class="lbl hi">High</span></div>
+      <div class="row med"><span class="num">03</span><div><b>Server 311 / Drive 7</b> &mdash; <span class="sub">stable deterioration</span></div><span class="lbl med">Med</span></div>
+      <div class="row dim"><span class="num">&mdash;</span><div>Defer: 12 low-risk anomalies</div><span></span></div>
+    </div>
+  </div>
+  <div class="src">Demo data. Coordinated drift + operational context &mdash; what turns 37 alerts into a ranked plan.</div>
+  <div class="count">12 &mdash; 16</div>
+</section>
+
+<!-- 13 STATUS -->
+<section class="slide">
+  <div class="eyebrow">13 &nbsp;·&nbsp; Honest status &nbsp;·&nbsp; hackathon draft</div>
+  <div class="statushead"><h2 class="hl">Built. Draft. <em>Next.</em></h2></div>
+  <div class="statusgrid">
+    <div class="stc built">
+      <div class="k"><span class="dot"></span>Built &amp; demoable</div>
+      <ul>
+        <li><div class="t">Real Backblaze data pipeline</div><div class="m">3,000 drives &middot; 547,812 obs &middot; SHA-pinned</div></li>
+        <li><div class="t">Disjoint drive-hash splits</div><div class="m">Train 1,802 &middot; Val 467 &middot; Cal 290 &middot; Test 441</div></li>
+        <li><div class="t">3D digital twin, 147 devices</div><div class="m">driftops3d/ &middot; rule-based baseline v0</div></li>
+        <li><div class="t">Rule-based copilot</div><div class="m">Status / why / wait / action / fleet</div></li>
+        <li><div class="t">Causal-window tests passing</div><div class="m">Gaps, event exclusion, censoring</div></li>
+      </ul>
+    </div>
+    <div class="stc draft frag">
+      <div class="k"><span class="dot"></span>Draft / illustrative</div>
+      <ul>
+        <li><div class="t">Weak SMART annotations</div><div class="m">Rules, not expert labels</div></li>
+        <li><div class="t">33 recorded events in pilot</div><div class="m">Insufficient for calibrated risk</div></li>
+        <li><div class="t">3D twin fleet percentiles</div><div class="m">Illustrative baselines</div></li>
+        <li><div class="t">Cost figures on slide 2</div><div class="m">Modeled, not measured</div></li>
+        <li><div class="t">Copilot is rule-based, not LLM</div><div class="m">Contract preserved for TSLM swap</div></li>
+      </ul>
+    </div>
+    <div class="stc next frag">
+      <div class="k"><span class="dot"></span>What's next</div>
+      <ul>
+        <li><div class="t">Train Gemma 3 270M + OpenTSLM-SP</div><div class="m">Weights pinned &middot; runtime check pending</div></li>
+        <li><div class="t">First Nebius diagnostic run</div><div class="m">$600 voucher &middot; bounded, resumable</div></li>
+        <li><div class="t">Held-out test on partition 4</div><div class="m">Compare against baseline + starting ckpt</div></li>
+        <li><div class="t">Wire TSLM into 3D twin copilot</div><div class="m">Same output contract as baseline v0</div></li>
+        <li><div class="t">Widen cohort for event support</div><div class="m">More drives, more failures, real risk</div></li>
+      </ul>
+    </div>
+  </div>
+  <div class="src">Aionic Temporal AI Challenge &middot; TimeNet for data prep &middot; OpenTSLM for signal-language modeling &middot; Nebius for training compute. Cited numbers are real; the trained model is prototype-stage.</div>
+  <div class="count">13 &mdash; 16</div>
+</section>
+
+<!-- 14 PAYOFF -->
+<section class="slide">
+  <div class="eyebrow">14 &nbsp;·&nbsp; The trade you're making</div>
+  <div class="payhead"><h2 class="hl">Catch the drift early.<br><em>Pay a little, not a lot.</em></h2></div>
+  <div class="paygrid">
+    <div>
+      <div class="k">Planned &middot; caught early</div>
+      <div class="big">€180 &middot; 45 min</div>
+      <ul><li>Scheduled maintenance window</li><li>Hot spare ready</li><li>No customer impact</li></ul>
+    </div>
+    <div class="frag">
+      <div class="k">Unplanned &middot; too late</div>
+      <div class="big italic">Hours &middot; SLA hit</div>
+      <ul><li>Emergency 3 a.m. recovery</li><li>Degraded service, angry clients</li><li>Reputation on the line</li></ul>
+    </div>
+  </div>
+  <div class="src">Illustrative cost model &mdash; planned-vs-unplanned maintenance economics, not a measured DriftOps result.</div>
+  <div class="count">14 &mdash; 16</div>
+</section>
+
+<!-- 15 CLOSE -->
+<section class="slide dark">
+  <div class="eyebrow">15 &nbsp;·&nbsp; Close</div>
+  <div class="hero">
+    <h2 class="hl" style="font-size:130px;max-width:20ch">Turn telemetry into decisions <em>before</em> downtime.</h2>
+    <p class="frag" style="margin-top:44px;font-size:24px;line-height:1.5;color:var(--n2);max-width:54ch">We don't stop the next config outage. We catch the hardware drift your thresholds miss &mdash; before it costs you the hour.</p>
+  </div>
+  <div class="foot"><div>DriftOps &middot; Team Piloty &middot; EHL Zurich Temporal AI Challenge</div><div>15 &mdash; 16</div></div>
+</section>
+
+<!-- 16 SOURCES -->
+<section class="slide">
+  <div class="eyebrow">16 &nbsp;·&nbsp; Sources &amp; verification</div>
+  <div class="sourceshead"><h2 class="hl">Every number, <em>checked.</em></h2></div>
+  <div class="srclist">
+    <div class="si"><div class="claim">Disks &mdash; 1 in 4 fail with no SMART warning (23.3%)</div><div class="cite">Backblaze, "What SMART Stats Tell Us," 2016 (67,814 drives) &middot; Pinheiro et&nbsp;al., Google, USENIX FAST 2007.</div></div>
+    <div class="si"><div class="claim">Memory &mdash; 65&ndash;80% preceded by correctable-error drift</div><div class="cite">Schroeder, Pinheiro &amp; Weber, "DRAM Errors in the Wild," Google, SIGMETRICS 2009.</div></div>
+    <div class="si"><div class="claim">GPUs &mdash; ~1 interruption / 3 hrs at cluster scale</div><div class="cite">Meta, "The Llama 3 Herd of Models," 2024 &mdash; 16,384-GPU cluster. arXiv:2407.21783.</div></div>
+    <div class="si"><div class="claim">CPUs &mdash; silent data corruption ~1 per 1,000 devices</div><div class="cite">Meta, "Silent Data Corruptions at Scale," 2021 &middot; Google, "Cores That Don't Count," 2021.</div></div>
+    <div class="si"><div class="claim">Downtime &mdash; 90%+ &gt;$300K/hr; 41% $1M&ndash;$5M+/hr</div><div class="cite">ITIC, 2024 Hourly Cost of Downtime survey. itic-corp.com</div></div>
+    <div class="si"><div class="claim">Outages &mdash; 20% cost &gt;$1M; power is #1 cause (~54%)</div><div class="cite">Uptime Institute, Annual Outage Analysis 2025 (2024 data).</div></div>
+    <div class="si"><div class="claim">British Airways &mdash; £58M, ~75,000, 672 flights (May 2017)</div><div class="cite">BA/CBRE settlement, 2019 (Data Center Dynamics). Cause officially undetermined at settlement.</div></div>
+    <div class="si"><div class="claim">AWS us-east-1 &mdash; 113 services, ~2,500 companies (Oct 2025)</div><div class="cite">AWS post-event summary &amp; InfoQ DynamoDB postmortem, 2025 &middot; Downdetector.</div></div>
+    <div class="si"><div class="claim">Backblaze pilot &mdash; 3,000 drives, 547,812 obs, 13,616 tasks</div><div class="cite">Repo: EHL_Zurich_hackathon_team_piloty &middot; SHA-256 6de7fc9e… &middot; public archive.</div></div>
+    <div class="si"><div class="claim">Model &mdash; Gemma 3 270M base + OpenTSLM-SP checkpoint</div><div class="cite">google/gemma-3-270m &middot; OpenTSLM/gemma-3-270m-tsqa-sp &middot; arXiv 2410.02897.</div></div>
+  </div>
+  <p class="honest">Honest scope: ITIC &amp; Uptime figures size the cost of downtime in general; the British Airways event sizes what one data-centre failure can cost &mdash; not a claimed DriftOps save. Most headline mega-outages (AWS, CrowdStrike) were software/config, which DriftOps does not target. Component figures speak directly to DriftOps' domain: hardware degradation that threshold-based tools miss.</p>
+  <div class="count">16 &mdash; 16</div>
+</section>
+
+</div>
+
+<script>
+const stage=document.getElementById('stage');
+function fit(){const s=Math.min(innerWidth/1920,innerHeight/1080);
+  stage.style.transform=`translate(${(innerWidth-1920*s)/2}px,${(innerHeight-1080*s)/2}px) scale(${s})`;
+  document.body.style.background=slides[cur]&&slides[cur].classList.contains('dark')?'#0F0F0E':'#F7F5F1'}
+addEventListener('resize',fit);
+const slides=[...document.querySelectorAll('.slide')],bar=document.getElementById('bar');
+let cur=0;
+function frags(i){return[...slides[i].querySelectorAll('.frag')]}
+function show(i,all){slides[cur].classList.remove('active');cur=Math.max(0,Math.min(slides.length-1,i));
+  const s=slides[cur];frags(cur).forEach(f=>f.classList.toggle('on',!!all));
+  s.classList.remove('active');void s.offsetWidth;s.classList.add('active');
+  bar.style.width=((cur+1)/slides.length*100)+'%';
+  document.body.style.background=s.classList.contains('dark')?'#0F0F0E':'#F7F5F1';
+  bar.style.background=s.classList.contains('dark')?'#F0EEE9':'#0F0F0E';}
+function next(){const f=frags(cur).find(x=>!x.classList.contains('on'));if(f){f.classList.add('on');return}if(cur<slides.length-1)show(cur+1,false)}
+function prev(){if(cur>0)show(cur-1,true)}
+addEventListener('keydown',e=>{
+  if(['ArrowRight',' ','PageDown'].includes(e.key)){e.preventDefault();next()}
+  else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev()}
+  else if(e.key==='Home')show(0,false);else if(e.key==='End')show(slides.length-1,true);
+  else if(e.key==='f'&&document.documentElement.requestFullscreen)document.documentElement.requestFullscreen();
+});
+addEventListener('click',e=>{(e.clientX>innerWidth*0.35)?next():prev()});
+let tx=null;addEventListener('touchstart',e=>tx=e.touches[0].clientX);
+addEventListener('touchend',e=>{if(tx==null)return;const dx=e.changedTouches[0].clientX-tx;if(dx<-40)next();else if(dx>40)prev();tx=null});
+if(matchMedia('(prefers-reduced-motion: reduce)').matches)document.querySelectorAll('.frag').forEach(f=>f.classList.add('on'));
+fit();show(0,false);
+</script>
