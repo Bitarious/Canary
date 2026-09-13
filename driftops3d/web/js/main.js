@@ -15,7 +15,7 @@ const els = {
 
 const state = {
   view: null, sites: [], site: null, rackId: null, lastTwin: null,
-  current: null, analysis: null, selected: null, sim: {}, scanning: false, benchmarking: false,
+  current: null, analysis: null, readings: null, selected: null, sim: {}, scanning: false, benchmarking: false,
   fleetRows: [], fleetFilter: {}, deviceCount: 0,
   timeline: null, frameSite: null,   // time machine: timeline data for state.site and the site as of the shown day
 };
@@ -356,6 +356,7 @@ async function openDevice(id, opts = {}) {
   if (reuse) { paintCrumbs(); return; }
   state.current = record;
   state.analysis = null;
+  state.readings = null;
   state.sim = {};
   selectComponent(null);
   els.analyze.disabled = false;
@@ -375,7 +376,31 @@ function paintCrumbs() {
 }
 
 function drawOverview(error) {
-  renderOverview(els.overview, { machine: state.current, analysis: state.analysis, scanning: state.scanning, error });
+  renderOverview(els.overview, { machine: state.current, analysis: state.analysis, readings: state.readings, scanning: state.scanning, error });
+}
+
+/** Send the benchmarked device's windows to the trained OpenTSLM component models (separate worker; may take a while). */
+async function fetchReadings(machineId) {
+  state.readings = { loading: true };
+  drawOverview();
+  refreshPanel();
+  try {
+    const r = await api('/api/model-readings', { machine_id: machineId });
+    if (state.current?.id !== machineId) return;
+    state.readings = r.readings;
+  } catch (err) {
+    if (state.current?.id !== machineId) return;
+    state.readings = { error: err.message };
+  }
+  drawOverview();
+  refreshPanel();
+}
+
+function refreshPanel() {
+  if (!state.selected || !state.analysis) return;
+  const scroll = els.panel.scrollTop;
+  renderComponent(els.panel, state.analysis.components.find(c => c.id === state.selected), state.sim[state.selected], state.readings);
+  els.panel.scrollTop = scroll;
 }
 
 async function analyze() {
@@ -392,6 +417,7 @@ async function analyze() {
     const analysis = await deviceScene.playAnalysis(api('/api/analyze', { machine_id: machineId }));
     if (!analysis || state.current?.id !== machineId) return;
     state.analysis = analysis;
+    if (state.current.source !== 'demo') fetchReadings(machineId);
     const o = analysis.overall;
     toast(o.counts.critical + o.counts.elevated
       ? `<b class="s-${o.status}">${esc(o.headline)}</b> — click a highlighted component for details.`
@@ -413,7 +439,7 @@ function selectComponent(id) {
   deviceScene?.select(comp ? id : null);
   if (!comp) { els.panel.hidden = true; return; }
   const scroll = els.panel.hidden || els.panel.dataset.id !== id ? 0 : els.panel.scrollTop;
-  renderComponent(els.panel, comp, state.sim[id]);
+  renderComponent(els.panel, comp, state.sim[id], state.readings);
   els.panel.dataset.id = id;
   els.panel.hidden = false;
   els.panel.scrollTop = scroll;
@@ -425,7 +451,7 @@ els.panel.addEventListener('click', e => {
   if (tab && state.selected) {
     state.sim[state.selected] = Number(tab.dataset.sim);
     const scroll = els.panel.scrollTop;
-    renderComponent(els.panel, state.analysis.components.find(c => c.id === state.selected), state.sim[state.selected]);
+    renderComponent(els.panel, state.analysis.components.find(c => c.id === state.selected), state.sim[state.selected], state.readings);
     els.panel.scrollTop = scroll;
   }
 });

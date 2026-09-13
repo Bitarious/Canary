@@ -4,7 +4,7 @@ DriftOps explores how small time-series language models can describe changes in 
 
 Thirteen component models passed their declared signal-description tests. These tests measure agreement with numerical pattern rules. They do not establish failure prediction or maintenance benefit.
 
-The `driftops3d` demo currently uses synthetic devices and deterministic analysis. It does not call the trained models. Saved Backblaze cases and an integration proposal are included below.
+The `driftops3d` demo uses synthetic devices and deterministic analysis for health, risk and projections. For benchmarked devices, **Analyze** also sends the benchmark windows to the released GPU, CPU and HDD models and shows their signal descriptions as labelled evidence (see [the demo README](driftops3d/README.md#trained-model-readings)). Saved Backblaze cases and an integration proposal are included below.
 
 Built for the EHL Zurich Temporal AI Challenge with Aionic TimeNet, Gemma-based OpenTSLM, and Nebius training compute.
 

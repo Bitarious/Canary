@@ -35,7 +35,7 @@ function badge(status, text) {
 
 // ------------------------------------------------------------------------------------ overview
 
-export function renderOverview(el, { machine, analysis, scanning, error }) {
+export function renderOverview(el, { machine, analysis, readings, scanning, error }) {
   if (error) {
     el.innerHTML = `<div class="eyebrow">Connection</div><h2>Server not reachable</h2>
       <p class="empty">${esc(error)}</p><p class="empty">Start it with <span class="mono">python server.py</span> and open
@@ -93,13 +93,14 @@ export function renderOverview(el, { machine, analysis, scanning, error }) {
         <span class="score s-${c.status}">${Math.round(c.health)}</span>
       </button>`).join('')}
     </div>
+    ${readingsOverview(readings, analysis)}
     ${analysis.findings.length ? `<h3>Cross-component findings</h3>${analysis.findings.map(f => `<div class="finding"><b>${esc(f.title)}</b>${esc(f.text)}</div>`).join('')}` : ''}
-    <p class="sub" style="margin-top:16px">Model <span class="mono">${esc(analysis.model)}</span> · ${analysis.runs_used} run${analysis.runs_used === 1 ? '' : 's'} of history · fleet percentiles use illustrative reference baselines.</p>`;
+    <p class="sub" style="margin-top:16px">Health and risk: <span class="mono">${esc(analysis.model)}</span> (rules) · ${analysis.runs_used} run${analysis.runs_used === 1 ? '' : 's'} of history · fleet percentiles use illustrative reference baselines.</p>`;
 }
 
 // ------------------------------------------------------------------------------------ component
 
-export function renderComponent(el, c, simIndex) {
+export function renderComponent(el, c, simIndex, readings) {
   const conf = { high: 'High', medium: 'Medium', low: 'Low' }[c.confidence] || c.confidence;
   const fleet = c.evidence.find(e => e.fleet_percentile != null && e.impact > 0) || c.evidence.find(e => e.fleet_percentile != null);
   const trendArrow = c.trend === 'improving' ? '↗' : c.trend.includes('deteriorating') ? (c.accelerating ? '↓↓' : '↘') : c.trend === 'baseline' ? '•' : '→';
@@ -135,6 +136,8 @@ export function renderComponent(el, c, simIndex) {
     <h3>Evidence</h3>
     <div class="evidence">${c.evidence.length ? c.evidence.map(evidenceRow).join('') : '<div class="empty">No signals exposed for this component.</div>'}</div>
 
+    ${modelReading(readings, c.id)}
+
     ${c.signals.length ? `<h3>Benchmark signals (latest run)</h3>${c.signals.map(s => sparkline(s, COLORS[c.status])).join('')}` : ''}
 
     <h3>Recommended action</h3>
@@ -152,6 +155,65 @@ export function renderComponent(el, c, simIndex) {
     <p class="sub" style="margin-top:8px">${simSentence(sim, sel)}</p>
     ${c.associations.length ? `<h3>Associated with</h3>${c.associations.map(a => `<div class="finding"><b>${esc(a.title)}</b>${esc(a.text)}</div>`).join('')}` : ''}
   `;
+}
+
+// ------------------------------------------------------------------------------------ trained model readings
+
+const PATTERN_ICON = { constant: '→', rising: '↗', falling: '↘', 'fluctuating without a clear net trend': '∿', 'counter reset or decrease': '↺' };
+const RUN_LABEL = { hdd: 'HDD', cpu: 'CPU', gpu: 'GPU' };
+
+function parsePatterns(text) {
+  return Object.fromEntries(String(text || '').replace(/\.$/, '').split(';').map(p => p.split(':').map(x => x.trim()))
+    .filter(([k, v]) => k && v));
+}
+
+function readingsOverview(readings, analysis) {
+  if (!readings) return '';
+  if (readings.loading) return `<h3>Trained model readings</h3><div class="scan-state small"><div class="spinner"></div>Sending benchmark windows to the OpenTSLM component models…</div>`;
+  if (readings.error) return `<h3>Trained model readings</h3><p class="empty">Model worker error: ${esc(readings.error)}</p>`;
+  const names = Object.fromEntries(analysis.components.map(c => [c.id, c.name]));
+  const rows = Object.entries(readings);
+  if (!rows.length) return `<h3>Trained model readings</h3><p class="empty">No component of this device matches a released model (HDD, CPU, GPU).</p>`;
+  return `<h3>Trained model readings</h3><div class="list">${rows.map(([id, r]) => `
+    <button class="item" data-id="${esc(id)}">
+      <span class="mr-dot ${esc(r.status)}"></span>
+      <div class="grow"><div class="name">${esc(names[id] || id)}</div>
+        <div class="meta">${r.status === 'ok' ? esc(r.channels.map(ch => `${ch.replace(/_/g, ' ')}: ${r.patterns[ch] || 'no answer'}`).join('; ')) : esc(r.status === 'insufficient' ? 'not enough samples' : 'model unavailable')}</div></div>
+      <span class="chip">${esc(RUN_LABEL[r.component] || r.component)}</span>
+    </button>`).join('')}</div>`;
+}
+
+function modelReading(readings, id) {
+  if (!readings) return '';
+  const head = '<h3>Trained model reading <span class="chip mr-chip">OpenTSLM</span></h3>';
+  if (readings.loading) return `${head}<div class="scan-state small"><div class="spinner"></div>Running the trained model on this benchmark…</div>`;
+  if (readings.error) return `${head}<p class="empty">Model worker error: ${esc(readings.error)}</p>`;
+  const r = readings[id];
+  if (!r) return '';
+  if (r.status !== 'ok') {
+    return `${head}<div class="model-reading muted"><div class="mr-status">${r.status === 'insufficient' ? 'Not enough data for the model' : 'Model unavailable'}</div>
+      <div class="detail">${esc(r.reason)}</div><div class="mr-foot">${esc(r.scope)}</div></div>`;
+  }
+  const model = r.patterns || parsePatterns(r.answer), rules = parsePatterns(r.reference);
+  const rows = r.channels.map((ch, i) => {
+    const got = model[ch] || 'no answer', ref = rules[ch];
+    const vals = r.values[i], min = Math.min(...vals), max = Math.max(...vals), span = max - min || 1;
+    const path = vals.map((v, j) => `${j ? 'L' : 'M'}${(j / 27 * 120).toFixed(1)},${(22 - (v - min) / span * 20).toFixed(1)}`).join('');
+    return `<div class="mr-row">
+      <span class="mr-ch">${esc(ch.replace(/_/g, ' '))}</span>
+      <svg viewBox="0 0 120 24" class="mr-spark"><path d="${path}"/></svg>
+      <span class="mr-pat" title="model answer">${PATTERN_ICON[got] || '?'} ${esc(got)}</span>
+      ${ref && ref !== got ? `<span class="mr-ref" title="rule-based reference label">rules: ${esc(ref)}</span>` : ''}
+    </div>`;
+  }).join('');
+  return `${head}<div class="model-reading">
+    ${rows}
+    <div class="mr-foot">
+      <b>${esc(r.run)}</b> · ${r.agrees_with_rules ? 'matches the rule reference' : 'differs from the rule reference'} · ${esc(r.latency_ms)} ms on CPU<br>
+      ${esc(r.note)}${r.skipped?.length ? ` Skipped: ${esc(r.skipped.join('; '))}.` : ''}${r.extra_output?.length ? ` The model also emitted an entry for an unsupplied channel (${esc(r.extra_output.join(', '))}); ignored.` : ''}<br>
+      ${esc(r.scope)} Held-out channel accuracy vs. rule labels: ${r.channel_accuracy != null ? `${(r.channel_accuracy * 100).toFixed(1)}%` : 'n/a'} ·
+      checkpoint <span class="mono">${esc(r.checkpoint_sha256.slice(0, 12))}</span> · input <span class="mono">${esc(r.input_hash.slice(0, 12))}</span>
+    </div></div>`;
 }
 
 function riskStatus(r) {

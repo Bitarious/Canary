@@ -17,12 +17,14 @@ from urllib.parse import urlparse
 
 from driftops import copilot
 from driftops.fleet import Fleet
+from driftops.tslm import TslmClient
 
 ROOT = Path(__file__).resolve().parent
 WEB = ROOT / "web"
 DATA = ROOT / "data" / "machines"
 JOBS: dict[str, dict] = {}
 FLEET: Fleet
+TSLM = TslmClient()   # trained OpenTSLM component models, run in a separate worker process
 WARM = {"done": False}
 
 
@@ -102,6 +104,8 @@ class Handler(SimpleHTTPRequestHandler):
         path = urlparse(self.path).path.rstrip("/")
         parts = path.split("/")
         try:
+            if path == "/api/model-status":
+                return self._json(TSLM.status())
             if path == "/api/status":
                 return self._json({"ready": WARM["done"], "devices": len(FLEET.device_ids())})
             if path == "/api/sites":
@@ -133,6 +137,12 @@ class Handler(SimpleHTTPRequestHandler):
                 return self._json({"machine_id": FLEET.save_run(self._body())})
             if path == "/api/analyze":
                 return self._json(FLEET.analyze(self._body().get("machine_id")))
+            if path == "/api/model-readings":
+                mid = self._body().get("machine_id")
+                runs = FLEET.runs(mid)
+                if not runs:
+                    raise KeyError(mid)
+                return self._json({"machine_id": mid, "readings": TSLM.readings(runs)})
             if path == "/api/copilot":
                 body = self._body()
                 return self._json(copilot.answer(FLEET, body.get("question", ""), body.get("context") or {}))
@@ -161,6 +171,7 @@ def main():
         print(f"model results ready for {len(FLEET.device_ids())} devices", flush=True)
 
     threading.Thread(target=warm, daemon=True).start()
+    threading.Thread(target=TSLM.preload, daemon=True).start()
     ThreadingHTTPServer.request_queue_size = 128  # default of 5 refuses connections under parallel page loads
     ThreadingHTTPServer.daemon_threads = True
     server = ThreadingHTTPServer((args.host, args.port), Handler)

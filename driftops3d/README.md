@@ -38,6 +38,26 @@ navigation, and checks a server's zoom and return transition.
 | **Fleet** (`#/fleet`) | Searchable table of every device, filterable by site and status and sorted by priority. |
 | **Incidents** (`#/incidents`) | Rack-level patterns plus every at-risk component, ranked by risk × criticality × redundancy. |
 
+### Trained model readings
+
+For a benchmarked (non-demo) device, **Analyze** also asks the released OpenTSLM component models to describe its signals. The health score, risk and actions still come from the rule-based baseline. The model readings appear beside them, labelled as descriptions and not failure predictions.
+
+| Component | Model run | Window sent |
+|---|---|---|
+| GPU | `gpu-component-v1` | 28 averaged steps of power, core and memory temperature sampled by `nvidia-smi` during the stress run |
+| CPU | `cpu-component-v1` | 28 steps of package power and core temperature. Power comes from Linux RAPL (usually root), so Windows devices report *not enough data* |
+| HDD | `full-history-rtx6000-v2` | SMART 5, 187, 194 and 197 from `drive_stats`, one reading per day over 28 consecutive days |
+
+Inputs are built with the training code (`driftops.component_data`, full-history SMART format). On this setup, the three saved HDD cases in `results/2026-09-13/hdd-demo-cases.json` reproduce their recorded input hashes and answers exactly. The benchmark windows use a different cadence and hardware than the training data (OLCF Summit ten-second means), and each reading says so. Components without enough samples show the exact shortfall.
+
+Setup, once per machine:
+
+1. Create the model environment: `python -m venv .venv-tslm`, install `torch==2.8.0` from the PyTorch CPU index, then `pip install -r requirements-models.txt` and `pip install -e . --no-deps` (see that file's header).
+2. Download the checkpoints: `gh release download v2026.09.13 --pattern "gpu-component-v1-model.tar.gz" ...` and extract them as in [the release guide](../docs/project-release.md).
+3. Log in to Hugging Face with an account that accepted the Gemma license, and cache the pinned `google/gemma-3-270m` and `OpenTSLM/gemma-3-270m-tsqa-sp` revisions from `config/model.yaml`.
+
+The server finds `.venv-tslm` automatically (override with `DRIFTOPS_TSLM_PYTHON`). It runs the models in one worker process (`python -m driftops.benchmark_tslm`) and preloads the GPU and HDD models at startup (`DRIFTOPS_TSLM_PRELOAD=gpu,hdd`; empty disables). Each loaded model uses about 1.1 GB of RAM, and loading takes about 2 minutes on a laptop CPU. Without the environment or weights, readings show *model unavailable* and everything else works as before. Endpoints: `POST /api/model-readings {machine_id}` and `GET /api/model-status`.
+
 ### Getting devices in
 
 - **Benchmark this device**: the server runs `agent/collect.py` on the computer hosting it, which takes about 30 s. The device lands in the **Local devices** site.
@@ -63,6 +83,7 @@ Run the agent several times over several days to build a health trajectory. The 
 | `driftops/demo_data.py` | Sites, racks and synthetic device histories with degradation profiles. |
 | `driftops/fleet.py` | Device registry, cached model results, site/rack aggregation, rack-level pattern detection, incidents. |
 | `driftops/copilot.py` | Answers status / why / wait / action / fleet-comparison questions from model outputs. |
+| `driftops/tslm.py` | Builds 28-step windows from benchmark runs and talks to the trained-model worker (`src/driftops/benchmark_tslm.py`). |
 | `web/js/timeline.js` | Time machine scrubber; `/api/sites/<id>/timeline` returns per-day device frames, projections, events and rack chains (`Fleet.timeline`). |
 | `server.py` | REST API (`/api/sites`, `/api/sites/<id>`, `/api/sites/<id>/timeline`, `/api/fleet`, `/api/incidents`, `/api/machines/<id>`, `/api/analyze`, `/api/copilot`, `/api/telemetry`, `/api/benchmark`) + serves `web/`. |
 | `web/` | `js/site-scene.js` (3D data hall), `js/scene.js` (3D device), `js/twin.js` (sidebar, copilot, fleet, incidents), `js/panel.js` (device panels), `js/main.js` (router). |

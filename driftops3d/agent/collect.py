@@ -303,14 +303,45 @@ def fan_rpm():
     return statistics.mean(vals) if vals else None
 
 
+GPU_QUERY = ["--query-gpu=name,temperature.gpu,utilization.gpu,power.draw,clocks_throttle_reasons.active,temperature.memory",
+             "--format=csv,noheader,nounits"]
+
+
 def gpu_sample():
     if not shutil.which("nvidia-smi"):
         return None
-    out = run(["nvidia-smi", "--query-gpu=name,temperature.gpu,utilization.gpu,power.draw,clocks_throttle_reasons.active",
-               "--format=csv,noheader,nounits"], timeout=10)
-    if not out.strip():
+    out = run(["nvidia-smi", *GPU_QUERY], timeout=10)
+    return parse_gpu_line(out.splitlines()[0]) if out.strip() else None
+
+
+class GpuStream:
+    """One long-lived `nvidia-smi -lms` process: steady 1 s samples (a fresh call per sample takes ~2 s on Windows)."""
+
+    def __init__(self, interval_ms=1000):
+        self.samples, self.proc = [], None
+        try:
+            self.proc = subprocess.Popen(["nvidia-smi", *GPU_QUERY, f"-lms={interval_ms}"], stdout=subprocess.PIPE,
+                                         stderr=subprocess.DEVNULL, text=True,
+                                         creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+            threading.Thread(target=self._read, daemon=True).start()
+        except OSError:
+            self.proc = None
+
+    def _read(self):
+        for line in self.proc.stdout:
+            sample = parse_gpu_line(line) if line.strip() else None
+            if sample:
+                self.samples.append(sample)
+
+    def close(self):
+        if self.proc and self.proc.poll() is None:
+            self.proc.terminate()
+
+
+def parse_gpu_line(line):
+    parts = [p.strip() for p in line.split(",")]
+    if len(parts) < 4:
         return None
-    parts = [p.strip() for p in out.splitlines()[0].split(",")]
 
     def num(x):
         try:
@@ -324,7 +355,20 @@ def gpu_sample():
     except ValueError:
         throttled = False
     return {"name": parts[0], "temp_c": num(parts[1]), "util_pct": num(parts[2]),
-            "power_w": num(parts[3]) if len(parts) > 3 else None, "throttled": throttled}
+            "power_w": num(parts[3]) if len(parts) > 3 else None, "throttled": throttled,
+            "mem_temp_c": num(parts[5]) if len(parts) > 5 else None}   # N/A on most consumer GPUs
+
+
+def rapl_energy_j():
+    """Cumulative CPU package energy in joules from Linux RAPL (intel-rapl / amd via powercap), else None."""
+    import glob
+    paths = [p for p in glob.glob("/sys/class/powercap/intel-rapl:*/energy_uj") if p.count(":") == 1]
+    if not paths:
+        return None
+    try:
+        return sum(int(open(p).read()) for p in paths) / 1e6
+    except (OSError, ValueError):  # root-only on recent kernels
+        return None
 
 
 def _burn(stop):
@@ -403,23 +447,40 @@ def collect(rounds=12, stress=True, disk_mb=48):
             workers.append(p)
         time.sleep(1.0)  # let the load processes spin up before the first round
 
+    # Steady-rate samples for the trained component models (28-step windows), separate from per-round series.
+    tslm = {"cpu_temp": [], "cpu_power": [], "gpu_mem_temp": []}
+
     def sampler():
         """Slow probes (external tools, WMI) run beside the benchmark instead of inside each round."""
+        energy = (rapl_energy_j(), time.perf_counter())
         while not stop.is_set():
+            started = time.perf_counter()
             t = win_thermal_zone() if use_wmi_temp else None
             if t is not None:
                 series["cpu_temp"].append(t)
-            g = gpu_sample() if has_gpu else None
+            fast = t if t is not None else cpu_temp()
+            if fast is not None:
+                tslm["cpu_temp"].append(round(fast, 2))
+            joules = rapl_energy_j()
+            if joules is not None and energy[0] is not None and joules >= energy[0]:
+                tslm["cpu_power"].append(round((joules - energy[0]) / max(1e-3, started - energy[1]), 2))
+            energy = (joules, started)
+            g = gpu_sample() if has_gpu and not (stream and stream.proc) else None
             if g:
-                gpu["name"] = g["name"]
-                gpu["throttle"] += int(g["throttled"])
-                for key, src_key in (("gpu_temp", "temp_c"), ("gpu_util", "util_pct"), ("gpu_power", "power_w")):
-                    if g[src_key] is not None:
-                        series[key].append(g[src_key])
-            stop.wait(1.5)
+                gpu_samples.append(g)
+            stop.wait(max(0.05, 1.0 - (time.perf_counter() - started)))
 
+    stream = GpuStream() if has_gpu else None
+    gpu_samples = stream.samples if stream and stream.proc else []
     probe = threading.Thread(target=sampler, daemon=True)
     probe.start()
+    started_at = time.perf_counter()
+
+    def model_windows_short():
+        """The trained component models need 28 steady samples; fewer rounds than that keep the load running briefly."""
+        gpu_short = has_gpu and len(gpu_samples) < 30
+        cpu_short = 0 < len(tslm["cpu_temp"]) < 30
+        return (gpu_short or cpu_short) and time.perf_counter() - started_at < 60
     src = bytearray(os.urandom(64 << 20))
     dst = bytearray(len(src))
     tmp = os.path.join(tempfile.gettempdir(), f"driftops_bench_{os.getpid()}.bin")
@@ -453,9 +514,21 @@ def collect(rounds=12, stress=True, disk_mb=48):
             b = psutil.sensors_battery()
             if b:
                 series["bat"].append(b.percent)
+        while model_windows_short():
+            time.sleep(0.5)
     finally:
         stop.set()
         probe.join(timeout=5)
+        if stream:
+            stream.close()
+        for g in gpu_samples:
+            gpu["name"] = g["name"]
+            gpu["throttle"] += int(g["throttled"])
+            for key, src_key in (("gpu_temp", "temp_c"), ("gpu_util", "util_pct"), ("gpu_power", "power_w")):
+                if g[src_key] is not None:
+                    series[key].append(g[src_key])
+            if g["mem_temp_c"] is not None:
+                tslm["gpu_mem_temp"].append(g["mem_temp_c"])
         for p in workers:
             p.join(timeout=3)
         try:
@@ -472,11 +545,14 @@ def collect(rounds=12, stress=True, disk_mb=48):
         "series": {"bench_ops": rnd(series["cpu_ops"], 0), "load_pct": rnd(series["cpu_load"], 1),
                    **({"temp_c": rnd(series["cpu_temp"], 1)} if series["cpu_temp"] else {}),
                    **({"freq_mhz": rnd(series["cpu_freq"], 0)} if len(set(series["cpu_freq"])) > 1 else {})},
+        "tslm_series": {"temp_c": tslm["cpu_temp"], "power_w": tslm["cpu_power"]},
     }]
     if gpu["name"]:
         comps.append({"id": "gpu0", "type": "gpu", "name": f"GPU · {gpu['name']}",
                       "static": {"throttle_events": gpu["throttle"]},
-                      "series": {"temp_c": series["gpu_temp"], "util_pct": series["gpu_util"], "power_w": series["gpu_power"]}})
+                      "series": {"temp_c": series["gpu_temp"], "util_pct": series["gpu_util"], "power_w": series["gpu_power"]},
+                      "tslm_series": {"temp_c": series["gpu_temp"], "power_w": series["gpu_power"],
+                                      "mem_temp_c": tslm["gpu_mem_temp"]}})
     comps.append({"id": "memory", "type": "memory",
                   "name": f"Memory · {psutil.virtual_memory().total / 2 ** 30:.0f} GB",
                   "static": {}, "series": {"used_pct": rnd(series["mem_used"], 1), "swap_pct": rnd(series["swap"], 1),
