@@ -38,7 +38,7 @@ function toast(msg, error = false, ms = 4500) {
   els.toast.classList.toggle('error', error);
   els.toast.hidden = false;
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { els.toast.hidden = true; }, ms);
+  if (ms > 0) toastTimer = setTimeout(() => { els.toast.hidden = true; }, ms);
 }
 
 // ------------------------------------------------------------------------------------ scenes (created lazily)
@@ -88,7 +88,6 @@ function showView(name, { crossfade = false } = {}) {
       if (from === 'device') deviceScene?.setActive(false);
     }, 900);
   }
-  setPanelModal(false);
   if (from === 'device' && name !== 'device' && !els.panel.hidden) {
     els.panel.hidden = true; state.selected = null; deviceScene?.select(null);
   }
@@ -125,9 +124,21 @@ async function route() {
     const fallback = state.lastTwin || (state.sites[0] && `#/site/${state.sites[0].id}`);
     if (fallback) location.replace(fallback);
   } catch (err) {
-    toast(esc(err.message), true);
+    if (err.code === 'WEBGL_UNAVAILABLE') {
+      els.analyze.disabled = true;
+      toast('3D graphics could not start. Close other 3D tabs, then retry. <button type="button" class="btn" data-retry-graphics>Retry 3D</button> <a class="btn" href="#/fleet">View device list</a>', true, 0);
+    } else {
+      toast(esc(err.message), true);
+    }
   }
 }
+els.toast.addEventListener('click', event => {
+  if (!event.target.closest('[data-retry-graphics]')) return;
+  const url = new URL(location.href);
+  url.searchParams.set('graphics', 'basic');
+  if (location.href === url.href) location.reload();
+  else location.replace(url.href);
+});
 window.addEventListener('hashchange', () => { document.querySelector('.more-menu').open = false; route(); });
 
 // ------------------------------------------------------------------------------------ twin (site / rack)
@@ -375,8 +386,8 @@ els.sidebar.addEventListener('mouseover', e => {
 async function openDevice(id, opts = {}) {
   const reuse = state.current?.id === id && state.current.machine && !opts.crossfade;
   const record = reuse ? state.current : await api(`/api/machines/${encodeURIComponent(id)}`);
-  showView('device', { crossfade: !!opts.crossfade });
   const scene = getDeviceScene();
+  showView('device', { crossfade: !!opts.crossfade });
   if (reuse) { paintCrumbs(); return; }
   state.current = record;
   state.analysis = null;
@@ -431,25 +442,6 @@ async function analyze() {
   }
 }
 
-const panelMobile = matchMedia('(max-width: 800px)');
-const modalBackground = new Map();
-function setPanelModal(on) {
-  if (on && panelMobile.matches) {
-    const nodes = [document.querySelector('.topbar'), $('originBanner'), $('jobBar'), $('loading'), $('drop'), $('toast'), $('viewStatus'),
-      ...Object.values(els.views).filter(view => view !== els.views.device),
-      ...[...els.views.device.children].filter(node => node !== els.panel)];
-    for (const node of nodes) {
-      if (!modalBackground.has(node)) modalBackground.set(node, node.inert);
-      node.inert = true;
-    }
-  } else {
-    for (const [node, inert] of modalBackground) node.inert = inert;
-    modalBackground.clear();
-  }
-  els.panel.setAttribute('aria-modal', String(on && panelMobile.matches));
-}
-panelMobile.addEventListener('change', () => setPanelModal(!els.panel.hidden));
-
 let panelReturnFocus, panelReturnId;
 function selectComponent(id, trigger) {
   const wasOpen = !els.panel.hidden;
@@ -463,7 +455,6 @@ function selectComponent(id, trigger) {
   document.body.classList.toggle('component-open', !!comp);
   if (!comp) {
     els.panel.hidden = true;
-    setPanelModal(false);
     if (wasOpen) requestAnimationFrame(() => {
       const currentItem = panelReturnId && els.overview.querySelector(`button[data-id="${CSS.escape(panelReturnId)}"]`);
       (currentItem || panelReturnFocus || els.analyze).focus({ preventScroll: true });
@@ -478,7 +469,7 @@ function selectComponent(id, trigger) {
   els.panel.scrollTop = scroll;
   els.panel.setAttribute('role', 'dialog');
   els.panel.setAttribute('aria-label', 'Illustrative component analysis');
-  setPanelModal(true);
+  els.panel.setAttribute('aria-modal', 'false');
   els.panel.querySelector('.close')?.focus();
 }
 
@@ -512,12 +503,7 @@ window.addEventListener('keydown', e => {
     }
     if (e.key === ' ' && !e.target.closest('button')) { e.preventDefault(); return tl.timer ? tl.pause() : tl.play(); }
   }
-  if (e.key === 'Tab' && !els.panel.hidden && matchMedia('(max-width: 800px)').matches) {
-    const items = [...els.panel.querySelectorAll('button, a, input, select, [tabindex="0"]')].filter(el => !el.disabled && el.getClientRects().length);
-    const first = items[0], last = items.at(-1);
-    if (e.shiftKey && (e.target === first || !els.panel.contains(e.target))) { e.preventDefault(); last?.focus(); }
-    else if (!e.shiftKey && (e.target === last || !els.panel.contains(e.target))) { e.preventDefault(); first?.focus(); }
-  }
+
 });
 
 // ------------------------------------------------------------------------------------ fleet & incidents

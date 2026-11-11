@@ -96,27 +96,32 @@ try {
   await page.waitForFunction(() => window.driftops.state.analysis && !window.driftops.state.scanning, {timeout:10000});
   await page.locator('#overview button.item').first().click();
   assert.ok(await page.locator('#panel').isVisible());
-  assert.ok(await page.locator('#labels').evaluate(el => getComputedStyle(el).visibility === 'hidden'));
-  assert.equal(await page.locator('#panel').getAttribute('aria-modal'), 'true');
-  assert.ok(await page.locator('.topbar').evaluate(el => el.inert));
-  assert.ok(await page.locator('#stage').evaluate(el => el.inert));
+  assert.ok(await page.locator('#labels').evaluate(el => getComputedStyle(el).visibility === 'visible'));
+  assert.equal(await page.locator('#panel').getAttribute('aria-modal'), 'false');
+  assert.ok(await page.locator('.topbar').evaluate(el => !el.inert));
+  assert.ok(await page.locator('#stage').evaluate(el => !el.inert));
+  for (const [width, height] of [[390,844], [768,1024], [844,390], [980,844], [1100,844]]) {
+    await page.setViewportSize({width, height});
+    const stage = await page.locator('#stage').boundingBox();
+    const panel = await page.locator('#panel').boundingBox();
+    assert.ok(stage.height >= 220, 'The model keeps a usable viewport');
+    assert.ok(stage.y + stage.height <= panel.y, 'Details do not cover the model');
+    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+  }
+  await page.setViewportSize({width:390, height:844});
   assert.ok(await page.locator('#toast').isHidden());
-  const hash = await page.evaluate(() => location.hash);
-  const evidenceLink = await page.locator('.tabs [data-tab="evidence"]').boundingBox();
-  await page.mouse.click(evidenceLink.x + evidenceLink.width / 2, evidenceLink.y + evidenceLink.height / 2);
-  assert.equal(await page.evaluate(() => location.hash), hash, 'Modal background rejects pointer navigation');
   await page.locator('#panel [data-sim="1"]').focus();
   await page.keyboard.press('Enter');
   assert.ok(await page.evaluate(() => document.activeElement.matches('#panel [data-sim="1"]')));
   await page.locator('#panel .close').focus();
   await page.keyboard.press('Shift+Tab');
-  assert.ok(await page.evaluate(() => document.querySelector('#panel').contains(document.activeElement)));
+  assert.ok(await page.evaluate(() => !document.querySelector('#panel').contains(document.activeElement)), 'The dock does not trap keyboard focus');
   await page.keyboard.press('Escape');
   assert.ok(await page.locator('#panel').isHidden());
   assert.ok(await page.locator('.topbar').evaluate(el => !el.inert));
   assert.ok(await page.locator('#stage').evaluate(el => !el.inert));
   await page.waitForFunction(() => document.activeElement.matches('#overview button.item'));
-  console.log('PASS: reduced-motion analysis, mobile drawer focus, Escape, and focus return');
+  console.log('PASS: reduced-motion analysis, mobile model/detail separation, nonmodal focus, Escape, and focus return');
   assert.deepEqual(errors, []);
   console.log('PASS: no browser exceptions');
 } finally { await browser.close(); }

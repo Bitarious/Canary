@@ -4,6 +4,39 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
+// Phones use fewer drawing-buffer samples and skip shadow-map allocations.
+export function createRenderer() {
+  const basic = matchMedia('(pointer: coarse)').matches || innerWidth <= 900 || new URLSearchParams(location.search).get('graphics') === 'basic';
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias: !basic, alpha: true, powerPreference: basic ? 'low-power' : 'default' });
+  } catch {
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: false, alpha: false, powerPreference: 'default' });
+    } catch (cause) {
+      const error = new Error('3D graphics could not start.');
+      error.code = 'WEBGL_UNAVAILABLE';
+      error.cause = cause;
+      throw error;
+    }
+  }
+  renderer.setPixelRatio(basic ? 1 : Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = !basic;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  return renderer;
+}
+
+export function roomEnvironment(renderer) {
+  const generator = new THREE.PMREMGenerator(renderer);
+  const room = new RoomEnvironment(renderer);
+  try {
+    return generator.fromScene(room, 0.04).texture;
+  } finally {
+    room.dispose();
+    generator.dispose();
+  }
+}
+
 export const STATUS_HEX = { healthy: 0x22c55e, watch: 0xeab308, elevated: 0xf97316, critical: 0xef4444 };
 const NEUTRAL = new THREE.Color(0x8a94a3);
 const SCAN = new THREE.Color(0x38bdf8);
@@ -405,20 +438,16 @@ export class HardwareScene {
     this.selected = null;
     this.hovered = null;
 
-    const r = (this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }));
-    r.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    const r = (this.renderer = createRenderer());
     r.toneMapping = THREE.ACESFilmicToneMapping;
     r.toneMappingExposure = DEVICE_LIGHTS.exposure;
     r.outputColorSpace = THREE.SRGBColorSpace;
-    r.shadowMap.enabled = true;
-    r.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild(r.domElement);
 
     this.labelRenderer = new CSS2DRenderer({ element: labelContainer });
 
     const scene = (this.scene = new THREE.Scene());
-    const pmrem = new THREE.PMREMGenerator(r);
-    scene.environment = pmrem.fromScene(new RoomEnvironment(r), 0.04).texture;
+    scene.environment = roomEnvironment(r);
     scene.environmentIntensity = DEVICE_LIGHTS.environment;
 
     this.camera = new THREE.PerspectiveCamera(38, 1, 0.05, 200);

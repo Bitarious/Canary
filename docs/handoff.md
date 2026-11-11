@@ -52,3 +52,9 @@ Source, model, and evidence publication must refer to their exact revisions. Pre
 Use [the implementation plan](implementation-plan.md) for future product scope. Use [the reproduction guide](reproduction.md) for new research runs. Do not reuse historical cloud instances, expired deadlines, stale budgets, or released run directories as a shortcut.
 
 Before every training run, explain and record the objective, data splits, updated and frozen parameters, hardware/cost limit, stopping conditions, evaluation, and outputs. Training is separate from release verification and requires its own bounded plan.
+
+## Mobile device inspection, 2026-09-16
+
+At widths up to 1100 pixels, and on coarse-pointer devices, the device view places the 3D model above the health legend and scrollable details. Selecting a component preserves model interaction and navigation. Details do not trap keyboard focus. Closing them returns focus to the component list. The browser regression covers portrait and landscape separation, focus return, and existing desktop navigation.
+
+Mobile WebGL now uses pixel ratio one without anti-aliasing or shadow maps. Renderer initialization retries with minimal attributes. A persistent recovery message provides a basic-graphics reload and device-list navigation if WebGL is unavailable. The browser suite includes simulated attribute refusal and total WebGL failure. Physical-device confirmation remains separate from these browser checks.

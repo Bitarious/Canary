@@ -43,6 +43,8 @@ try {
   });
   const base = `http://127.0.0.1:${port}`;
   await run(['driftops3d/tests/evidence-ui.mjs', base]);
+  await run(['driftops3d/tests/webgl-recovery.mjs', base]);
+  await run(['driftops3d/tests/device-layout.mjs', base]);
   const userData = join(temporary, 'chromium');
   profile = await chromium.launchPersistentContext(userData, {
     executablePath: process.env.CHROME_PATH || undefined,

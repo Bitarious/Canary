@@ -493,13 +493,21 @@ table.fleet { width: 100%; border-collapse: collapse; font-size: 13px; min-width
   .twin { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) 42%; }
   .sidebar { display: none; }
   .copilot { border-left: 0; border-top: 1px solid var(--line); }
-  .overview { top: auto; bottom: 64px; left: 16px; right: 16px; width: auto; max-height: 38vh; }
-  .panel { left: 16px; right: 16px; width: auto; top: 30%; bottom: 16px; }
-  .legend { left: 16px; right: 16px; bottom: 16px; justify-content: center; flex-wrap: wrap; }
   .hint, .twin-foot { display: none; }
   .timeline { bottom: 10px; left: 8px; right: 8px; gap: 8px; grid-template-columns: auto minmax(0, 1fr); }
   .tl-read { display: none; }
   .page-inner { padding: 16px; }
+}
+
+/* Keep device details outside the canvas on tablets and touch browsers. */
+@media (max-width: 1100px), (pointer: coarse) {
+  #deviceView { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(220px, 1fr) auto minmax(180px, 40%); overflow-y: auto; }
+  #deviceView > .stage3d, #deviceView > .labels { position: relative; inset: auto; grid-area: 1 / 1; min-width: 0; min-height: 0; }
+  #deviceView > .overview, #deviceView > .panel { position: relative; inset: auto; grid-area: 3 / 1; width: 100%; min-height: 0; max-height: none; margin: 0; padding: 16px; border-radius: 0; background: var(--card-solid); box-shadow: none; animation: none; overscroll-behavior: contain; }
+  #deviceView > .legend { position: relative; inset: auto; grid-area: 2 / 1; margin: 0; border-radius: 0; justify-content: center; flex-wrap: wrap; gap: 8px 14px; }
+  body.component-open #deviceView > .overview { display: none; }
+  #deviceView .panel .close { position: sticky; top: 0; z-index: 1; background: var(--card-solid); }
+  #deviceView > .hint { display: none; }
 }
 
 /* Canary keeps the original twin geometry and frames the supplied logo in CSS. */
@@ -586,8 +594,6 @@ table.fleet { width: 100%; border-collapse: collapse; font-size: 13px; min-width
   .provenance dl { grid-template-columns: 1fr; gap: 6px; }
   .provenance dd { margin-bottom: 12px; }
   .eval-stats { flex-wrap: wrap; gap: 22px 36px; }
-  body.component-open #labels, body.component-open .overview, body.component-open .legend, body.component-open .hint { visibility: hidden; }
-  body.component-open .panel { position: fixed; z-index: 80; top: calc(var(--top) + var(--origin-height)); bottom: 0; left: 0; right: 0; width: 100%; max-height: none; border-radius: 0; background: #0f1826; }
   .panel .close { min-width: 44px; min-height: 44px; }
 }
 @media (max-width: 480px) { .raw-charts { grid-template-columns: 1fr; } .tab-count { display: none; } .brand-art { width: 40px; flex-basis: 40px; } .brand { gap: 5px; } }

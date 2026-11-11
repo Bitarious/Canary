@@ -1,8 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { Tweens, ease, STATUS_HEX, SERVER_SIZE, SERVER_LOOK, DEVICE_LIGHTS, buildServerShell, LAPTOP_LOOK, buildLaptopShell } from './scene.js';
+import { createRenderer, roomEnvironment, Tweens, ease, STATUS_HEX, SERVER_SIZE, SERVER_LOOK, DEVICE_LIGHTS, buildServerShell, LAPTOP_LOOK, buildLaptopShell } from './scene.js';
 
 const RW = 0.9, RH = 2.1, RD = 1.1;       // rack cabinet size
 const PITCH_X = 1.75, PITCH_Z = 4.2;      // rack spacing (aisles between rows)
@@ -58,17 +57,14 @@ export class SiteScene {
     this.hover = null;
     this.siteId = null;
 
-    const r = (this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }));
-    r.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    const r = (this.renderer = createRenderer());
     r.toneMapping = THREE.ACESFilmicToneMapping;
     r.outputColorSpace = THREE.SRGBColorSpace;
-    r.shadowMap.enabled = true;
-    r.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild(r.domElement);
     this.labelRenderer = new CSS2DRenderer({ element: labelContainer });
 
     const scene = (this.scene = new THREE.Scene());
-    scene.environment = new THREE.PMREMGenerator(r).fromScene(new RoomEnvironment(r), 0.04).texture;
+    scene.environment = roomEnvironment(r);
     this.camera = new THREE.PerspectiveCamera(35, 1, 0.1, 300);
     const controls = (this.controls = new OrbitControls(this.camera, r.domElement));
     controls.enableDamping = true;
